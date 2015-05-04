@@ -5,7 +5,7 @@ project(ShotBoundDetection)
 # PROJECT DESCRIPTION
 #################################################
 
-set(META_PROJECT_NAME        "Shot Boundary Detection")
+set(META_PROJECT_NAME        "sbo")
 set(META_VERSION_MAJOR       "0")
 set(META_VERSION_MINOR       "1")
 set(META_VERSION_PATCH       "0")
