@@ -4,24 +4,16 @@
 
 using namespace cv;
 
-
-// dummy stuff, to see if OpenCV is working
-
 int main(int argc, char** argv) {
-    Histogram hist;
-    hist.buildHistogram();
-
     Mat image;
-    image = imread("../resources/cat.jpg", 1);
+    image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
-    if (!image.data) {
-        printf("No image data \n");
-        return -1;
-    }
-    namedWindow("Display Image", WINDOW_AUTOSIZE);
-    imshow("Display Image", image);
+    imshow("Image", image);
 
     waitKey(0);
+
+    Histogram hist;
+    hist.buildHistogram(&image);
 
     return 0;
 }
