@@ -98,6 +98,9 @@ endif()
 # OpenCV
 find_package( OpenCV REQUIRED )
 
+add_definitions(-DBOOST_ALL_NO_LIB)
+find_package(Boost COMPONENTS system filesystem regex REQUIRED)
+
 
 #################################################
 # SOURCES
@@ -125,11 +128,14 @@ add_executable(${target} ${sources})
 include_directories(
 	${CMAKE_SOURCE_DIR}
 	${OpenCV_INCLUDE_DIR}
+	${Boost_INCLUDE_DIR}
 	${PROJECT_BINARY_DIR} #for the generated files
 )
 
 
+link_directories(${Boost_LIBRARY_DIR})
 
 target_link_libraries( ${target}
     ${OpenCV_LIBS}
+    ${Boost_LIBRARIES} 
 )
