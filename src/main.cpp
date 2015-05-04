@@ -1,31 +1,40 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
+#include "histogram/histogram.h"
+#include "svm/svm.h"
 
-using namespace cv;
+using namespace sbd;
 
 
-// dummy stuff, to see if OpenCV is working
-
-int main(int argc, char** argv)
+void classifyExample()
 {
-	if (argc != 2)
-	{
-		printf("usage: DisplayImage.out <Image_Path>\n");
-		return -1;
-	}
+	// Set up training data
+	float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
+	cv::Mat labelsMat(4, 1, CV_32FC1, labels);
 
-	Mat image;
-	image = imread(argv[1], 1);
+	float trainingData[4][2] = { { 501, 10 }, { 255, 10 }, { 501, 255 }, { 10, 501 } };
+	cv::Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
 
-	if (!image.data)
-	{
-		printf("No image data \n");
-		return -1;
-	}
-	namedWindow("Display Image", WINDOW_AUTOSIZE);
-	imshow("Display Image", image);
+	SVMLearner svm;
+	svm.train(trainingDataMat, labelsMat);
+	svm.plotDecisionRegions();
+}
 
-	waitKey(0);
 
+int main(int argc, char** argv) {
+    cv::Mat image;
+    image = cv::imread("../resources/cat.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+    cv::Mat b = image;
+
+//    imshow("Image", image);
+//    waitKey(0);
+
+    Histogram histBuilder;
+    cv::MatND hist = histBuilder.buildHistogram(image);
+
+	classifyExample();
+    
 	return 0;
 }
+
+

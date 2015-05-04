@@ -5,7 +5,7 @@ project(ShotBoundDetection)
 # PROJECT DESCRIPTION
 #################################################
 
-set(META_PROJECT_NAME        "Shot Boundary Detection")
+set(META_PROJECT_NAME        "sbd")
 set(META_VERSION_MAJOR       "0")
 set(META_VERSION_MINOR       "1")
 set(META_VERSION_PATCH       "0")
@@ -98,6 +98,9 @@ endif()
 # OpenCV
 find_package( OpenCV REQUIRED )
 
+add_definitions(-DBOOST_ALL_NO_LIB)
+find_package(Boost COMPONENTS system filesystem regex REQUIRED)
+
 
 #################################################
 # SOURCES
@@ -105,6 +108,11 @@ find_package( OpenCV REQUIRED )
 
 set(sources
 	src/main.cpp
+	src/forwarddeclarations.h
+	src/histogram/histogram.h
+	src/histogram/histogram.cpp
+	src/svm/svm.h
+	src/svm/svm.cpp
 )
 
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -123,11 +131,14 @@ add_executable(${target} ${sources})
 include_directories(
 	${CMAKE_SOURCE_DIR}
 	${OpenCV_INCLUDE_DIR}
+	${Boost_INCLUDE_DIR}
 	${PROJECT_BINARY_DIR} #for the generated files
 )
 
 
+link_directories(${Boost_LIBRARY_DIR})
 
 target_link_libraries( ${target}
     ${OpenCV_LIBS}
+    ${Boost_LIBRARIES} 
 )
