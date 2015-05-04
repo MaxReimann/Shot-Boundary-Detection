@@ -5,5 +5,5 @@ using namespace cv;
 class Histogram {
 
 public:
-    void buildHistogram(const Mat*);
+    MatND buildHistogram(const Mat);
 };
