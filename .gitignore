@@ -18,5 +18,7 @@ build
 /bin
 /lib
 
+resources/senses111
+
 CMakeLists.txt.user
 CMakeCache.txt
