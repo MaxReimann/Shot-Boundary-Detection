@@ -105,6 +105,8 @@ find_package( OpenCV REQUIRED )
 
 set(sources
 	src/main.cpp
+	src/histogram/histogram.h
+	src/histogram/histogram.cpp
 )
 
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
