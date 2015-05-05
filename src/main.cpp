@@ -3,6 +3,8 @@
 #include <opencv2/opencv.hpp>
 #include "main.hpp"
 #include "histogram/histogram.hpp"
+#include "gold_standard/file_reader.hpp"
+#include "gold_standard/gold_standard_element.hpp"
 #include "svm/svm.hpp"
 
 using namespace cv;
@@ -10,12 +12,12 @@ using namespace sbd;
 using namespace std;
 
 int main(int argc, char** argv) {
-    getFileNames();
-    Mat image = readImages();
-    buildHistogramDifferences(image);
+//    getFileNames();
+//    Mat image = readImages();
+//    buildHistogramDifferences(image);
     readGoldStandard();
-    trainSVM();
-    evaluate();
+//    trainSVM();
+//    evaluate();
 
     return 0;
 }
@@ -64,6 +66,18 @@ void buildHistogramDifferences(Mat image) {
  */
 void readGoldStandard() {
     printf("Reading gold standard .. not yet.\n");
+
+    FileReader fileReader;
+    std::vector<GoldStandardElement> goldStandard;
+    fileReader.readDir("../resources/truth/", goldStandard);
+
+    for(std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
+        std::cout << "Name: "   << goldStandard[i].name
+                  << " Type: "  << goldStandard[i].type
+                  << " Start: " << goldStandard[i].startFrame
+                  << " End: "   << goldStandard[i].endFrame
+                  << "\n";
+    }
 }
 
 /**

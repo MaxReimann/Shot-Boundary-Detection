@@ -2,8 +2,9 @@
 
 using namespace sbd;
 
-GoldStandardElement::GoldStandardElement(std::string t, int s, int e) {
+GoldStandardElement::GoldStandardElement(std::string n, std::string t, int s, int e) {
+    name = n;
     type = t;
-    start_frame = s;
-    end_frame = e;
+    startFrame = s;
+    endFrame = e;
 }

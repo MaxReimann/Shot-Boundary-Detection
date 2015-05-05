@@ -6,6 +6,7 @@
 // STD includes we need everywhere
 #include <memory>
 #include <iostream>
+#include <vector>
 
 // openCV forward declarations
 #include <opencv2/opencv.hpp>

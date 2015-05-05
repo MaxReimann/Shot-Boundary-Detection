@@ -6,11 +6,12 @@ namespace sbd {
 
     class GoldStandardElement {
     public:
+        std::string name;
         std::string type;
-        int start_frame;
-        int end_frame;
+        int startFrame;
+        int endFrame;
 
-        GoldStandardElement(std::string, int, int);
+        GoldStandardElement(std::string, std::string, int, int);
     };
 
 }
