@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include "main.hpp"
 #include "histogram/histogram.h"
 #include "svm/svm.h"
 
@@ -8,10 +9,70 @@ using namespace sbd;
 using namespace cv;
 using namespace std;
 
-void plotHistogram(Mat);
+int main(int argc, char** argv) {
+    getFileNames();
+    Mat image = readImages();
+    buildHistogramDifferences(image);
+    readGoldStandard();
+    trainSVM();
+    evaluate();
 
+    return 0;
+}
 
-void classifyExample() {
+/**
+ * 1.
+ * Read the frame file names recursively.
+ */
+void getFileNames() {
+    printf("Getting frame file names .. not yet.\n");
+}
+
+/**
+ * 2.
+ * TODO: Given a list of file names, read all the corresponding images as matrices.
+ * Maybe use iterator, so we do not read all at once, but only on demand?
+ */
+Mat readImages() {
+    printf("Reading images.\n");
+    Mat image;
+    image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+
+    imshow("Image", image);
+    waitKey(0);
+    return image;
+}
+
+/**
+ * 3.
+ * TODO: Given two images, compute the differences in 8 * 8 * 8 histogram bins.
+ */
+void buildHistogramDifferences(Mat image) {
+    printf("Building histogram differences.\n");
+
+    Histogram histBuilder(8);
+    MatND hist = histBuilder.buildHistogram(image);
+//    cout << "hist = " << endl << " "  << hist << endl;
+//    printf("Rows: %d, Columns: %d\n", hist.rows, hist.cols);
+
+    Histogram::plotHistogram(hist, 1000, 400);
+}
+
+/**
+ * 4.
+ * TODO: Reads the gold standard and returns it in some easy format.
+ */
+void readGoldStandard() {
+    printf("Reading gold standard .. not yet.\n");
+}
+
+/**
+ * 5.
+ * TODO: Trains the SVM with the histogram differences and the gold standard.
+ */
+
+void trainSVM() {
+    printf("Training SVM.\n");
 	// Set up training data
 	float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
 	cv::Mat labelsMat(4, 1, CV_32FC1, labels);
@@ -24,43 +85,11 @@ void classifyExample() {
 	svm.plotDecisionRegions();
 }
 
-
-int main(int argc, char** argv) {
-    Mat image;
-    image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-
-    imshow("Image", image);
-    waitKey(0);
-
-    Histogram histBuilder(8);
-    MatND hist = histBuilder.buildHistogram(image);
-    cout << "hist = " << endl << " "  << hist << endl;
-
-    printf("Rows: %d, Columns: %d\n", hist.rows, hist.cols);
-
-    plotHistogram(hist);
-    classifyExample();
-    return 0;
+/**
+ * 6.
+ * Evaluate on some held-out test set.
+ */
+void evaluate() {
+    printf("Evaluating on test set .. not yet.\n");
 }
 
-void plotHistogram(Mat hist) {
-    int hist_w = 1000;
-    int hist_h = 400;
-    int histSize = hist.rows;
-    int bin_w = cvRound((double) hist_w / histSize);
-
-    Mat histImage(hist_h, hist_w, CV_8UC1, Scalar(0));
-    normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, Mat());
-    printf("After normalization:\n");
-    cout << "hist = " << endl << " "  << hist << endl;
-
-    for  (int i = 1; i <= histSize; i++) {
-        line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))) ,
-                        Point(bin_w * (i),     hist_h - cvRound(hist.at<float>(i))),
-                        Scalar(255), 2, 8, 0);
-    }
-
-    namedWindow("Result", 1 );
-    imshow("Result", histImage);
-    waitKey(0);
-}
