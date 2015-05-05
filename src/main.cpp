@@ -2,11 +2,11 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "main.hpp"
-#include "histogram/histogram.h"
-#include "svm/svm.h"
+#include "histogram/histogram.hpp"
+#include "svm/svm.hpp"
 
-using namespace sbd;
 using namespace cv;
+using namespace sbd;
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -92,4 +92,3 @@ void trainSVM() {
 void evaluate() {
     printf("Evaluating on test set .. not yet.\n");
 }
-

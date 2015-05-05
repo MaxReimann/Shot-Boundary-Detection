@@ -1,6 +1,6 @@
 #pragma once
 
-#include "forwarddeclarations.h"
+#include "forwarddeclarations.hpp"
 
 void getFileNames();
 cv::Mat readImages();

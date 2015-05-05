@@ -1,4 +1,6 @@
-#include "../forwarddeclarations.h"
+#pragma once
+
+#include "../forwarddeclarations.hpp"
 
 namespace sbd {
 	class Histogram {

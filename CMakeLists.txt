@@ -109,10 +109,10 @@ find_package(Boost COMPONENTS system filesystem regex REQUIRED)
 set(sources
 	src/main.cpp
 	src/main.hpp
-	src/forwarddeclarations.h
-	src/histogram/histogram.h
+	src/forwarddeclarations.hpp
+	src/histogram/histogram.hpp
 	src/histogram/histogram.cpp
-	src/svm/svm.h
+	src/svm/svm.hpp
 	src/svm/svm.cpp
 )
 

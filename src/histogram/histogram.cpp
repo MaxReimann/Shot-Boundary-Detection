@@ -1,4 +1,4 @@
-#include "histogram.h"
+#include "histogram.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
