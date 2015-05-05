@@ -1,8 +1,16 @@
-class GoldStandardElement {
-public:
-    std::string type;
-    int start_frame;
-    int end_frame;
+#pragma once
 
-    GoldStandardElement(std::string, int, int);
-};
+#include "../forwarddeclarations.hpp"
+
+namespace sbd {
+
+    class GoldStandardElement {
+    public:
+        std::string type;
+        int start_frame;
+        int end_frame;
+
+        GoldStandardElement(std::string, int, int);
+    };
+
+}

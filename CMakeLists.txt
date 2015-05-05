@@ -114,6 +114,10 @@ set(sources
 	src/histogram/histogram.cpp
 	src/svm/svm.hpp
 	src/svm/svm.cpp
+        src/gold_standard/file_reader.hpp
+        src/gold_standard/file_reader.cpp
+        src/gold_standard/gold_standard_element.hpp
+        src/gold_standard/gold_standard_element.cpp
 )
 
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
