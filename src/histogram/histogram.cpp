@@ -5,19 +5,23 @@
 
 using namespace sbd;
 
-cv::MatND Histogram::buildHistogram(const cv::Mat& image) {
-    printf("Hello World\n");
 
+Histogram::Histogram(int histSize) {
+    this->m_histSize = histSize;
+}
+int Histogram::getHistSize() {
+    return this->m_histSize;
+}
+
+cv::MatND Histogram::buildHistogram(const cv::Mat& image) {
     int channels[] = { 0 };
     cv::MatND hist;
-    int bins = 30;
-    int histSize[] = { bins };
 
     float range[] = { 0, 256 };
     const float* ranges[] = { range };
 
-    calcHist(&image, 1, channels, cv::Mat(),
-             hist, 1, histSize, ranges, true, false);
+    calcHist(&image, 1, 0, cv::Mat(),
+             hist, 1, &this->m_histSize, ranges, true, false);
 
     return hist;
 }
