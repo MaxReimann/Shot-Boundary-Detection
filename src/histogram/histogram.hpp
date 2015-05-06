@@ -9,7 +9,8 @@ namespace sbd {
 	public:
         Histogram(int);
         int getHistSize();
-		cv::MatND buildHistogram(const cv::Mat& image);
+        cv::MatND buildHistogram(const cv::Mat& image);
+        static void displayHistogram(const cv::Mat& hist);
         static void plotHistogram(const cv::Mat& hist, int width, int height);
 	};
 }

@@ -38,10 +38,10 @@ void getFileNames() {
 Mat readImages() {
     printf("Reading images.\n");
     Mat image;
-    image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+    image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_COLOR);
 
-    imshow("Image", image);
-    waitKey(0);
+//    imshow("Image", image);
+//    waitKey(0);
     return image;
 }
 
@@ -54,10 +54,13 @@ void buildHistogramDifferences(Mat image) {
 
     Histogram histBuilder(8);
     MatND hist = histBuilder.buildHistogram(image);
-//    cout << "hist = " << endl << " "  << hist << endl;
-//    printf("Rows: %d, Columns: %d\n", hist.rows, hist.cols);
 
-    Histogram::plotHistogram(hist, 1000, 400);
+//    for (MatConstIterator_<float> it = hist.begin<float>(); it != hist.end<float>(); it++) {
+//        cout << *it << "\n";
+//    }
+//    cout << std::flush;
+
+    Histogram::displayHistogram(hist);
 }
 
 /**
@@ -72,11 +75,11 @@ void readGoldStandard() {
     fileReader.readDir("../resources/truth/", goldStandard);
 
     for(std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
-        std::cout << "Name: "   << goldStandard[i].name
-                  << " Type: "  << goldStandard[i].type
-                  << " Start: " << goldStandard[i].startFrame
-                  << " End: "   << goldStandard[i].endFrame
-                  << "\n";
+//        std::cout << "Name: "   << goldStandard[i].name
+//                  << " Type: "  << goldStandard[i].type
+//                  << " Start: " << goldStandard[i].startFrame
+//                  << " End: "   << goldStandard[i].endFrame
+//                  << "\n";
     }
 }
 

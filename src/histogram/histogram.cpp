@@ -13,7 +13,12 @@ int Histogram::getHistSize() {
     return this->m_histSize;
 }
 
+void Histogram::displayHistogram(const cv::Mat &hist) {
+    std::cout << "Histogram size = " << hist.total() << ": [" << hist.size[0] << " x " << hist.size[1] << " x " << hist.size[2] << "]" << std::endl;
+}
+
 void Histogram::plotHistogram(const cv::Mat &hist, int width, int height) {
+    return;
     int histSize = hist.rows;
     int binWidth = cvRound((double) width / histSize);
 
@@ -32,13 +37,16 @@ void Histogram::plotHistogram(const cv::Mat &hist, int width, int height) {
 }
 
 cv::MatND Histogram::buildHistogram(const cv::Mat& image) {
+    int nrImages = 1;
+    int channels[] = { 0, 1, 2 };
+    cv::Mat mask;
     cv::MatND hist;
-
+    int histDimensionality = 3;
+    int histSizes[] = { this->m_histSize, this->m_histSize, this->m_histSize };
     float range[] = { 0, 256 };
-    const float* ranges[] = { range };
-
-    calcHist(&image, 1, 0, cv::Mat(),
-             hist, 1, &this->m_histSize, ranges, true, false);
+    const float* ranges[] = { range, range, range };
+    calcHist(&image, nrImages, channels, mask,
+             hist, histDimensionality, histSizes, ranges, true, false);
 
     return hist;
 }
