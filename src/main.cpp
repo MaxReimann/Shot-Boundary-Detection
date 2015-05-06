@@ -99,7 +99,7 @@ void trainSVM() {
 
 	SVMLearner svm;
 	svm.train(trainingDataMat, labelsMat);
-	svm.plotDecisionRegions();
+//	svm.plotDecisionRegions();
 }
 
 /**
