@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
@@ -15,8 +15,7 @@ using namespace std;
 int main(int argc, char** argv) {
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
     std::vector<std::string> imagePaths = getFileNames();
-    Mat image = readImages(imagePaths);
-    buildHistogramDifferences(image);
+    buildHistogramDifferences(imagePaths);
     trainSVM();
     evaluate();
 
@@ -67,39 +66,36 @@ std::vector<std::string> getFileNames() {
 
 /**
  * 3.
- * TODO: Given a list of file names, read all the corresponding images as matrices.
- * Maybe use iterator, so we do not read all at once, but only on demand?
- */
-Mat readImages(std::vector<std::string> imagePaths) {
-    printf("Reading images.\n");
-    Mat image;
-    image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_COLOR);
-
-//    imshow("Image", image);
-//    waitKey(0);
-    return image;
-}
-
-/**
- * 4.
  * TODO: Given two images, compute the differences in 8 * 8 * 8 histogram bins.
  */
-void buildHistogramDifferences(Mat image) {
+std::vector<MatND> buildHistogramDifferences(std::vector<std::string> imagePaths) {
     printf("Building histogram differences.\n");
 
     Histogram histBuilder(8);
-    MatND hist = histBuilder.buildHistogram(image);
+    std::cout << "Reading " << imagePaths.size() << " images." << std::endl;
+    assert(imagePaths.size() % 2 == 0);
 
+    std::vector<MatND> diffs;
+    for (int i = 0; i < imagePaths.size(); i += 2) {
+        Mat image1 = imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
+        Mat image2 = imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
+        MatND hist1 = histBuilder.buildHistogram(image1);
+        MatND hist2 = histBuilder.buildHistogram(image2);
+
+        MatND diff = hist1 - hist2;
+//        Histogram::displayHistogram(diff);
+
+        diffs.push_back(diff);
+    }
 //    for (MatConstIterator_<float> it = hist.begin<float>(); it != hist.end<float>(); it++) {
 //        cout << *it << "\n";
 //    }
 //    cout << std::flush;
-
-    Histogram::displayHistogram(hist);
+    return diffs;
 }
 
 /**
- * 5.
+ * 4.
  * TODO: Trains the SVM with the histogram differences and the gold standard.
  */
 
@@ -118,7 +114,7 @@ void trainSVM() {
 }
 
 /**
- * 6.
+ * 5.
  * Evaluate on some held-out test set.
  */
 void evaluate() {

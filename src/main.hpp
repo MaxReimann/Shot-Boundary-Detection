@@ -4,8 +4,7 @@
 
 std::vector<sbd::GoldStandardElement> readGoldStandard();
 std::vector<std::string> getFileNames();
-cv::Mat readImages(std::vector<std::string>);
-void buildHistogramDifferences(cv::Mat);
+std::vector<cv::MatND> buildHistogramDifferences(std::vector<std::string>);
 void trainSVM();
 void evaluate();
 
