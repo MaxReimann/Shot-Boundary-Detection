@@ -12,10 +12,10 @@ using namespace sbd;
 using namespace std;
 
 int main(int argc, char** argv) {
+    std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
     getFileNames();
     Mat image = readImages();
     buildHistogramDifferences(image);
-    readGoldStandard();
     trainSVM();
     evaluate();
 
@@ -24,6 +24,26 @@ int main(int argc, char** argv) {
 
 /**
  * 1.
+ * Reads the gold standard and returns it in some easy format.
+ */
+std::vector<sbd::GoldStandardElement> readGoldStandard() {
+    printf("Reading gold standard.\n");
+
+    FileReader fileReader;
+    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir("../resources/truth/");
+
+//    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
+//        std::cout << "Name: "   << goldStandard[i].name
+//                  << " Type: "  << goldStandard[i].type
+//                  << " Start: " << goldStandard[i].startFrame
+//                  << " End: "   << goldStandard[i].endFrame
+//                  << "\n";
+//    }
+    return goldStandard;
+}
+
+/**
+ * 2.
  * Read the frame file names recursively.
  */
 void getFileNames() {
@@ -31,7 +51,7 @@ void getFileNames() {
 }
 
 /**
- * 2.
+ * 3.
  * TODO: Given a list of file names, read all the corresponding images as matrices.
  * Maybe use iterator, so we do not read all at once, but only on demand?
  */
@@ -46,7 +66,7 @@ Mat readImages() {
 }
 
 /**
- * 3.
+ * 4.
  * TODO: Given two images, compute the differences in 8 * 8 * 8 histogram bins.
  */
 void buildHistogramDifferences(Mat image) {
@@ -61,26 +81,6 @@ void buildHistogramDifferences(Mat image) {
 //    cout << std::flush;
 
     Histogram::displayHistogram(hist);
-}
-
-/**
- * 4.
- * TODO: Reads the gold standard and returns it in some easy format.
- */
-void readGoldStandard() {
-    printf("Reading gold standard .. not yet.\n");
-
-    FileReader fileReader;
-    std::vector<GoldStandardElement> goldStandard;
-    fileReader.readDir("../resources/truth/", goldStandard);
-
-    for(std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
-//        std::cout << "Name: "   << goldStandard[i].name
-//                  << " Type: "  << goldStandard[i].type
-//                  << " Start: " << goldStandard[i].startFrame
-//                  << " End: "   << goldStandard[i].endFrame
-//                  << "\n";
-    }
 }
 
 /**

@@ -10,7 +10,7 @@ namespace sbd {
               void read(std::string, std::vector<GoldStandardElement>&);
               const char* extractName(std::string);
             public:
-              void readDir(const char*, std::vector<GoldStandardElement>&);
+              std::vector<GoldStandardElement> readDir(const char*);
     };
 
 }

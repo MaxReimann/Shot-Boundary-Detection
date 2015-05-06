@@ -11,7 +11,9 @@
 
 using namespace sbd;
 
-void FileReader::readDir(const char *dir, std::vector<GoldStandardElement>& goldStandard) {
+std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
+    std::vector<GoldStandardElement> goldStandard;
+
     boost::filesystem::recursive_directory_iterator rdi(dir);
     boost::filesystem::recursive_directory_iterator end_rdi;
 
@@ -22,6 +24,8 @@ void FileReader::readDir(const char *dir, std::vector<GoldStandardElement>& gold
             read((*rdi).path().string(), goldStandard);
         }
     }
+
+    return goldStandard;
 }
 
 void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& goldStandard) {
