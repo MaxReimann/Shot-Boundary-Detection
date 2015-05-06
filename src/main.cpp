@@ -12,12 +12,12 @@ using namespace sbd;
 using namespace std;
 
 int main(int argc, char** argv) {
-//    getFileNames();
-//    Mat image = readImages();
-//    buildHistogramDifferences(image);
+    getFileNames();
+    Mat image = readImages();
+    buildHistogramDifferences(image);
     readGoldStandard();
-//    trainSVM();
-//    evaluate();
+    trainSVM();
+    evaluate();
 
     return 0;
 }
