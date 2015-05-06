@@ -15,6 +15,10 @@ int Histogram::getHistSize() {
 
 void Histogram::displayHistogram(const cv::Mat &hist) {
     std::cout << "Histogram size = " << hist.total() << ": [" << hist.size[0] << " x " << hist.size[1] << " x " << hist.size[2] << "]" << std::endl;
+//    for (MatConstIterator_<float> it = hist.begin<float>(); it != hist.end<float>(); it++) {
+//        cout << *it << "\n";
+//    }
+//    cout << std::flush;
 }
 
 void Histogram::plotHistogram(const cv::Mat &hist, int width, int height) {
