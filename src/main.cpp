@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <boost/filesystem.hpp>
 #include "main.hpp"
 #include "histogram/histogram.hpp"
 #include "gold_standard/file_reader.hpp"
@@ -13,8 +14,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
-    getFileNames();
-    Mat image = readImages();
+    std::vector<std::string> imagePaths = getFileNames();
+    Mat image = readImages(imagePaths);
     buildHistogramDifferences(image);
     trainSVM();
     evaluate();
@@ -46,8 +47,22 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
  * 2.
  * Read the frame file names recursively.
  */
-void getFileNames() {
-    printf("Getting frame file names .. not yet.\n");
+std::vector<std::string> getFileNames() {
+    printf("Getting frame file names.\n");
+
+    std::vector<std::string> imagePaths;
+    std::string extension = ".jpg";
+    std::string dir = "../resources/frames/";
+
+    boost::filesystem::recursive_directory_iterator rdi(dir);
+    boost::filesystem::recursive_directory_iterator end_rdi;
+    for (; rdi != end_rdi; rdi++) {
+        if (extension.compare((*rdi).path().extension().string()) == 0) {
+            imagePaths.push_back((*rdi).path().string());
+        }
+    }
+
+    return imagePaths;
 }
 
 /**
@@ -55,7 +70,7 @@ void getFileNames() {
  * TODO: Given a list of file names, read all the corresponding images as matrices.
  * Maybe use iterator, so we do not read all at once, but only on demand?
  */
-Mat readImages() {
+Mat readImages(std::vector<std::string> imagePaths) {
     printf("Reading images.\n");
     Mat image;
     image = imread("../resources/cat.jpg", CV_LOAD_IMAGE_COLOR);
