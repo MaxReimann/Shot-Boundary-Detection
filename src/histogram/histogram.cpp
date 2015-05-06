@@ -40,11 +40,11 @@ void Histogram::plotHistogram(const cv::Mat &hist, int width, int height) {
     cv::waitKey(0);
 }
 
-cv::MatND Histogram::buildHistogram(const cv::Mat& image) {
+cv::Mat Histogram::buildHistogram(const cv::Mat& image) {
     int nrImages = 1;
     int channels[] = { 0, 1, 2 };
     cv::Mat mask;
-    cv::MatND hist;
+    cv::Mat hist;
     int histDimensionality = 3;
     int histSizes[] = { this->m_histSize, this->m_histSize, this->m_histSize };
     float range[] = { 0, 256 };

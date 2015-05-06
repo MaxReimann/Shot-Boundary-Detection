@@ -12,11 +12,13 @@ using namespace cv;
 using namespace sbd;
 using namespace std;
 
+
+
 int main(int argc, char** argv) {
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
     std::vector<std::string> imagePaths = getFileNames();
-    buildHistogramDifferences(imagePaths, gold);
-    trainSVM();
+    Features features = buildHistogramDifferences(imagePaths, gold);
+    trainSVM(features);
     evaluate();
 
     return 0;
@@ -68,30 +70,31 @@ std::vector<std::string> getFileNames() {
  * 3.
  * TODO: Given two images, compute the differences in 8 * 8 * 8 histogram bins.
  */
-std::vector<MatND> buildHistogramDifferences(std::vector<std::string> imagePaths, std::vector<sbd::GoldStandardElement> goldStandard) {
+Features buildHistogramDifferences(std::vector<std::string> imagePaths, std::vector<sbd::GoldStandardElement> goldStandard) {
     printf("Building histogram differences.\n");
 
     Histogram histBuilder(8);
     std::cout << "Reading " << imagePaths.size() << " images." << std::endl;
     assert(imagePaths.size() % 2 == 0);
 
-    std::vector<MatND> diffs;
+    std::vector<Mat> diffs;
     std::vector<bool> golds;
     for (int i = 0; i < imagePaths.size(); i += 2) {
         Mat image1 = imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         Mat image2 = imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
         bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
-        MatND hist1 = histBuilder.buildHistogram(image1);
-        MatND hist2 = histBuilder.buildHistogram(image2);
+        Mat hist1 = histBuilder.buildHistogram(image1);
+        Mat hist2 = histBuilder.buildHistogram(image2);
 
-        MatND diff = hist1 - hist2;
+        Mat diff = hist1 - hist2;
 //        Histogram::displayHistogram(diff);
 
         diffs.push_back(diff);
         golds.push_back(gold);
     }
-    return diffs;
+    Features features = {golds, diffs};
+    return features;
 }
 
 /**
@@ -107,7 +110,7 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
  * TODO: Trains the SVM with the histogram differences and the gold standard.
  */
 
-void trainSVM() {
+void trainSVM(Features features) {
     printf("Training SVM.\n");
 	// Set up training data
 	float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
