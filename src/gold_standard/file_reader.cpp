@@ -14,6 +14,13 @@ using namespace sbd;
 std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
     std::vector<GoldStandardElement> goldStandard;
 
+	if (!boost::filesystem::exists(dir))
+	{
+		std::cout << "[Filereader::readDir] no such directory: " << dir << std::endl;
+		std::system("pause");
+		exit(-1);
+	}
+
     boost::filesystem::recursive_directory_iterator rdi(dir);
     boost::filesystem::recursive_directory_iterator end_rdi;
 

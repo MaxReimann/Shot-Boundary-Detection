@@ -105,7 +105,7 @@ Features buildHistogramDifferences(std::vector<std::string> imagePaths, std::vec
  * 3.1
  * TODO: For the two given files find out the gold standard, i.e. whether it is a CUT or not.
  */
-bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> gold) {
+bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> &gold) {
 	std::string frameNr1 = boost::filesystem::path(path1).stem().string();
 	std::string frameNr2 = boost::filesystem::path(path2).stem().string();
 
@@ -120,7 +120,7 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
  * TODO: Trains the SVM with the histogram differences and the gold standard.
  */
 
-void trainSVM(Features features) {
+void trainSVM(Features &features) {
     printf("Training SVM.\n");
 	// Set up training data
 	float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
