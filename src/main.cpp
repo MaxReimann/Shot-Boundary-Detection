@@ -76,22 +76,24 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
     std::cout << "Reading " << imagePaths.size() << " images." << std::endl;
     assert(imagePaths.size() % 2 == 0);
 
-    std::vector<cv::Mat> diffs;
-    std::vector<bool> golds;
+    cv::Mat diffs;
+	cv::Mat golds;
     for (int i = 0; i < imagePaths.size(); i += 2) {
 		cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
 		cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
 		
-        bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
+        float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
 		cv::Mat hist1 = histBuilder.buildHistogram(image1);
 		cv::Mat hist2 = histBuilder.buildHistogram(image2);
 
-		//cv::Mat diff;
-		//cv::absdiff(hist1, hist2, diff);
-		cv::Mat diff = hist1 - hist2;
-        //Histogram::displayHistogram(diff);
 
+		cv::Mat diff = hist1 - hist2;
+		//Histogram::displayHistogram(hist1);
+
+		for (auto it = diff.begin<float>(); it != diff.end<float>(); it++)
+			if (*it != 0.0)
+				printf("%f,", *it);
 
         diffs.push_back(diff);
         golds.push_back(gold);
@@ -123,23 +125,18 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
 void trainSVM(Features &features) {
     printf("Training SVM.\n");
 	// Set up training data
-	//float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
-	//cv::Mat labelsMat(4, 1, CV_32FC1, labels);
 
-	//float trainingData[4][2] = { { 501, 10 }, { 255, 10 }, { 501, 255 }, { 10, 501 } };
-	//cv::Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
-	
-	int trainLength = features.values.size();
-	cv::Mat *trainingData = &features.values[0]; //pointer to underlying array
-	//std::cout << features.values.at(0).size() << std::endl;
+	cv::Mat trainMat = features.values;
+	cv::Mat labelsMat = features.classes;
 
-	//features.values.at(0).
+	//for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
+	//	if (*it != 0)
+	//		printf("%f,", *it);
 
-	//std::cout << "height" << s.height << "width" << s.width << std::endl;
+	assert(trainMat.isContinuous());
 
 	SVMLearner svm;
-	cv::Mat trainingMat(trainLength, trainingData[0].size, CV_32FC1, trainingData);
-	//svm.train(features.values, features.classes);
+	svm.train(trainMat, labelsMat);
 	//svm.plotDecisionRegions();
 }
 

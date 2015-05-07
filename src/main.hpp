@@ -3,8 +3,8 @@
 #include "forwarddeclarations.hpp"
 
 typedef struct {
-    std::vector<int> classes;
-    std::vector<cv::Mat> values;
+    cv::Mat classes;
+    cv::Mat values;
 } Features;
 
 std::vector<sbd::GoldStandardElement> readGoldStandard();
