@@ -2,6 +2,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include "main.hpp"
 #include "histogram/histogram.hpp"
 #include "gold_standard/file_reader.hpp"
@@ -50,19 +51,34 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
 std::vector<std::string> getFileNames() {
     printf("Getting frame file names.\n");
 
-    std::vector<std::string> imagePaths;
+    std::vector<boost::filesystem::path> imagePaths;
     std::string extension = ".jpg";
     std::string dir = "../resources/frames/anni009/";
 
     boost::filesystem::recursive_directory_iterator rdi(dir);
     boost::filesystem::recursive_directory_iterator end_rdi;
     for (; rdi != end_rdi; rdi++) {
-        if (extension.compare((*rdi).path().extension().string()) == 0) {
-            imagePaths.push_back((*rdi).path().string());
+        if (extension.compare(rdi->path().extension().string()) == 0) {
+            imagePaths.push_back(rdi->path());
         }
     }
 
-    return imagePaths;
+	//sort according to int number of frame
+	std::sort(imagePaths.begin(), imagePaths.end(), 
+		[](boost::filesystem::path &aPath, boost::filesystem::path &bPath)
+	{
+		std::string a = aPath.filename().string();
+		std::string b = bPath.filename().string();
+		std::string aNum = a.substr(0, a.find(".jpg"));
+		std::string bNum = b.substr(0, b.find(".jpg"));
+		return std::stoi(a) <= std::stoi(b);
+	});
+
+	std::vector<std::string> imageStrPaths(imagePaths.size());
+	for (auto img : imagePaths)
+		imageStrPaths.push_back(img.string());
+
+	return imageStrPaths;
 }
 
 /**
@@ -81,6 +97,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
     for (int i = 0; i < imagePaths.size(); i += 2) {
 		cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
 		cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
+		assert(image1.total() > 0);
+		assert(image2.total() > 0);
 		
         float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
@@ -90,10 +108,6 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
 
 		cv::Mat diff = hist1 - hist2;
 		//Histogram::displayHistogram(hist1);
-
-		for (auto it = diff.begin<float>(); it != diff.end<float>(); it++)
-			if (*it != 0.0)
-				printf("%f,", *it);
 
         diffs.push_back(diff);
         golds.push_back(gold);

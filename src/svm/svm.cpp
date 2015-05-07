@@ -34,19 +34,19 @@ void SVMLearner::plotDecisionRegions()
 
 	cv::Vec3b green(0, 255, 0), blue(255, 0, 0);
 	// Show the decision regions given by the SVM
-	for (int i = 0; i < image.rows; ++i)
-	{
-		for (int j = 0; j < image.cols; ++j)
-		{
-			cv::Mat sampleMat = (cv::Mat_<float>(1, 2) << j, i);
-			float response = m_svm.predict(sampleMat);
+	//for (int i = 0; i < image.rows; ++i)
+	//{
+	//	for (int j = 0; j < image.cols; ++j)
+	//	{
+	//		cv::Mat sampleMat = (cv::Mat_<float>(1, 2) << j, i);
+	//		float response = m_svm.predict(sampleMat);
 
-			if (response == 1)
-				image.at<cv::Vec3b>(i, j) = green;
-			else if (response == -1)
-				image.at<cv::Vec3b>(i, j) = blue;
-		}
-	}
+	//		if (response == 1)
+	//			image.at<cv::Vec3b>(i, j) = green;
+	//		else if (response == -1)
+	//			image.at<cv::Vec3b>(i, j) = blue;
+	//	}
+	//}
 
 
 	// Show the training data
