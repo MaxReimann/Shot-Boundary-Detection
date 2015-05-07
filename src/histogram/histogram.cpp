@@ -14,11 +14,32 @@ int Histogram::getHistSize() {
 }
 
 void Histogram::displayHistogram(const cv::Mat &hist) {
+
 	std::cout << "Histogram size = " << hist.total() << ": [" << hist.size[0] << " x " << hist.size[1] << " x " << hist.size[2] << "]" << std::endl;
-	//    for (MatConstIterator_<float> it = hist.begin<float>(); it != hist.end<float>(); it++) {
-	//        cout << *it << "\n";
-	//    }
-	//    cout << std::flush;
+
+	int width = 512;
+	int height = 256;
+
+	cv::Mat histImage(height, width, CV_8UC1, cv::Scalar(0));
+	cv::Mat outHist;
+	//cv::normalize(hist, hist, height, 0.0, cv::NORM_L1, -1, cv::Mat());
+
+	float maxEl = 0.0;
+	for (auto it = hist.begin<float>(); it != hist.end<float>(); it++)
+		if (maxEl < *it)
+			maxEl = *it;
+
+	float scale = height / maxEl;
+
+	auto it = hist.begin<float>();
+	float last = *it++;
+
+	for (int i = 1; it != hist.end<float>(); it++, i++) {
+		cv::line(histImage, cv::Point(i - 1, height - cvRound(last * scale)),
+			cv::Point(i, height - cvRound(*it * scale)),
+			cv::Scalar(255),2, 8, 0);
+		float last = *it;
+		printf("%f,", *it * scale);
 	}
 
 	cv::namedWindow("Result", 1);
@@ -94,5 +115,8 @@ cv::Mat Histogram::buildHistogram(const cv::Mat& image) {
     cv::calcHist(&image, nrImages, channels, mask,
              hist, histDimensionality, histSizes, ranges, true, false);
 
-    return hist;
+
+
+
+    return hist; 
 }
