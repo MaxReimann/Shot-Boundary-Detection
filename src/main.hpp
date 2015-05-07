@@ -3,7 +3,7 @@
 #include "forwarddeclarations.hpp"
 
 typedef struct {
-    std::vector<bool> classes;
+    std::vector<int> classes;
     std::vector<cv::Mat> values;
 } Features;
 
