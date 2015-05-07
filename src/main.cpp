@@ -8,10 +8,7 @@
 #include "gold_standard/gold_standard_element.hpp"
 #include "svm/svm.hpp"
 
-using namespace cv;
 using namespace sbd;
-using namespace std;
-
 
 
 int main(int argc, char** argv) {
@@ -55,7 +52,7 @@ std::vector<std::string> getFileNames() {
 
     std::vector<std::string> imagePaths;
     std::string extension = ".jpg";
-    std::string dir = "../resources/frames/";
+    std::string dir = "../resources/frames/anni009/";
 
     boost::filesystem::recursive_directory_iterator rdi(dir);
     boost::filesystem::recursive_directory_iterator end_rdi;
@@ -72,25 +69,27 @@ std::vector<std::string> getFileNames() {
  * 3.
  * TODO: Given two images, compute the differences in 8 * 8 * 8 histogram bins.
  */
-Features buildHistogramDifferences(std::vector<std::string> imagePaths, std::vector<sbd::GoldStandardElement> goldStandard) {
+Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::vector<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
     Histogram histBuilder(8);
     std::cout << "Reading " << imagePaths.size() << " images." << std::endl;
     assert(imagePaths.size() % 2 == 0);
 
-    std::vector<Mat> diffs;
+    std::vector<cv::Mat> diffs;
     std::vector<bool> golds;
     for (int i = 0; i < imagePaths.size(); i += 2) {
-        Mat image1 = imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
-        Mat image2 = imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
+		cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
+		cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
 		
         bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
-        Mat hist1 = histBuilder.buildHistogram(image1);
-        Mat hist2 = histBuilder.buildHistogram(image2);
+		cv::Mat hist1 = histBuilder.buildHistogram(image1);
+		cv::Mat hist2 = histBuilder.buildHistogram(image2);
 
-        Mat diff = hist1 - hist2;
+		//cv::Mat diff;
+		//cv::absdiff(hist1, hist2, diff);
+		cv::Mat diff = hist1 - hist2;
         //Histogram::displayHistogram(diff);
 
 
@@ -110,7 +109,8 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
 	std::string frameNr2 = boost::filesystem::path(path2).stem().string();
 
 	for (int i = 0; i < gold.size(); i++) {
-		if (frameNr1 == std::to_string(gold[i].startFrame) && frameNr2 == std::to_string(gold[i].endFrame)) return true;
+		if (frameNr1 == std::to_string(gold[i].startFrame) && frameNr2 == std::to_string(gold[i].endFrame)) 
+			return true;
 	}
 	return false;
 }
@@ -123,14 +123,23 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
 void trainSVM(Features &features) {
     printf("Training SVM.\n");
 	// Set up training data
-	float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
-	cv::Mat labelsMat(4, 1, CV_32FC1, labels);
+	//float labels[4] = { 1.0, -1.0, -1.0, -1.0 };
+	//cv::Mat labelsMat(4, 1, CV_32FC1, labels);
 
-	float trainingData[4][2] = { { 501, 10 }, { 255, 10 }, { 501, 255 }, { 10, 501 } };
-	cv::Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
+	//float trainingData[4][2] = { { 501, 10 }, { 255, 10 }, { 501, 255 }, { 10, 501 } };
+	//cv::Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
+	
+	int trainLength = features.values.size();
+	cv::Mat *trainingData = &features.values[0]; //pointer to underlying array
+	//std::cout << features.values.at(0).size() << std::endl;
+
+	//features.values.at(0).
+
+	//std::cout << "height" << s.height << "width" << s.width << std::endl;
 
 	SVMLearner svm;
-	svm.train(trainingDataMat, labelsMat);
+	cv::Mat trainingMat(trainLength, trainingData[0].size, CV_32FC1, trainingData);
+	//svm.train(features.values, features.classes);
 	//svm.plotDecisionRegions();
 }
 
