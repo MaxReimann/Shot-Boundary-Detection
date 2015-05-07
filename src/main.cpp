@@ -84,14 +84,15 @@ Features buildHistogramDifferences(std::vector<std::string> imagePaths, std::vec
     for (int i = 0; i < imagePaths.size(); i += 2) {
         Mat image1 = imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         Mat image2 = imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
-
+		
         bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
         Mat hist1 = histBuilder.buildHistogram(image1);
         Mat hist2 = histBuilder.buildHistogram(image2);
 
         Mat diff = hist1 - hist2;
-//        Histogram::displayHistogram(diff);
+        //Histogram::displayHistogram(diff);
+
 
         diffs.push_back(diff);
         golds.push_back(gold);
@@ -104,8 +105,14 @@ Features buildHistogramDifferences(std::vector<std::string> imagePaths, std::vec
  * 3.1
  * TODO: For the two given files find out the gold standard, i.e. whether it is a CUT or not.
  */
-bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement>) {
-    return true;
+bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> gold) {
+	std::string frameNr1 = boost::filesystem::path(path1).stem().string();
+	std::string frameNr2 = boost::filesystem::path(path2).stem().string();
+
+	for (int i = 0; i < gold.size(); i++) {
+		if (frameNr1 == std::to_string(gold[i].startFrame) && frameNr2 == std::to_string(gold[i].endFrame)) return true;
+	}
+	return false;
 }
 
 /**
@@ -124,7 +131,7 @@ void trainSVM(Features features) {
 
 	SVMLearner svm;
 	svm.train(trainingDataMat, labelsMat);
-//	svm.plotDecisionRegions();
+	//svm.plotDecisionRegions();
 }
 
 /**

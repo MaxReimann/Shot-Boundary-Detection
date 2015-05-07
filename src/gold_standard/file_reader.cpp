@@ -35,7 +35,7 @@ void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& go
     boost::smatch startFrameMatch;
     boost::smatch endFrameMatch;
 
-    boost::regex typeRegex      (".*?type..(DIS).*");
+    boost::regex typeRegex      (".*?type..(CUT).*");
     boost::regex startFrameRegex(".*?preFNum..([0-9]+).*");
     boost::regex endFrameRegex  (".*?postFNum..([0-9]+).*");
 
