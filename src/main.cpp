@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
     trainSVM(features);
     evaluate();
 
+	// wait for key, so we can read the console output
+	system("pause");
     return 0;
 }
 
@@ -82,6 +84,7 @@ Features buildHistogramDifferences(std::vector<std::string> imagePaths, std::vec
     for (int i = 0; i < imagePaths.size(); i += 2) {
         Mat image1 = imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         Mat image2 = imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
+
         bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
         Mat hist1 = histBuilder.buildHistogram(image1);
