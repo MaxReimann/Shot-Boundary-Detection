@@ -115,8 +115,9 @@ cv::Mat Histogram::buildHistogram(const cv::Mat& image) {
     cv::calcHist(&image, nrImages, channels, mask,
              hist, histDimensionality, histSizes, ranges, true, false);
 
+	// resize mat from a 3d Mat to a nx1 Mat. Only changes headers
+	cv::Mat m2(m_histSize, m_histSize*m_histSize, CV_32SC1, hist.data); 
+	cv::Mat flattenedHist = m2.reshape(0, 1);
 
-
-
-    return hist; 
+	return flattenedHist;
 }
