@@ -11,7 +11,9 @@
 
 using namespace sbd;
 
-void FileReader::readDir(const char *dir, std::vector<GoldStandardElement>& goldStandard) {
+std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
+    std::vector<GoldStandardElement> goldStandard;
+
     boost::filesystem::recursive_directory_iterator rdi(dir);
     boost::filesystem::recursive_directory_iterator end_rdi;
 
@@ -22,33 +24,35 @@ void FileReader::readDir(const char *dir, std::vector<GoldStandardElement>& gold
             read((*rdi).path().string(), goldStandard);
         }
     }
+
+    return goldStandard;
 }
 
 void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& goldStandard) {
     const char* name = extractName(fileName);
 
-    boost::cmatch typeMatch;
-    boost::cmatch startFrameMatch;
-    boost::cmatch endFrameMatch;
+    boost::smatch typeMatch;
+    boost::smatch startFrameMatch;
+    boost::smatch endFrameMatch;
 
-    boost::regex typeRegex(".*?type..([A-Z]+).*");
+    boost::regex typeRegex      (".*?type..(DIS).*");
     boost::regex startFrameRegex(".*?preFNum..([0-9]+).*");
-    boost::regex endFrameRegex(".*?postFNum..([0-9]+).*");
+    boost::regex endFrameRegex  (".*?postFNum..([0-9]+).*");
 
     std::ifstream file(fileName);
     std::string line;
     while (std::getline(file, line)) {
-        const char* l = line.c_str();
-        bool findType       = boost::regex_match(l, typeMatch, typeRegex);
-        bool findStartFrame = boost::regex_match(l, startFrameMatch, startFrameRegex);
-        bool findEndFrame   = boost::regex_match(l, endFrameMatch, endFrameRegex);
+//        const char* l = line.c_str();
+        bool findType       = boost::regex_match(line, typeMatch, typeRegex);
+        bool findStartFrame = boost::regex_match(line, startFrameMatch, startFrameRegex);
+        bool findEndFrame   = boost::regex_match(line, endFrameMatch, endFrameRegex);
 
         if (findType && findStartFrame && findEndFrame) {
-            const char* type       = typeMatch[1].second;
-            const char* startFrame = startFrameMatch[1].first;
-            const char* endFrame   = endFrameMatch[1].first;
+            std::string type       = typeMatch[1].str();
+            std::string startFrame = startFrameMatch[1].str();
+            std::string endFrame   = endFrameMatch[1].str();
 
-            GoldStandardElement element(name, type, atoi(startFrame), atoi(endFrame));
+            GoldStandardElement element(name, type, std::stoi(startFrame), std::stoi(endFrame));
             goldStandard.push_back(element);
         }
     }
