@@ -8,6 +8,7 @@
 #include "gold_standard/file_reader.hpp"
 #include "gold_standard/gold_standard_element.hpp"
 #include "svm/svm.hpp"
+#include "util.hpp"
 
 using namespace sbd;
 
@@ -16,8 +17,10 @@ int main(int argc, char** argv) {
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
     std::vector<std::string> imagePaths = getFileNames();
     Features features = buildHistogramDifferences(imagePaths, gold);
-    trainSVM(features);
-    evaluate();
+	Features trainSet, testSet;
+	splitTrainTestSets(features, 0.7, trainSet, testSet);
+	trainSVM(trainSet);
+    evaluate(testSet);
 
 	// wait for key, so we can read the console output
 	system("pause");
@@ -74,7 +77,8 @@ std::vector<std::string> getFileNames() {
 		return std::stoi(a) <= std::stoi(b);
 	});
 
-	std::vector<std::string> imageStrPaths(imagePaths.size());
+	std::vector<std::string> imageStrPaths;
+	imageStrPaths.reserve(imagePaths.size());
 	for (auto img : imagePaths)
 		imageStrPaths.push_back(img.string());
 
@@ -136,12 +140,12 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
  * TODO: Trains the SVM with the histogram differences and the gold standard.
  */
 
-void trainSVM(Features &features) {
+void trainSVM(Features &trainSet) {
     printf("Training SVM.\n");
 	// Set up training data
 
-	cv::Mat trainMat = features.values;
-	cv::Mat labelsMat = features.classes;
+	cv::Mat trainMat = trainSet.values;
+	cv::Mat labelsMat = trainSet.classes;
 
 	//for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
 	//	if (*it != 0)
@@ -158,6 +162,6 @@ void trainSVM(Features &features) {
  * 5.
  * Evaluate on some held-out test set.
  */
-void evaluate() {
+void evaluate(Features &testSet) {
     printf("Evaluating on test set .. not yet.\n");
 }
