@@ -20,8 +20,8 @@ int main(int argc, char** argv) {
 
     Features trainSet, testSet;
     splitTrainTestSets(features, 0.7, trainSet, testSet);
-    trainSVM(trainSet);
-    evaluate(testSet);
+    SVMLearner* learner = trainSVM(trainSet);
+    evaluate(testSet, learner);
 
     // wait for key, so we can read the console output
     system("pause");
@@ -105,7 +105,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
         assert(image1.total() > 0);
         assert(image2.total() > 0);
 
-            float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
+        float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
         cv::Mat hist1 = histBuilder.buildHistogram(image1);
         cv::Mat hist2 = histBuilder.buildHistogram(image2);
@@ -123,7 +123,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
 
 /**
  * 3.1
- * TODO: For the two given files find out the gold standard, i.e. whether it is a CUT or not.
+ * For the two given files find out the gold standard, i.e. whether it is a CUT or not.
  */
 bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> &gold) {
     std::string frameNr1 = boost::filesystem::path(path1).stem().string();
@@ -138,10 +138,10 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
 
 /**
  * 4.
- * TODO: Trains the SVM with the histogram differences and the gold standard.
+ * Trains the SVM with the histogram differences and the gold standard.
  */
 
-void trainSVM(Features &trainSet) {
+SVMLearner* trainSVM(Features &trainSet) {
     printf("Training SVM.\n");
     // Set up training data
 
@@ -154,15 +154,41 @@ void trainSVM(Features &trainSet) {
 
     assert(trainMat.isContinuous());
 
-    SVMLearner svm;
-    svm.train(trainMat, labelsMat);
-    //svm.plotDecisionRegions();
+    SVMLearner *svm = new SVMLearner();
+    svm->train(trainMat, labelsMat);
+    //svm->plotDecisionRegions();
+
+    return svm;
 }
 
 /**
  * 5.
  * Evaluate on some held-out test set.
  */
-void evaluate(Features &testSet) {
-    printf("Evaluating on test set .. not yet.\n");
+void evaluate(Features &testSet, SVMLearner *learner) {
+    printf("Evaluating on test set ...\n");
+
+    cv::Mat testMat = testSet.values;
+    cv::Mat labelsMat = testSet.classes;
+
+    int tp = 0, fp = 0, tn = 0, fn = 0;
+
+    for (int rowIndex = 0; rowIndex < testMat.rows; rowIndex++) {
+        float predicted = learner->predict(testMat.row(rowIndex));
+        float actual = labelsMat.at<float>(rowIndex, 0);
+        if (predicted == actual) {
+            (actual && ++tp) || tn++;
+        } else {
+            (actual && ++fn) || fp++;
+        }
+        printf("Predicted %f   Actual: %f\n", predicted, actual);
+    }
+
+    float precision = (tp + fp) > 0 ? tp / (tp + fp) : 0;
+    float recall = (tp + fn) > 0 ? tp / (tp + fn) : 0;
+    float f1 = (precision + recall) > 0 ? 2 * precision * recall / (precision + recall) : 0;
+    printf("tp: %i fp: %i tn: %i fn: %i\n", tp, fp, tn, fn);
+    printf("Precision: %f\n", precision);
+    printf("Recall: %f\n", recall);
+    printf("F1: %f\n", f1);
 }

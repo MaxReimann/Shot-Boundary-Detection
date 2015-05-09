@@ -19,4 +19,6 @@ namespace cv {
 
 namespace sbd {
     class GoldStandardElement;
+    class SVMLearner;
 }
+
