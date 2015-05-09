@@ -3,14 +3,14 @@
 #include "../forwarddeclarations.hpp"
 
 namespace sbd {
-	class Histogram {
+    class Histogram {
     private:
         int m_histSize;
-	public:
+    public:
         Histogram(int);
         int getHistSize();
         cv::Mat buildHistogram(const cv::Mat& image);
         static void displayHistogram(const cv::Mat& hist);
-		static void plotRGBHistogram(const cv::Mat &srcImage, int width, int height);
-	};
+        static void plotRGBHistogram(const cv::Mat &srcImage, int width, int height);
+    };
 }

@@ -4,8 +4,8 @@
 
 
 typedef struct {
-	cv::Mat classes;
-	cv::Mat values;
+    cv::Mat classes;
+    cv::Mat values;
 } Features;
 
 std::vector<sbd::GoldStandardElement> readGoldStandard();

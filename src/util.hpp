@@ -5,5 +5,5 @@
 
 
 namespace sbd {
-	void splitTrainTestSets(Features &input, float trainTestRatio, Features &trainSet, Features &testSet);
+	  void splitTrainTestSets(Features &input, float trainTestRatio, Features &trainSet, Features &testSet);
 }

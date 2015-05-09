@@ -17,13 +17,14 @@ int main(int argc, char** argv) {
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
     std::vector<std::string> imagePaths = getFileNames();
     Features features = buildHistogramDifferences(imagePaths, gold);
-	Features trainSet, testSet;
-	splitTrainTestSets(features, 0.7, trainSet, testSet);
-	trainSVM(trainSet);
+
+    Features trainSet, testSet;
+    splitTrainTestSets(features, 0.7, trainSet, testSet);
+    trainSVM(trainSet);
     evaluate(testSet);
 
-	// wait for key, so we can read the console output
-	system("pause");
+    // wait for key, so we can read the console output
+    system("pause");
     return 0;
 }
 
@@ -66,23 +67,23 @@ std::vector<std::string> getFileNames() {
         }
     }
 
-	//sort according to int number of frame
-	std::sort(imagePaths.begin(), imagePaths.end(), 
-		[](boost::filesystem::path &aPath, boost::filesystem::path &bPath)
-	{
-		std::string a = aPath.filename().string();
-		std::string b = bPath.filename().string();
-		std::string aNum = a.substr(0, a.find(".jpg"));
-		std::string bNum = b.substr(0, b.find(".jpg"));
-		return std::stoi(a) <= std::stoi(b);
-	});
+    //sort according to int number of frame
+    std::sort(imagePaths.begin(), imagePaths.end(),
+    [](boost::filesystem::path &aPath, boost::filesystem::path &bPath)
+    {
+        std::string a = aPath.filename().string();
+        std::string b = bPath.filename().string();
+        std::string aNum = a.substr(0, a.find(".jpg"));
+        std::string bNum = b.substr(0, b.find(".jpg"));
+        return std::stoi(a) <= std::stoi(b);
+    });
 
-	std::vector<std::string> imageStrPaths;
-	imageStrPaths.reserve(imagePaths.size());
-	for (auto img : imagePaths)
-		imageStrPaths.push_back(img.string());
+    std::vector<std::string> imageStrPaths;
+    imageStrPaths.reserve(imagePaths.size());
+    for (auto img : imagePaths)
+        imageStrPaths.push_back(img.string());
 
-	return imageStrPaths;
+    return imageStrPaths;
 }
 
 /**
@@ -97,21 +98,21 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
     assert(imagePaths.size() % 2 == 0);
 
     cv::Mat diffs;
-	cv::Mat golds;
+    cv::Mat golds;
     for (int i = 0; i < imagePaths.size(); i += 2) {
-		cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
-		cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
-		assert(image1.total() > 0);
-		assert(image2.total() > 0);
-		
-        float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
+        cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
+        cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
+        assert(image1.total() > 0);
+        assert(image2.total() > 0);
 
-		cv::Mat hist1 = histBuilder.buildHistogram(image1);
-		cv::Mat hist2 = histBuilder.buildHistogram(image2);
+            float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
+
+        cv::Mat hist1 = histBuilder.buildHistogram(image1);
+        cv::Mat hist2 = histBuilder.buildHistogram(image2);
 
 
-		cv::Mat diff = hist1 - hist2;
-		//Histogram::displayHistogram(hist1);
+        cv::Mat diff = hist1 - hist2;
+        //Histogram::displayHistogram(hist1);
 
         diffs.push_back(diff);
         golds.push_back(gold);
@@ -125,14 +126,14 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
  * TODO: For the two given files find out the gold standard, i.e. whether it is a CUT or not.
  */
 bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> &gold) {
-	std::string frameNr1 = boost::filesystem::path(path1).stem().string();
-	std::string frameNr2 = boost::filesystem::path(path2).stem().string();
+    std::string frameNr1 = boost::filesystem::path(path1).stem().string();
+    std::string frameNr2 = boost::filesystem::path(path2).stem().string();
 
-	for (int i = 0; i < gold.size(); i++) {
-		if (frameNr1 == std::to_string(gold[i].startFrame) && frameNr2 == std::to_string(gold[i].endFrame)) 
-			return true;
-	}
-	return false;
+    for (int i = 0; i < gold.size(); i++) {
+        if (frameNr1 == std::to_string(gold[i].startFrame) && frameNr2 == std::to_string(gold[i].endFrame))
+            return true;
+    }
+    return false;
 }
 
 /**
@@ -142,20 +143,20 @@ bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandar
 
 void trainSVM(Features &trainSet) {
     printf("Training SVM.\n");
-	// Set up training data
+    // Set up training data
 
-	cv::Mat trainMat = trainSet.values;
-	cv::Mat labelsMat = trainSet.classes;
+    cv::Mat trainMat = trainSet.values;
+    cv::Mat labelsMat = trainSet.classes;
 
-	//for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
-	//	if (*it != 0)
-	//		printf("%f,", *it);
+    //for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
+    //  if (*it != 0)
+    //    printf("%f,", *it);
 
-	assert(trainMat.isContinuous());
+    assert(trainMat.isContinuous());
 
-	SVMLearner svm;
-	svm.train(trainMat, labelsMat);
-	//svm.plotDecisionRegions();
+    SVMLearner svm;
+    svm.train(trainMat, labelsMat);
+    //svm.plotDecisionRegions();
 }
 
 /**
