@@ -15,9 +15,9 @@ void sbd::splitTrainTestSets(Features &input, float trainSetRatio, Features &tra
     cv::Mat testLabels  = cv::Mat(0, 1, CV_32FC1);
 
     // create an array containing the random row order, so we can shuffle the train/test set order
-	std::vector<int> randomRows(rows);
-	std::iota(randomRows.begin(), randomRows.end(), 0); // Fill with 0, 1, ..., n-1
-	srand(1599);
+    std::vector<int> randomRows(rows);
+    std::iota(randomRows.begin(), randomRows.end(), 0); // Fill with 0, 1, ..., n-1
+    srand(1599);
     std::random_shuffle(randomRows.begin(), randomRows.end());
 
     for (int i = 0; i < rows; i++) {
