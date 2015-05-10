@@ -40,14 +40,14 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
     FileReader fileReader;
     std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir("../resources/truth/");
 
-    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
-        std::cout << "Name: "   << goldStandard[i].name
-                  << " Type: "  << goldStandard[i].type
-                  << " Start: " << goldStandard[i].startFrame
-                  << " End: "   << goldStandard[i].endFrame
-                  << "\n";
-    }
-    return goldStandard;
+//    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
+//        std::cout << "Name: "   << goldStandard[i].name
+//                  << " Type: "  << goldStandard[i].type
+//                  << " Start: " << goldStandard[i].startFrame
+//                  << " End: "   << goldStandard[i].endFrame
+//                  << "\n";
+//    }
+//    return goldStandard;
 }
 
 /**

@@ -70,7 +70,6 @@ std::string FileReader::extractName(std::string fileName) {
 
     std::string prefix("ref_");
     std::size_t pos = name.find(prefix);
-    std::cout << pos << std::endl;
     int substrPos = (pos == 0) ? prefix.size() : 0;
     name = name.substr(substrPos);
 
