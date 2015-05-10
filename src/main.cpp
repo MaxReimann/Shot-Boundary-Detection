@@ -92,7 +92,6 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
 
     Histogram histBuilder(2);
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
-    assert(imagePaths.size() % 2 == 0);
 
     cv::Mat diffs;
     cv::Mat golds;
