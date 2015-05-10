@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
     evaluate(testSet, learner);
 
     // wait for key, so we can read the console output
+    cvNamedWindow("Dummy window");
     cv::waitKey(0);
-//    system("pause"); // <-- this is not OS independent
     return 0;
 }
 
