@@ -68,13 +68,9 @@ std::vector<std::string> getFileNames() {
     }
 
     //sort according to int number of frame
-    std::sort(imagePaths.begin(), imagePaths.end(),
-    [](boost::filesystem::path &aPath, boost::filesystem::path &bPath)
-    {
+    std::sort(imagePaths.begin(), imagePaths.end(), [](boost::filesystem::path aPath, boost::filesystem::path bPath) {
         std::string a = aPath.filename().string();
         std::string b = bPath.filename().string();
-        std::string aNum = a.substr(0, a.find(".jpg"));
-        std::string bNum = b.substr(0, b.find(".jpg"));
         return std::stoi(a) <= std::stoi(b);
     });
 
