@@ -1,5 +1,5 @@
 #include "util.hpp"
-#include <memory.h>
+#include <numeric>
 
 using namespace sbd;
 
@@ -15,11 +15,10 @@ void sbd::splitTrainTestSets(Features &input, float trainSetRatio, Features &tra
     cv::Mat testLabels  = cv::Mat(0, 1, CV_32FC1);
 
     // create an array containing the random row order, so we can shuffle the train/test set order
-    int *randomRows = (int*) malloc(rows * sizeof(int));
-    for (int i = 0; i < rows; i++)
-        randomRows[i] = i;
-    srand(1599);
-    std::random_shuffle(&randomRows[0], &randomRows[rows]);
+	std::vector<int> randomRows(rows);
+	std::iota(randomRows.begin(), randomRows.end(), 0); // Fill with 0, 1, ..., n-1
+	srand(1599);
+    std::random_shuffle(randomRows.begin(), randomRows.end());
 
     for (int i = 0; i < rows; i++) {
         float currentRatio = i / static_cast<float>(rows);
@@ -38,5 +37,4 @@ void sbd::splitTrainTestSets(Features &input, float trainSetRatio, Features &tra
     trainSet.classes = trainLabels;
     testSet.values = testValues;
     testSet.classes = testLabels;
-    free(randomRows);
 }
