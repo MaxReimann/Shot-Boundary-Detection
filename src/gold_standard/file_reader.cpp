@@ -27,7 +27,7 @@ std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
     std::string extension = ".xml";
 
     for (; rdi != end_rdi; rdi++) {
-        if (extension.compare((*rdi).path().extension().string()) == 0) {
+        if (extension.compare((*rdi).path().extension().string()) == 0 && (*rdi).path().filename().string() == "ref_anni009.xml") {
             read((*rdi).path().string(), goldStandard);
         }
     }
