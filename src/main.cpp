@@ -174,7 +174,8 @@ void evaluate(Features &testSet, SVMLearner *learner) {
     int tp = 0, fp = 0, tn = 0, fn = 0;
 
     for (int rowIndex = 0; rowIndex < testMat.rows; rowIndex++) {
-        float predicted = learner->predict(testMat.row(rowIndex));
+        cv::Mat mTest = testMat.row(rowIndex);
+        float predicted = learner->predict(mTest);
         float actual = labelsMat.at<float>(rowIndex, 0);
         if (predicted == actual) {
             (actual && ++tp) || tn++;
