@@ -153,6 +153,8 @@ SVMLearner* trainSVM(Features &trainSet) {
     cv::Mat trainMat = trainSet.values;
     cv::Mat labelsMat = trainSet.classes;
 
+    std::cout << "Training on " << cv::sum(labelsMat)[0] << "/" << labelsMat.size().height << " positive instances." << std::endl;
+
 //    std::cout << trainMat << std::endl;
 //    for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
 //      if (*it != 0)
@@ -176,6 +178,7 @@ void evaluate(Features &testSet, SVMLearner *learner) {
 
     cv::Mat testMat = testSet.values;
     cv::Mat labelsMat = testSet.classes;
+    std::cout << "Evaluating on " << cv::sum(labelsMat)[0] << "/" << labelsMat.size().height << " positive instances." << std::endl;
 
     int tp = 0, fp = 0, tn = 0, fn = 0;
 
