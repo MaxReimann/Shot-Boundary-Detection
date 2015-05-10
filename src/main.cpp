@@ -68,7 +68,7 @@ std::vector<std::string> getFileNames() {
         }
     }
 
-    //sort according to int number of frame
+    // sort according to int number of frame
     std::sort(imagePaths.begin(), imagePaths.end(), [](boost::filesystem::path aPath, boost::filesystem::path bPath) {
         std::string a = aPath.filename().string();
         std::string b = bPath.filename().string();
@@ -85,18 +85,22 @@ std::vector<std::string> getFileNames() {
 
 /**
  * 3.
- * TODO: Given two images, compute the differences in 8 * 8 * 8 histogram bins.
+ * Given two images, compute the differences in 8 * 8 * 8 histogram bins.
  */
 Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::vector<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
-    Histogram histBuilder(8);
-    std::cout << "Reading " << imagePaths.size() << " images." << std::endl;
+    Histogram histBuilder(2);
+    std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
     assert(imagePaths.size() % 2 == 0);
 
     cv::Mat diffs;
     cv::Mat golds;
-    for (int i = 0; i < imagePaths.size(); i += 2) {
+
+    int tenPercent = imagePaths.size() / 10;
+    for (int i = 0; i < imagePaths.size() - 1; i += 1) {
+        if (i % tenPercent == 0)
+            std::cout << (i / tenPercent * 10) << "% ";
         cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
         assert(image1.total() > 0);
@@ -118,7 +122,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
         diffs.push_back(diff);
         golds.push_back(gold);
     }
-    Features features = {golds, diffs};
+    std::cout << std::endl;
+    Features features = { golds, diffs };
     return features;
 }
 
@@ -149,9 +154,10 @@ SVMLearner* trainSVM(Features &trainSet) {
     cv::Mat trainMat = trainSet.values;
     cv::Mat labelsMat = trainSet.classes;
 
-    //for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
-    //  if (*it != 0)
-    //    printf("%f,", *it);
+//    std::cout << trainMat << std::endl;
+//    for (auto it = trainMat.begin<float>(); it != trainMat.end<float>(); it++)
+//      if (*it != 0)
+//        printf("%f,", *it);
 
     assert(trainMat.isContinuous());
 
@@ -183,14 +189,14 @@ void evaluate(Features &testSet, SVMLearner *learner) {
         } else {
             (actual && ++fn) || fp++;
         }
-        printf("Predicted %f   Actual: %f\n", predicted, actual);
+//        printf("Predicted %f   Actual: %f\n", predicted, actual);
     }
 
-    float precision = (tp + fp) > 0 ? (float) tp / (tp + fp) : 0;
-    float recall = (tp + fn) > 0 ? (float) tp / (tp + fn) : 0;
-    float f1 = (precision + recall) > 0 ? 2 * precision * recall / (precision + recall) : 0;
-    printf("tp: %i fp: %i tn: %i fn: %i\n", tp, fp, tn, fn);
-    printf("Precision: %f\n", precision);
-    printf("Recall: %f\n", recall);
-    printf("F1: %f\n", f1);
+    float precision = (float) tp / (tp + fp);
+    float recall = (float) tp / (tp + fn);
+    float f1 = 2 * precision * recall / (precision + recall);
+    printf("TP: %i FP: %i TN: %i FN: %i\n", tp, fp, tn, fn);
+    printf("Precision:\t%.2f\n", precision);
+    printf("Recall:\t%.2f\n", recall);
+    printf("F1:\t%.2f\n", f1);
 }
