@@ -24,7 +24,8 @@ int main(int argc, char** argv) {
     evaluate(testSet, learner);
 
     // wait for key, so we can read the console output
-    system("pause");
+    cv::waitKey(0);
+//    system("pause"); // <-- this is not OS independent
     return 0;
 }
 
@@ -104,11 +105,15 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
         float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
         cv::Mat hist1 = histBuilder.buildHistogram(image1);
+        cv::Mat oneDimHist1 = histBuilder.convertMat(hist1);
+
         cv::Mat hist2 = histBuilder.buildHistogram(image2);
+        cv::Mat oneDimHist2 = histBuilder.convertMat(hist2);
 
+        cv::Mat diff = oneDimHist1 - oneDimHist2;
 
-        cv::Mat diff = hist1 - hist2;
-        //Histogram::displayHistogram(hist1);
+//        Histogram::displayHistogram(hist1);
+//        std::cout << "diff = " << diff << std::endl;
 
         diffs.push_back(diff);
         golds.push_back(gold);

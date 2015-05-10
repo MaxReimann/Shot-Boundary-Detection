@@ -115,12 +115,14 @@ cv::Mat Histogram::buildHistogram(const cv::Mat& image) {
     cv::calcHist(&image, nrImages, channels, mask,
              hist, histDimensionality, histSizes, ranges, true, false);
 
+    return hist;
+}
 
+cv::Mat Histogram::convertMat(const cv::Mat& hist) {
     // resize mat from a 3d Mat to a nx1 Mat. Only changes headers
-    cv::Mat m2(m_histSize, m_histSize*m_histSize, CV_32FC1,
-        static_cast<void*>(hist.data));  // void cast, else false data type will be assumed
-    assert(m2.isContinuous());
-    cv::Mat flattenedHist = m2.reshape(0, 1); // reshape to 1 row
+    cv::Mat oneDimMat(1, m_histSize * m_histSize * m_histSize, CV_32FC1,
+        hist.data);  // void cast, else false data type will be assumed
+    assert(oneDimMat.isContinuous());
 
-    return flattenedHist;
+    return oneDimMat;
 }
