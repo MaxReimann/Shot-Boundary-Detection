@@ -186,8 +186,8 @@ void evaluate(Features &testSet, SVMLearner *learner) {
         printf("Predicted %f   Actual: %f\n", predicted, actual);
     }
 
-    float precision = (tp + fp) > 0 ? tp / (tp + fp) : 0;
-    float recall = (tp + fn) > 0 ? tp / (tp + fn) : 0;
+    float precision = (tp + fp) > 0 ? (float) tp / (tp + fp) : 0;
+    float recall = (tp + fn) > 0 ? (float) tp / (tp + fn) : 0;
     float f1 = (precision + recall) > 0 ? 2 * precision * recall / (precision + recall) : 0;
     printf("tp: %i fp: %i tn: %i fn: %i\n", tp, fp, tn, fn);
     printf("Precision: %f\n", precision);
