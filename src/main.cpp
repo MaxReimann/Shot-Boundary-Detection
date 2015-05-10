@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <iostream>
+#include <iomanip>
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -194,11 +195,15 @@ void evaluate(Features &testSet, SVMLearner *learner) {
 //        printf("Predicted %f   Actual: %f\n", predicted, actual);
     }
 
-    float precision = (float) tp / (tp + fp);
-    float recall = (float) tp / (tp + fn);
-    float f1 = 2 * precision * recall / (precision + recall);
+    float precision = static_cast<float>(tp) / (tp + fp);
+    float recall    = static_cast<float>(tp) / (tp + fn);
+    float f1        = 2 * precision * recall / (precision + recall);
+    float accuracy  = static_cast<float>(tp + tn) / (tp + tn + fp + fn);
+
+    std::cout.precision(2);
     printf("TP: %i FP: %i TN: %i FN: %i\n", tp, fp, tn, fn);
-    printf("Precision:\t%.2f\n", precision);
-    printf("Recall:\t%.2f\n", recall);
-    printf("F1:\t%.2f\n", f1);
+    std::cout << std::setw(11) << "Precision: " << precision << std::endl;
+    std::cout << std::setw(11) << "Recall: "    << recall << std::endl;
+    std::cout << std::setw(11) << "F1: "        << f1 << std::endl;
+    std::cout << std::setw(11) << "Accuracy: "  << accuracy << std::endl;
 }
