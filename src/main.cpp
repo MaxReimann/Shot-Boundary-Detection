@@ -47,7 +47,7 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
 //                  << " End: "   << goldStandard[i].endFrame
 //                  << "\n";
 //    }
-//    return goldStandard;
+    return goldStandard;
 }
 
 /**
