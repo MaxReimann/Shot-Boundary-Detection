@@ -99,7 +99,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
     int tenPercent = imagePaths.size() / 10;
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         if (i % tenPercent == 0)
-            std::cout << (i / tenPercent * 10) << "% ";
+            std::cout << (i / tenPercent * 10) << "% " << std::flush;
         cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
         assert(image1.total() > 0);
