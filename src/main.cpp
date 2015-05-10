@@ -40,13 +40,13 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
     FileReader fileReader;
     std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir("../resources/truth/");
 
-//    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
-//        std::cout << "Name: "   << goldStandard[i].name
-//                  << " Type: "  << goldStandard[i].type
-//                  << " Start: " << goldStandard[i].startFrame
-//                  << " End: "   << goldStandard[i].endFrame
-//                  << "\n";
-//    }
+    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
+        std::cout << "Name: "   << goldStandard[i].name
+                  << " Type: "  << goldStandard[i].type
+                  << " Start: " << goldStandard[i].startFrame
+                  << " End: "   << goldStandard[i].endFrame
+                  << "\n";
+    }
     return goldStandard;
 }
 
@@ -59,7 +59,7 @@ std::vector<std::string> getFileNames() {
 
     std::vector<boost::filesystem::path> imagePaths;
     std::string extension = ".jpg";
-    std::string dir = "../resources/frames/anni009/";
+    std::string dir = "../resources/frames/";
 
     boost::filesystem::recursive_directory_iterator rdi(dir);
     boost::filesystem::recursive_directory_iterator end_rdi;
@@ -132,11 +132,16 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
  * For the two given files find out the gold standard, i.e. whether it is a CUT or not.
  */
 bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> &gold) {
+    std::string videoName1 = boost::filesystem::path(path1).parent_path().stem().string();
+    std::string videoName2 = boost::filesystem::path(path2).parent_path().stem().string();
     std::string frameNr1 = boost::filesystem::path(path1).stem().string();
     std::string frameNr2 = boost::filesystem::path(path2).stem().string();
 
     for (int i = 0; i < gold.size(); i++) {
-        if (frameNr1 == std::to_string(gold[i].startFrame) && frameNr2 == std::to_string(gold[i].endFrame))
+        if (videoName1 == gold[i].name &&
+                videoName2 == gold[i].name &&
+                frameNr1 == std::to_string(gold[i].startFrame) &&
+                frameNr2 == std::to_string(gold[i].endFrame))
             return true;
     }
     return false;

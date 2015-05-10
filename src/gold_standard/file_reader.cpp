@@ -17,7 +17,7 @@ std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
 	if (!boost::filesystem::exists(dir))
 	{
 		std::cout << "[Filereader::readDir] no such directory: " << dir << std::endl;
-		std::system("pause");
+        cv::waitKey(0);
 		exit(-1);
 	}
 
@@ -27,7 +27,7 @@ std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
     std::string extension = ".xml";
 
     for (; rdi != end_rdi; rdi++) {
-        if (extension.compare((*rdi).path().extension().string()) == 0 && (*rdi).path().filename().string() == "ref_anni009.xml") {
+        if (extension.compare((*rdi).path().extension().string()) == 0) {
             read((*rdi).path().string(), goldStandard);
         }
     }
@@ -36,7 +36,7 @@ std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
 }
 
 void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& goldStandard) {
-    const char* name = extractName(fileName);
+    std::string name = extractName(fileName);
 
     boost::smatch typeMatch;
     boost::smatch startFrameMatch;
@@ -65,10 +65,14 @@ void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& go
     }
 }
 
-const char* FileReader::extractName(std::string fileName) {
-    boost::cmatch fileNameMatch;
-    boost::regex fileNameRegex(".*?truth.(.*)");
-    const char* f = fileName.c_str();
-    boost::regex_match(f, fileNameMatch, fileNameRegex);
-    return fileNameMatch[1].first;
+std::string FileReader::extractName(std::string fileName) {
+    std::string name = boost::filesystem::path(fileName).stem().string();
+
+    std::string prefix("ref_");
+    std::size_t pos = name.find(prefix);
+    std::cout << pos << std::endl;
+    int substrPos = (pos == 0) ? prefix.size() : 0;
+    name = name.substr(substrPos);
+
+    return name;
 }
