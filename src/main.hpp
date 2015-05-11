@@ -13,4 +13,4 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
 bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> &gold);
 sbd::SVMLearner* trainSVM(Features &trainSet);
 void evaluate(Features &testSet, sbd::SVMLearner *learner);
-
+void createRandomTransition(std::vector<sbd::GoldStandardElement> &gold, std::vector<std::string> imagePaths);
