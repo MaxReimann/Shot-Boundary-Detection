@@ -33,8 +33,11 @@ int main(int argc, char** argv) {
     evaluate(testSet, learner);
 
     // wait for key, so we can read the console output
-    cvNamedWindow("Dummy window");
+#ifdef _WIN32
+    system("pause");
+#else
     cv::waitKey(0);
+#endif
     return 0;
 }
 
