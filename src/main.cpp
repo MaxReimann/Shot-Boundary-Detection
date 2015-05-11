@@ -52,6 +52,7 @@ std::unordered_set<sbd::GoldStandardElement> readGoldStandard(std::string dataFo
     printf("Reading gold standard.\n");
 
     std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
+    std::cout << "Reading truth from " << truthFolder << std::endl;
 
     FileReader fileReader;
     std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
@@ -69,6 +70,7 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
     std::vector<boost::filesystem::path> imagePaths;
     std::string extension = ".jpg";
     std::string framesFolder = boost::replace_first_copy(dataFolder, "[type]", "frames");
+    std::cout << "Reading frames from " << framesFolder << std::endl;
 
     boost::filesystem::recursive_directory_iterator rdi(framesFolder);
     boost::filesystem::recursive_directory_iterator end_rdi;
