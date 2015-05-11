@@ -11,8 +11,8 @@
 
 using namespace sbd;
 
-std::vector<GoldStandardElement> FileReader::readDir(const char *dir, bool cutsOnly) {
-    std::vector<GoldStandardElement> goldStandard;
+std::unordered_set<GoldStandardElement> FileReader::readDir(const char *dir, bool cutsOnly) {
+    std::unordered_set<GoldStandardElement> goldStandard;
 
 	if (!boost::filesystem::exists(dir))
 	{
@@ -35,7 +35,7 @@ std::vector<GoldStandardElement> FileReader::readDir(const char *dir, bool cutsO
     return goldStandard;
 }
 
-void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& goldStandard, bool cutsOnly) {
+void FileReader::read(std::string fileName, std::unordered_set<GoldStandardElement>& goldStandard, bool cutsOnly) {
     std::string name = extractName(fileName);
 
     boost::smatch typeMatch;
@@ -65,7 +65,7 @@ void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& go
             std::string endFrame   = endFrameMatch[1].str();
 
             GoldStandardElement element(name, type, std::stoi(startFrame), std::stoi(endFrame));
-            goldStandard.push_back(element);
+            goldStandard.insert(element);
         }
     }
 }

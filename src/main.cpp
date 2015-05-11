@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <unordered_set>
 #include "main.hpp"
 #include "histogram/histogram.hpp"
 #include "gold_standard/file_reader.hpp"
@@ -22,10 +23,9 @@ int main(int argc, char** argv) {
         exit(1);
     }
     std::string dataFolder(argv[1]);
-
 //    GoldStandardStatistic::create(dataFolder);
 
-    std::vector<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
+    std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
     std::vector<std::string> imagePaths = getFileNames(dataFolder);
     Features features = buildHistogramDifferences(imagePaths, gold);
 
@@ -47,21 +47,14 @@ int main(int argc, char** argv) {
  * 1.
  * Reads the gold standard and returns it in some easy format.
  */
-std::vector<sbd::GoldStandardElement> readGoldStandard(std::string dataFolder) {
+std::unordered_set<sbd::GoldStandardElement> readGoldStandard(std::string dataFolder) {
     printf("Reading gold standard.\n");
 
     std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
 
     FileReader fileReader;
-    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
 
-//    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
-//        std::cout << "Name: "   << goldStandard[i].name
-//                  << " Type: "  << goldStandard[i].type
-//                  << " Start: " << goldStandard[i].startFrame
-//                  << " End: "   << goldStandard[i].endFrame
-//                  << "\n";
-//    }
     return goldStandard;
 }
 
@@ -103,7 +96,7 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
  * 3.
  * Given two images, compute the differences in 8 * 8 * 8 histogram bins.
  */
-Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::vector<sbd::GoldStandardElement> &goldStandard) {
+Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::unordered_set<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
     Histogram histBuilder(8);
@@ -146,20 +139,24 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::ve
  * 3.1
  * For the two given files find out the gold standard, i.e. whether it is a CUT or not.
  */
-bool findGold(std::string path1, std::string path2, std::vector<sbd::GoldStandardElement> &gold) {
+bool findGold(std::string path1, std::string path2, std::unordered_set<sbd::GoldStandardElement> &golds) {
     std::string videoName1 = boost::filesystem::path(path1).parent_path().stem().string();
     std::string videoName2 = boost::filesystem::path(path2).parent_path().stem().string();
     std::string frameNr1 = boost::filesystem::path(path1).stem().string();
     std::string frameNr2 = boost::filesystem::path(path2).stem().string();
 
-    for (int i = 0; i < gold.size(); i++) {
-        if (videoName1 == gold[i].name &&
-                videoName2 == gold[i].name &&
-                frameNr1 == std::to_string(gold[i].startFrame) &&
-                frameNr2 == std::to_string(gold[i].endFrame))
-            return true;
-    }
-    return false;
+    GoldStandardElement gold(videoName1, videoName2, std::stoi(frameNr1), std::stoi(frameNr2));
+
+//    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
+//    for (int i = 0; i < gold.size(); i++) {
+//        if (videoName1 == gold[i].name &&
+//                videoName2 == gold[i].name &&
+//                frameNr1 == std::to_string(gold[i].startFrame) &&
+//                frameNr2 == std::to_string(gold[i].endFrame))
+//            return true;
+//    }
+//    return false;
+    return golds.find(gold) != golds.end();
 }
 
 /**

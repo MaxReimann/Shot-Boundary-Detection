@@ -11,7 +11,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     // read all truth files
     std::cout << "Read truth files..." << std::endl;
     FileReader fileReader;
-    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), false);
+    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), false);
 
     // count different cut types
     std::cout << "Count different cut types..." << std::endl;
@@ -23,9 +23,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     int oth = 0;
     std::vector<double> othLength;
 
-    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
-        GoldStandardElement element = goldStandard[i];
-
+    for (const auto& element : goldStandard) {
         if (element.type == "CUT") {
             cut++;
         } else if (element.type == "DIS") {
