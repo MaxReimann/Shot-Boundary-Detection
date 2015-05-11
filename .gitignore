@@ -22,3 +22,5 @@ resources/senses111
 
 CMakeLists.txt.user
 CMakeCache.txt
+
+gold_standard_statistics.txt

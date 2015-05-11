@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
         exit(1);
     }
     std::string dataFolder(argv[1]);
+
 //    GoldStandardStatistic::create(dataFolder);
 
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);

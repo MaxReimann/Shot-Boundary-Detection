@@ -16,6 +16,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     // count different cut types
     std::cout << "Count different cut types..." << std::endl;
     int cut = 0;
+    std::vector<double> cutLength;
     int dis = 0;
     std::vector<double> disLength;
     int foi = 0;
@@ -26,6 +27,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     for (const auto& element : goldStandard) {
         if (element.type == "CUT") {
             cut++;
+            cutLength.push_back(element.endFrame - element.startFrame);
         } else if (element.type == "DIS") {
             dis++;
             disLength.push_back(element.endFrame - element.startFrame);
@@ -44,7 +46,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     std::cout << "Write results..." << std::endl;
     std::ofstream outfile;
     outfile.open ("../gold_standard_statistics.txt");
-    writeResult(outfile, "CUT", cut, std::vector<double>());
+    writeResult(outfile, "CUT", cut, cutLength);
     writeResult(outfile, "DIS", dis, disLength);
     writeResult(outfile, "OTH", oth, othLength);
     writeResult(outfile, "FOI", foi, foiLength);
@@ -56,15 +58,21 @@ void GoldStandardStatistic::create(std::string dataFolder) {
 
 void GoldStandardStatistic::writeResult(std::ofstream& outfile, std::string type, int count, std::vector<double> length) {
     outfile << "--- " << type << " ---" << std::endl;
-    outfile << "Count:  " << count << std::endl;
-    outfile << "Mean:   " << getMean(length) << std::endl;
-    for (int i = 0; i < length.size(); i++) {
-        outfile << length[i] << ", ";
+    outfile << "Count : " << count << std::endl;
+    outfile << "Mean  : " << getMean(length) << std::endl;
+    if (length.size() > 0) {
+        outfile << "# of frames: " << std::endl;
+        outfile << "c(" << length[0];
+        for (int i = 1; i < length.size(); i++) {
+            outfile << ", " << length[i];
+        }
+        outfile << ")" << std::endl;
     }
     outfile << std::endl << std::endl;
 }
 
 double GoldStandardStatistic::getMean(std::vector<double> v) {
+    if (v.size() == 0) return 0.0;
     double sum = std::accumulate(v.begin(), v.end(), 0.0);
     return sum / v.size();
 }
