@@ -8,6 +8,7 @@
 #include "histogram/histogram.hpp"
 #include "gold_standard/file_reader.hpp"
 #include "gold_standard/gold_standard_element.hpp"
+#include "gold_standard/gold_standard_statistic.hpp"
 #include "svm/svm.hpp"
 #include "util.hpp"
 
@@ -15,6 +16,8 @@ using namespace sbd;
 
 
 int main(int argc, char** argv) {
+//    GoldStandardStatistic::create();
+
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
     std::vector<std::string> imagePaths = getFileNames();
     Features features = buildHistogramDifferences(imagePaths, gold);
@@ -38,7 +41,7 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
     printf("Reading gold standard.\n");
 
     FileReader fileReader;
-    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir("../resources/truth/");
+    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir("../resources/truth/", true);
 
 //    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
 //        std::cout << "Name: "   << goldStandard[i].name

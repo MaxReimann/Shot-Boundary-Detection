@@ -7,10 +7,10 @@ namespace sbd {
 
     class FileReader {
         private:
-	        void read(std::string, std::vector<GoldStandardElement>&);
+            void read(std::string, std::vector<GoldStandardElement>&, bool cutsOnly);
             std::string extractName(std::string);
         public:
-        	std::vector<GoldStandardElement> readDir(const char*);
+            std::vector<GoldStandardElement> readDir(const char*, bool cutsOnly);
     };
 
 }

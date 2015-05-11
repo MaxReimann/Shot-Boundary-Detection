@@ -118,6 +118,8 @@ set(sources
 	src/svm/svm.cpp
     src/gold_standard/file_reader.hpp
     src/gold_standard/file_reader.cpp
+    src/gold_standard/gold_standard_statistic.hpp
+    src/gold_standard/gold_standard_statistic.cpp
     src/gold_standard/gold_standard_element.hpp
     src/gold_standard/gold_standard_element.cpp
 )
