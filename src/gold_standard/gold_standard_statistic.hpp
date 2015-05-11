@@ -10,6 +10,7 @@ namespace sbd {
         static void create();
     private:
         static double getMean(std::vector<double> v);
+        static void writeResult(std::ofstream& outfile, std::string type, int count, std::vector<double> length);
     };
 
 }

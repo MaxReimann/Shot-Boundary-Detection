@@ -7,6 +7,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 // openCV forward declarations
 #include <opencv2/opencv.hpp>
