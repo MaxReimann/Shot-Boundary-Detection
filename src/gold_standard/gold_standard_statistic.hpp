@@ -7,7 +7,7 @@ namespace sbd {
 
     class GoldStandardStatistic {
     public:
-        static void create();
+        static void create(std::string dataFolder);
     private:
         static double getMean(std::vector<double> v);
         static void writeResult(std::ofstream& outfile, std::string type, int count, std::vector<double> length);

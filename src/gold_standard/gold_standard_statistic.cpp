@@ -1,18 +1,17 @@
-
+#include <boost/algorithm/string.hpp>
 #include <fstream>
 #include "gold_standard_statistic.hpp"
 #include "file_reader.hpp"
 
 using namespace sbd;
 
-void GoldStandardStatistic::create() {
-//    const char* dir = "/opt/data_sets/video_sbd_dataset/truth/";
-    const char* dir = "../resources/truth/";
+void GoldStandardStatistic::create(std::string dataFolder) {
+    std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
 
     // read all truth files
     FileReader fileReader;
 
-    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir(dir, false);
+    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), false);
 
     // count different cut types
     int cut = 0;
