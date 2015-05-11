@@ -14,12 +14,17 @@
 
 using namespace sbd;
 
-
 int main(int argc, char** argv) {
-//    GoldStandardStatistic::create();
+    if (argc != 2) {
+        std::cout << "Usage: sbd data_folder" << std::endl;
+        std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
+        std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
+        exit(1);
+    }
+    std::string dataFolder(argv[1]);
 
-    std::vector<sbd::GoldStandardElement> gold = readGoldStandard();
-    std::vector<std::string> imagePaths = getFileNames();
+    std::vector<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
+    std::vector<std::string> imagePaths = getFileNames(dataFolder);
     Features features = buildHistogramDifferences(imagePaths, gold);
 
     Features trainSet, testSet;
@@ -37,11 +42,13 @@ int main(int argc, char** argv) {
  * 1.
  * Reads the gold standard and returns it in some easy format.
  */
-std::vector<sbd::GoldStandardElement> readGoldStandard() {
+std::vector<sbd::GoldStandardElement> readGoldStandard(std::string dataFolder) {
     printf("Reading gold standard.\n");
 
+    std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
+
     FileReader fileReader;
-    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir("../resources/truth/", true);
+    std::vector<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
 
 //    for (std::vector<GoldStandardElement>::size_type i = 0; i != goldStandard.size(); i++) {
 //        std::cout << "Name: "   << goldStandard[i].name
@@ -57,14 +64,14 @@ std::vector<sbd::GoldStandardElement> readGoldStandard() {
  * 2.
  * Read the frame file names recursively.
  */
-std::vector<std::string> getFileNames() {
+std::vector<std::string> getFileNames(std::string dataFolder) {
     printf("Getting frame file names.\n");
 
     std::vector<boost::filesystem::path> imagePaths;
     std::string extension = ".jpg";
-    std::string dir = "../resources/frames/";
+    std::string framesFolder = boost::replace_first_copy(dataFolder, "[type]", "frames");
 
-    boost::filesystem::recursive_directory_iterator rdi(dir);
+    boost::filesystem::recursive_directory_iterator rdi(framesFolder);
     boost::filesystem::recursive_directory_iterator end_rdi;
     for (; rdi != end_rdi; rdi++) {
         if (extension.compare(rdi->path().extension().string()) == 0) {
