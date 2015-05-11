@@ -91,7 +91,7 @@ std::vector<std::string> getFileNames() {
 Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::vector<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
-    Histogram histBuilder(2);
+    Histogram histBuilder(8);
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
 
     cv::Mat diffs;
