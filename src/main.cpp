@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     }
     std::string dataFolder(argv[1]);
 
-//    GoldStandardStatistic::create(dataFolder);
+    GoldStandardStatistic::create(dataFolder);
 
     std::vector<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
     std::vector<std::string> imagePaths = getFileNames(dataFolder);
