@@ -14,6 +14,7 @@
 #include "util.hpp"
 #include <random>
 #include <iostream>
+#include <omp.h>
 
 using namespace sbd;
 
@@ -177,9 +178,9 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     cv::Mat golds;
 
     int tenPercent = imagePaths.size() / 10;
+    std::cout << "0% " << std::flush;
+#pragma omp parallel for
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
-        if (i % tenPercent == 0)
-            std::cout << (i / tenPercent * 10) << "% " << std::flush;
         cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
         assert(image1.total() > 0);
@@ -195,11 +196,17 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
 
         cv::Mat diff = oneDimHist1 - oneDimHist2;
 
-//        Histogram::displayHistogram(hist1);
-//        std::cout << "diff = " << diff << std::endl;
+        //Histogram::displayHistogram(hist1);
+        //std::cout << "diff = " << diff << std::endl;
 
-        diffs.push_back(diff);
-        golds.push_back(gold);
+#pragma omp critical
+        {
+            diffs.push_back(diff);
+            golds.push_back(gold);
+
+            if (diffs.rows % tenPercent == 0)
+                std::cout << (diffs.rows / tenPercent * 10) << "% " << std::flush;
+        }
     }
     std::cout << std::endl;
     Features features = { golds, diffs };
