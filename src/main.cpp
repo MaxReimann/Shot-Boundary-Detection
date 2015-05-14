@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <unordered_set>
+#include <vector>
 #include "main.hpp"
 #include "histogram/histogram.hpp"
 #include "gold_standard/file_reader.hpp"
@@ -28,10 +28,29 @@ int main(int argc, char** argv) {
     std::string dataFolder(argv[1]);
 
 //    GoldStandardStatistic::create(dataFolder);
-
+    Features features;
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
-    std::vector<std::string> imagePaths = getFileNames(dataFolder);
-    Features features = buildHistogramDifferences(imagePaths, gold);
+    std::string histogramCachePath = "../resources/differenceHistograms.yaml";
+    
+    cv::FileStorage fs;
+    if (!boost::filesystem::exists(histogramCachePath))
+    {
+        std::vector<std::string> imagePaths = getFileNames(dataFolder);
+        features = buildHistogramDifferences(imagePaths, gold);
+        std::cout << "Caching built histograms." << std::endl;
+        fs.open(histogramCachePath, cv::FileStorage::WRITE);
+        fs << "Histograms" << features.values;
+        fs << "Labels" << features.classes;
+    }
+    else
+    {
+        std::cout << "Using cached histogram differences." << std::endl;
+        fs.open(histogramCachePath, cv::FileStorage::READ);
+        fs["Histograms"] >> features.values;
+        fs["Labels"] >> features.classes;
+    }
+
+    fs.release();
 
     Features trainSet, testSet;
     splitTrainTestSets(features, 0.7, trainSet, testSet);
@@ -210,6 +229,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     }
     std::cout << std::endl;
     Features features = { golds, diffs };
+
     return features;
 }
 
