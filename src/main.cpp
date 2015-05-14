@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 
     Features trainSet, testSet;
     splitTrainTestSets(features, 0.7, trainSet, testSet);
-    SVMLearner* learner = trainSVM(trainSet);
+    cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
     evaluate(testSet, learner);
 
     // wait for key, so we can read the console output
@@ -129,6 +129,7 @@ std::unordered_set<sbd::GoldStandardElement> readGoldStandard(std::string dataFo
     return goldStandard;
 }
 
+
 /**
  * 2.
  * Read the frame file names recursively.
@@ -198,7 +199,6 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
 
         //Histogram::displayHistogram(hist1);
         //std::cout << "diff = " << diff << std::endl;
-
 #pragma omp critical
         {
             diffs.push_back(diff);
@@ -242,7 +242,7 @@ bool findGold(std::string path1, std::string path2, std::unordered_set<sbd::Gold
  * Trains the SVM with the histogram differences and the gold standard.
  */
 
-SVMLearner* trainSVM(Features &trainSet) {
+cv::Ptr<sbd::SVMLearner> trainSVM(Features &trainSet) {
     printf("Training SVM.\n");
     // Set up training data
 
@@ -258,7 +258,7 @@ SVMLearner* trainSVM(Features &trainSet) {
 
     assert(trainMat.isContinuous());
 
-    SVMLearner *svm = new SVMLearner();
+    cv::Ptr<SVMLearner> svm = new SVMLearner();
     svm->train(trainMat, labelsMat);
     //svm->plotDecisionRegions();
 
