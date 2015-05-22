@@ -118,9 +118,33 @@ cv::Mat Histogram::buildHistogram(const cv::Mat& image) {
     return hist;
 }
 
+cv::Mat Histogram::buildHistogram1Channel(const cv::Mat& image) {
+    int nrImages = 1;
+    const int channels[] = { 0 };
+    cv::Mat mask;
+    cv::Mat hist;
+    int histDimensionality = 1;
+    const int histSizes[] = { m_histSize };
+    float range[] = { 0, 256 };
+    const float* ranges[] = { range };
+    cv::calcHist(&image, nrImages, channels, mask,
+        hist, histDimensionality, histSizes, ranges, true, false);
+
+    return hist;
+}
+
 cv::Mat Histogram::convertMat(const cv::Mat& hist) {
     // resize mat from a 3d Mat to a nx1 Mat. Only changes headers
     cv::Mat oneDimMat(1, m_histSize * m_histSize * m_histSize, CV_32FC1,
+        hist.data);  // void cast, else false data type will be assumed
+    assert(oneDimMat.isContinuous());
+
+    return oneDimMat;
+}
+
+cv::Mat Histogram::convertMat1Channel(const cv::Mat& hist) {
+    // resize mat from a 3d Mat to a nx1 Mat. Only changes headers
+    cv::Mat oneDimMat(1, m_histSize, CV_32FC1,
         hist.data);  // void cast, else false data type will be assumed
     assert(oneDimMat.isContinuous());
 
