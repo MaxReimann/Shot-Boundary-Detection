@@ -11,8 +11,8 @@
 
 using namespace sbd;
 
-std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
-    std::vector<GoldStandardElement> goldStandard;
+std::unordered_set<GoldStandardElement> FileReader::readDir(const char *dir, bool cutsOnly) {
+    std::unordered_set<GoldStandardElement> goldStandard;
 
 	if (!boost::filesystem::exists(dir))
 	{
@@ -28,21 +28,26 @@ std::vector<GoldStandardElement> FileReader::readDir(const char *dir) {
 
     for (; rdi != end_rdi; rdi++) {
         if (extension.compare((*rdi).path().extension().string()) == 0) {
-            read((*rdi).path().string(), goldStandard);
+            read((*rdi).path().string(), goldStandard, cutsOnly);
         }
     }
 
     return goldStandard;
 }
 
-void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& goldStandard) {
+void FileReader::read(std::string fileName, std::unordered_set<GoldStandardElement>& goldStandard, bool cutsOnly) {
     std::string name = extractName(fileName);
 
     boost::smatch typeMatch;
     boost::smatch startFrameMatch;
     boost::smatch endFrameMatch;
 
-    boost::regex typeRegex      (".*?type..(CUT).*");
+    boost::regex typeRegex;
+    if (cutsOnly) {
+        typeRegex = boost::regex(".*?type..(CUT).*");
+    } else {
+        typeRegex = boost::regex(".*?type..([A-Z]+).*");
+    }
     boost::regex startFrameRegex(".*?preFNum..([0-9]+).*");
     boost::regex endFrameRegex  (".*?postFNum..([0-9]+).*");
 
@@ -60,7 +65,7 @@ void FileReader::read(std::string fileName, std::vector<GoldStandardElement>& go
             std::string endFrame   = endFrameMatch[1].str();
 
             GoldStandardElement element(name, type, std::stoi(startFrame), std::stoi(endFrame));
-            goldStandard.push_back(element);
+            goldStandard.insert(element);
         }
     }
 }

@@ -101,6 +101,11 @@ find_package( OpenCV REQUIRED )
 add_definitions(-DBOOST_ALL_NO_LIB)
 find_package(Boost COMPONENTS system filesystem regex REQUIRED)
 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
 
 #################################################
 # SOURCES
@@ -118,6 +123,8 @@ set(sources
 	src/svm/svm.cpp
     src/gold_standard/file_reader.hpp
     src/gold_standard/file_reader.cpp
+    src/gold_standard/gold_standard_statistic.hpp
+    src/gold_standard/gold_standard_statistic.cpp
     src/gold_standard/gold_standard_element.hpp
     src/gold_standard/gold_standard_element.cpp
 )

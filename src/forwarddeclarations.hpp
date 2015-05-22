@@ -7,6 +7,8 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <unordered_set>
 
 // openCV forward declarations
 #include <opencv2/opencv.hpp>
@@ -21,4 +23,3 @@ namespace sbd {
     class GoldStandardElement;
     class SVMLearner;
 }
-
