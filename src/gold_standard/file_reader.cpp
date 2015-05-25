@@ -17,7 +17,12 @@ std::unordered_set<GoldStandardElement> FileReader::readDir(const char *dir, boo
 	if (!boost::filesystem::exists(dir))
 	{
 		std::cout << "[Filereader::readDir] no such directory: " << dir << std::endl;
+
+#ifdef _WIN32
+        system("pause");
+#else
         cv::waitKey(0);
+#endif
 		exit(-1);
 	}
 

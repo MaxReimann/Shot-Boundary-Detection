@@ -127,6 +127,9 @@ set(sources
     src/gold_standard/gold_standard_statistic.cpp
     src/gold_standard/gold_standard_element.hpp
     src/gold_standard/gold_standard_element.cpp
+    src/data_generation/transition_generator.cpp
+    src/data_generation/transition_generator.hpp
+
 )
 
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -154,5 +157,5 @@ link_directories(${Boost_LIBRARY_DIR})
 
 target_link_libraries( ${target}
     ${OpenCV_LIBS}
-    ${Boost_LIBRARIES} 
+    ${Boost_LIBRARIES}
 )

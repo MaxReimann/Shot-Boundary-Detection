@@ -12,25 +12,32 @@
 #include "gold_standard/gold_standard_statistic.hpp"
 #include "svm/svm.hpp"
 #include "util.hpp"
-#include <random>
 #include <iostream>
 #include <omp.h>
+#include "data_generation/transition_generator.hpp"
 
 using namespace sbd;
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
+    bool localExecution = false;
+    if (!localExecution && argc != 2) {
         std::cout << "Usage: sbd data_folder" << std::endl;
         std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
         std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
         exit(1);
     }
+
     std::string dataFolder(argv[1]);
+    // std::string dataFolder("../resources/[type]/anni009");
+
 
 //    GoldStandardStatistic::create(dataFolder);
     Features features;
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
     std::string histogramCachePath = "../resources/differenceHistograms.yaml";
+
+    TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
+    transitionGenerator.createRandomTransitions(10);
     
     cv::FileStorage fs;
     if (!boost::filesystem::exists(histogramCachePath))
@@ -64,72 +71,6 @@ int main(int argc, char** argv) {
     cv::waitKey(0);
 #endif
     return 0;
-}
-
-void createRandomTransition(std::vector<sbd::GoldStandardElement> &gold,
-    std::vector<std::string> imagePaths) {
-    
-    std::random_device rd;
-    std::mt19937 mt(rd());
-    std::uniform_int_distribution<int> goldSizeDist(0, gold.size() - 2);
-
-    int cutStart1 = goldSizeDist(mt);
-    int cutStart2 = goldSizeDist(mt);
-
-    bool retry = false;
-    retry = retry || cutStart1 == cutStart2;
-    if (retry) {
-        std::cout << "same start frames. retry" << std::endl;
-        return createRandomTransition(gold, imagePaths);
-    }
-
-    int sequence1Start = gold[cutStart1].endFrame;
-    int sequence1End = gold[cutStart1 + 1].startFrame;
-
-    int sequence2Start = gold[cutStart2].endFrame;
-    int sequence2End = gold[cutStart2 + 1].startFrame;
-
-    std::uniform_int_distribution<int> transitionLengthDist(10, 25);
-    int transitionLength = transitionLengthDist(mt);
-
-
-    retry = retry || (sequence1End - sequence1Start) < transitionLength;
-    retry = retry || (sequence2End - sequence2Start) < transitionLength;
-
-    std::cout << transitionLength << std::endl;
-    std::cout << sequence1Start << " " << sequence1End << std::endl;
-
-    if (retry) {
-        std::cout << "retry";
-        createRandomTransition(gold, imagePaths);
-        return;
-    }
-
-    std::uniform_int_distribution<int> startFrame1Dist(
-        sequence1Start, sequence1End - transitionLength);
-    std::uniform_int_distribution<int> startFrame2Dist(
-        sequence2Start, sequence2End - transitionLength);
-
-    int startFrame1 = startFrame1Dist(mt);
-    int startFrame2 = startFrame2Dist(mt);
-
-    for (size_t i = 0; i < transitionLength; i++) {
-
-        cv::Mat image1 = cv::imread("../resources/frames/senses111/" + std::to_string(startFrame1 + i) + ".jpg", CV_LOAD_IMAGE_COLOR);
-        cv::Mat image2 = cv::imread("../resources/frames/senses111/" + std::to_string(startFrame2 + i) + ".jpg", CV_LOAD_IMAGE_COLOR);
-     
-        cv::Mat result;
-        float alpha = static_cast<float>(i) / transitionLength;
-        float beta = 1 - alpha;
-        cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
-
-        std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
-        bool b =  cv::imwrite(
-            "../output/sequence" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2)
-            + std::to_string(i) + ".jpg",
-        result);
-    }
-
 }
 
 /**
