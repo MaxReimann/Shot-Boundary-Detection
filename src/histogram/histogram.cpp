@@ -172,7 +172,7 @@ void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& gol
     assert(absChanges.size() == golds.size().height);
 
     int MARGIN = 10;
-    int BINSIZE = 2;
+    int BINSIZE = 1;
     int imageWidth = BINSIZE * absChanges.size() + 2 * MARGIN;
     int imageHeight = 400;
 
@@ -190,8 +190,9 @@ void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& gol
         cv::line(histImage, start, end, lineColor, BINSIZE, 8);
     }
 
-    cv::namedWindow("Histogram Changes", CV_WINDOW_AUTOSIZE);
-    imshow("Histogram Changes", histImage);
+//    cv::namedWindow("Histogram Changes", CV_WINDOW_AUTOSIZE);
+//    imshow("Histogram Changes", histImage);
+    cv::imwrite("abs-changes.png", histImage);
 
 #ifdef _WIN32
     system("pause");

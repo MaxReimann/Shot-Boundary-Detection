@@ -194,13 +194,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     std::cout << std::endl;
     Features features = { golds, diffs };
 
-    std::vector<float> dummyAbsChanges = { 0, 1, 2, 3, 50, 4, 5, 1, 3, 4, 7, 5, 1, 3, 5, 7, 8, 1, 2, 4, 5, 101, 4, 5, 1, 3, 7, 1, 4, 2, 8, 2, 1, 3, 5, 1, 9, 3, 3, 1, 2, 3, 1, 2, 73, 2, 1, 3, 1, 2, 3, 3 };
-    float dummyGoldValues[]           = { 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0 };
-    cv::Mat dummyGolds;
-    for (unsigned int i = 0; i < sizeof(dummyGoldValues) / sizeof(dummyGoldValues[0]); i++) { dummyGolds.push_back(dummyGoldValues[i]); }
-
-//    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
-    histBuilder.drawAbsChanges(dummyAbsChanges, dummyGolds);
+    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
+    histBuilder.drawAbsChanges(absChanges, golds);
 
     return features;
 }

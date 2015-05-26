@@ -19,6 +19,8 @@ build
 /lib
 
 resources/senses111
+resources/truth/BG_11362
+resources/frames/BG_11362
 
 CMakeLists.txt.user
 CMakeCache.txt
