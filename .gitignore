@@ -24,3 +24,7 @@ CMakeLists.txt.user
 CMakeCache.txt
 
 gold_standard_statistics.txt
+
+.idea
+
+resources/differenceHistograms.yaml

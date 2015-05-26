@@ -4,23 +4,18 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <vector>
 #include "main.hpp"
 #include "histogram/histogram.hpp"
 #include "gold_standard/file_reader.hpp"
-#include "gold_standard/gold_standard_element.hpp"
 #include "gold_standard/gold_standard_statistic.hpp"
 #include "svm/svm.hpp"
 #include "util.hpp"
-#include <iostream>
-#include <omp.h>
 #include "data_generation/transition_generator.hpp"
 
 using namespace sbd;
 
 int main(int argc, char** argv) {
-    bool localExecution = false;
-    if (!localExecution && argc != 2) {
+    if (argc != 2) {
         std::cout << "Usage: sbd data_folder" << std::endl;
         std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
         std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
@@ -30,16 +25,16 @@ int main(int argc, char** argv) {
     std::string dataFolder(argv[1]);
     // std::string dataFolder("../resources/[type]/anni009");
 
-
 //    GoldStandardStatistic::create(dataFolder);
+
     Features features;
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
-    std::string histogramCachePath = "../resources/differenceHistograms.yaml";
 
-    TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
-    transitionGenerator.createRandomTransitions(10);
+    // TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
+    // transitionGenerator.createRandomTransitions(10);
     
     cv::FileStorage fs;
+    std::string histogramCachePath = "../resources/differenceHistograms.yaml";
     if (!boost::filesystem::exists(histogramCachePath))
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
@@ -56,7 +51,6 @@ int main(int argc, char** argv) {
         fs["Histograms"] >> features.values;
         fs["Labels"] >> features.classes;
     }
-
     fs.release();
 
     Features trainSet, testSet;
@@ -138,7 +132,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     cv::Mat diffs;
     cv::Mat golds;
 
-    int tenPercent = imagePaths.size() / 10;
+    unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
 #pragma omp parallel for
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
@@ -198,30 +192,6 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     Features features = { golds, diffs };
 
     return features;
-}
-
-/**
- * 3.1
- * For the two given files find out the gold standard, i.e. whether it is a CUT or not.
- */
-bool findGold(std::string path1, std::string path2, std::unordered_set<sbd::GoldStandardElement> &golds) {
-    std::string videoName1 = boost::filesystem::path(path1).parent_path().stem().string();
-    std::string videoName2 = boost::filesystem::path(path2).parent_path().stem().string();
-    std::string frameNr1 = boost::filesystem::path(path1).stem().string();
-    std::string frameNr2 = boost::filesystem::path(path2).stem().string();
-
-    GoldStandardElement gold(videoName1, videoName2, std::stoi(frameNr1), std::stoi(frameNr2));
-
-//    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
-//    for (int i = 0; i < gold.size(); i++) {
-//        if (videoName1 == gold[i].name &&
-//                videoName2 == gold[i].name &&
-//                frameNr1 == std::to_string(gold[i].startFrame) &&
-//                frameNr2 == std::to_string(gold[i].endFrame))
-//            return true;
-//    }
-//    return false;
-    return golds.find(gold) != golds.end();
 }
 
 /**

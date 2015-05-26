@@ -1,5 +1,6 @@
 #include "util.hpp"
-#include <numeric>
+#include <boost/filesystem.hpp>
+#include <src/gold_standard/gold_standard_element.hpp>
 
 using namespace sbd;
 
@@ -37,4 +38,27 @@ void sbd::splitTrainTestSets(Features &input, float trainSetRatio, Features &tra
     trainSet.classes = trainLabels;
     testSet.values = testValues;
     testSet.classes = testLabels;
+}
+
+
+// For the two given files find out the gold standard, i.e. whether it is a CUT or not.
+bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd::GoldStandardElement> &golds) {
+    std::string videoName1 = boost::filesystem::path(path1).parent_path().stem().string();
+    std::string videoName2 = boost::filesystem::path(path2).parent_path().stem().string();
+    std::string frameNr1 = boost::filesystem::path(path1).stem().string();
+    std::string frameNr2 = boost::filesystem::path(path2).stem().string();
+
+    GoldStandardElement gold(videoName1, videoName2, std::stoi(frameNr1), std::stoi(frameNr2));
+
+//    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
+//    for (int i = 0; i < gold.size(); i++) {
+//        if (videoName1 == gold[i].name &&
+//                videoName2 == gold[i].name &&
+//                frameNr1 == std::to_string(gold[i].startFrame) &&
+//                frameNr2 == std::to_string(gold[i].endFrame))
+//            return true;
+//    }
+//    return false;
+
+    return golds.find(gold) != golds.end();
 }
