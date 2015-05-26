@@ -126,7 +126,8 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
 Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::unordered_set<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
-    Histogram histBuilder(8);
+    // create histograms with 32 bins
+    Histogram histBuilder(32);
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
 
     cv::Mat diffs;
@@ -191,8 +192,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     std::cout << std::endl;
     Features features = { golds, diffs };
 
-    std::vector<float> absChanges = getAbsChanges(diffs);
-    drawAbsChanges(absChanges, golds);
+    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
+    histBuilder.drawAbsChanges(absChanges, golds);
 
     return features;
 }

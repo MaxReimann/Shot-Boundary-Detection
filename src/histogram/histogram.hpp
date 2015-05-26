@@ -15,5 +15,7 @@ namespace sbd {
         static void plotRGBHistogram(const cv::Mat &srcImage, int width, int height);
         cv::Mat convertMat(const cv::Mat& hist);
         cv::Mat convertMat1Channel(const cv::Mat& hist);
+        std::vector<float> getAbsChanges(const cv::Mat& diffs);
+        static void drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds);
     };
 }
