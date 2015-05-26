@@ -168,30 +168,39 @@ std::vector<float> Histogram::getAbsChanges(const cv::Mat& diffs) {
     return absValues;
 }
 
-void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds) {
+void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds, std::vector<std::string> frameNumbers) {
     assert(absChanges.size() == golds.size().height);
 
     int MARGIN = 10;
     int BINSIZE = 1;
     int imageWidth = BINSIZE * absChanges.size() + 2 * MARGIN;
+    int LEGEND_HEIGHT = 50;
     int imageHeight = 400;
 
-    cv::Mat histImage(imageHeight, imageWidth, CV_8UC3, cv::Scalar(0, 0, 0));
+    cv::Mat histImage(imageHeight + LEGEND_HEIGHT, imageWidth, CV_8UC3, cv::Scalar(0, 0, 0));
 
-    cv::normalize(absChanges, absChanges, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+    cv::normalize(absChanges, absChanges, 0, imageHeight, cv::NORM_MINMAX, -1, cv::Mat());
 
     for (unsigned int i = 0; i < absChanges.size(); i++) {
         int absChange = cvRound(absChanges.at(i));
+        float topPercent = static_cast<float>(absChange) / imageHeight;
+        bool isTop = topPercent > 0.75;
         cv::Point start(MARGIN + BINSIZE * i, imageHeight - absChange);
         cv::Point end(MARGIN + BINSIZE * i, imageHeight);
 
         cv::Scalar lineColor = golds.at<float>(i) ? cv::Scalar(0, 165, 255) : cv::Scalar(255, 255, 255);
 
         cv::line(histImage, start, end, lineColor, BINSIZE, 8);
+
+        if (i % 100 == 0) {
+            cv::putText(histImage, frameNumbers[i], cv::Point(MARGIN + BINSIZE * i, imageHeight + LEGEND_HEIGHT / 2), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(255, 255, 255));
+        }
+        if (isTop) {
+            cv::putText(histImage, frameNumbers[i], cv::Point(MARGIN + BINSIZE * i, 10), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(255, 255, 255));
+        }
+
     }
 
-//    cv::namedWindow("Histogram Changes", CV_WINDOW_AUTOSIZE);
-//    imshow("Histogram Changes", histImage);
     cv::imwrite("abs-changes.png", histImage);
 
 #ifdef _WIN32

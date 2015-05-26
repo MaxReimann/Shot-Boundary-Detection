@@ -25,17 +25,16 @@ int main(int argc, char** argv) {
     }
 
     std::string dataFolder(argv[1]);
-    // std::string dataFolder("../resources/[type]/anni009");
 
 //    GoldStandardStatistic::create(dataFolder);
 
-    Features features;
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
 
-    // TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
-    // transitionGenerator.createRandomTransitions(10);
+//    TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
+//    transitionGenerator.createRandomTransitions(10);
     
     cv::FileStorage fs;
+    Features features;
     std::string histogramCachePath = "../resources/differenceHistograms.yaml";
     if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
     {
@@ -144,10 +143,11 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
 
     cv::Mat diffs;
     cv::Mat golds;
+    std::vector<std::string> frameNumbers;
 
     unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
-#pragma omp parallel for
+
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
         cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
@@ -192,20 +192,19 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
 
         //Histogram::displayHistogram(hist1);
         //std::cout << "diff = " << diff << std::endl;
-#pragma omp critical
-        {
-            diffs.push_back(diff);
-            golds.push_back(gold);
 
-            if (diffs.rows % tenPercent == 0)
-                std::cout << (diffs.rows / tenPercent * 10) << "% " << std::flush;
-        }
+        frameNumbers.push_back(boost::filesystem::path(imagePaths[i]).stem().string());
+        diffs.push_back(diff);
+        golds.push_back(gold);
+
+        if (diffs.rows % tenPercent == 0)
+            std::cout << (diffs.rows / tenPercent * 10) << "% " << std::flush;
     }
     std::cout << std::endl;
     Features features = { golds, diffs };
 
     std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
-    histBuilder.drawAbsChanges(absChanges, golds);
+    histBuilder.drawAbsChanges(absChanges, golds, frameNumbers);
 
     return features;
 }
