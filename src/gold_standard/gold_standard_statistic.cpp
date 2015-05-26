@@ -92,6 +92,7 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 	std::cout << "Read truth files..." << std::endl;
 	FileReader fileReader;
 	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+    std::unordered_set<std::string> skipDirectories;
 
 	for (auto &element : goldStandard)
 	{
@@ -99,6 +100,10 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 		auto imPath = fp(boost::replace_first_copy(element.filePath, "truth", "frames"));
 		std::string name = fileReader.extractName(imPath.string());
 		auto imDir = imPath.parent_path().parent_path() / name; //parentpath skips sbref folder
+        
+        if (skipDirectories.find(imDir.string()) != skipDirectories.end())
+            continue;
+
 		fp outPath(outputFolder);
 		outPath = outPath / name;
 
@@ -109,6 +114,7 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
             if (!boost::filesystem::exists(imDir))
             {
                 std::cout << "could not find directory: " << imDir.string() << std::endl;
+                skipDirectories.insert((imPath.parent_path().parent_path() / name).string());
                 continue;
             }
         }
