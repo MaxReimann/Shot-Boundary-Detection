@@ -144,7 +144,7 @@ void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& gol
         // draw line
         cv::Point start(MARGIN + BINSIZE * i, imageHeight - absChange);
         cv::Point end(MARGIN + BINSIZE * i, imageHeight);
-        cv::Scalar lineColor = golds.at<bool>(i) ? cv::Scalar(0, 165, 255) : cv::Scalar(255, 255, 255);
+        cv::Scalar lineColor = golds.at<float>(i) ? cv::Scalar(0, 165, 255) : cv::Scalar(255, 255, 255);
         cv::line(histImage, start, end, lineColor, BINSIZE, 8);
 
         // add text
