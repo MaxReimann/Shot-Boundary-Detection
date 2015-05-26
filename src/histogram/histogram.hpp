@@ -6,16 +6,16 @@ namespace sbd {
     class Histogram {
     private:
         int m_histSize;
+        bool m_blackAndWhite;
     public:
-        Histogram(int);
+        Histogram(int, bool);
         int getHistSize();
         cv::Mat buildHistogram(const cv::Mat& image);
         cv::Mat buildHistogram1Channel(const cv::Mat& image);
-        static void displayHistogram(const cv::Mat& hist);
-        static void plotRGBHistogram(const cv::Mat &srcImage, int width, int height);
         cv::Mat convertMat(const cv::Mat& hist);
         cv::Mat convertMat1Channel(const cv::Mat& hist);
         std::vector<float> getAbsChanges(const cv::Mat& diffs);
-        void drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds);
+        void drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds, std::vector<std::string> frameNumbers);
+        cv::Mat getDiff(std::string image1, std::string image2);
     };
 }

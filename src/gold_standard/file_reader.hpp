@@ -7,8 +7,8 @@ namespace sbd {
 
     class FileReader {
         private:
-            std::string extractName(std::string);
         public:
+            std::string extractName(std::string);
             void read(std::string, std::unordered_set<GoldStandardElement>&, bool cutsOnly);
             std::unordered_set<GoldStandardElement> readDir(const char*, bool cutsOnly);
 

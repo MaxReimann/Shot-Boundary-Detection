@@ -3,6 +3,9 @@
 #include "gold_standard_statistic.hpp"
 #include "file_reader.hpp"
 #include <numeric>
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
+#undef BOOST_NO_CXX11_SCOPED_ENUMS
 
 using namespace sbd;
 
@@ -76,5 +79,70 @@ double GoldStandardStatistic::getMean(std::vector<double> v) {
     if (v.size() == 0) return 0.0;
     double sum = std::accumulate(v.begin(), v.end(), 0.0);
     return sum / v.size();
+}
+
+
+
+void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outputFolder, bool hardCutsOnly)
+{
+	typedef boost::filesystem::path fp;
+	std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
+
+	// read all truth files
+	std::cout << "Read truth files..." << std::endl;
+	FileReader fileReader;
+	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+    std::unordered_set<std::string> skipDirectories;
+
+	for (auto &element : goldStandard)
+	{
+		
+		auto imPath = fp(boost::replace_first_copy(element.filePath, "truth", "frames"));
+		std::string name = fileReader.extractName(imPath.string());
+		auto imDir = imPath.parent_path().parent_path() / name; //parentpath skips sbref folder
+        
+        if (skipDirectories.find(imDir.string()) != skipDirectories.end())
+            continue;
+
+		fp outPath(outputFolder);
+		outPath = outPath / name;
+
+        if (!boost::filesystem::exists(imDir))
+        {
+            //some directories are uppercase and are not found automatically
+            imDir = imPath.parent_path().parent_path() / boost::to_upper_copy(name);
+            if (!boost::filesystem::exists(imDir))
+            {
+                std::cout << "could not find directory: " << imDir.string() << std::endl;
+                skipDirectories.insert((imPath.parent_path().parent_path() / name).string());
+                continue;
+            }
+        }
+		
+        if (!boost::filesystem::exists(outPath))
+		{
+			boost::filesystem::create_directory(outPath);
+			std::cout << "created dir " << outPath.string() << std::endl;
+		}
+
+		try
+		{
+			if (hardCutsOnly)
+			{
+				auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
+				auto in = imDir / strFrame(element.startFrame);
+				auto out = outPath / strFrame(element.startFrame);
+				copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
+				copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+
+			}
+		}
+		catch (std::exception &e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+
+	}
+
 }
 

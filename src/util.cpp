@@ -4,6 +4,7 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <src/gold_standard/gold_standard_element.hpp>
+#include <numeric>
 
 using namespace sbd;
 
@@ -57,15 +58,15 @@ bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd:
 
     GoldStandardElement gold(videoName1, videoName2, std::stoi(frameNr1), std::stoi(frameNr2));
 
-//    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
-//    for (int i = 0; i < gold.size(); i++) {
-//        if (videoName1 == gold[i].name &&
-//                videoName2 == gold[i].name &&
-//                frameNr1 == std::to_string(gold[i].startFrame) &&
-//                frameNr2 == std::to_string(gold[i].endFrame))
-//            return true;
-//    }
-//    return false;
+    //    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
+    //    for (int i = 0; i < gold.size(); i++) {
+    //        if (videoName1 == gold[i].name &&
+    //                videoName2 == gold[i].name &&
+    //                frameNr1 == std::to_string(gold[i].startFrame) &&
+    //                frameNr2 == std::to_string(gold[i].endFrame))
+    //            return true;
+    //    }
+    //    return false;
 
     return golds.find(gold) != golds.end();
 }
