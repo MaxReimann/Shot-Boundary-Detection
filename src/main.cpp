@@ -15,6 +15,8 @@
 using namespace sbd;
 
 int main(int argc, char** argv) {
+    bool USE_CACHED_HISTOGRAMS = false;
+
     if (argc != 2) {
         std::cout << "Usage: sbd data_folder" << std::endl;
         std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
@@ -35,7 +37,7 @@ int main(int argc, char** argv) {
     
     cv::FileStorage fs;
     std::string histogramCachePath = "../resources/differenceHistograms.yaml";
-    if (!boost::filesystem::exists(histogramCachePath))
+    if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
@@ -193,12 +195,12 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     Features features = { golds, diffs };
 
     std::vector<float> dummyAbsChanges = { 0, 1, 2, 3, 50, 4, 5, 1, 3, 4, 7, 5, 1, 3, 5, 7, 8, 1, 2, 4, 5, 101, 4, 5, 1, 3, 7, 1, 4, 2, 8, 2, 1, 3, 5, 1, 9, 3, 3, 1, 2, 3, 1, 2, 73, 2, 1, 3, 1, 2, 3, 3 };
-    float dummyGoldsValues[]                 = { 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0 };
+    float dummyGoldValues[]           = { 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0, 0, 0 };
     cv::Mat dummyGolds;
-    for (unsigned int i = 0; i < dummyGoldsValues.size(); i++) { dummyGolds.push_back(dummyGoldsValues[i]); }
+    for (unsigned int i = 0; i < sizeof(dummyGoldValues) / sizeof(dummyGoldValues[0]); i++) { dummyGolds.push_back(dummyGoldValues[i]); }
 
-    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
-    histBuilder.drawAbsChanges(absChanges, golds);
+//    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
+    histBuilder.drawAbsChanges(dummyAbsChanges, dummyGolds);
 
     return features;
 }
