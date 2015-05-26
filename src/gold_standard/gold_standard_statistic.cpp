@@ -102,11 +102,23 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 		fp outPath(outputFolder);
 		outPath = outPath / name;
 
-		if (!boost::filesystem::exists(outPath))
+        if (!boost::filesystem::exists(imDir))
+        {
+            //some directories are uppercase and are not found automatically
+            imDir = imPath.parent_path().parent_path() / boost::to_upper_copy(name);
+            if (!boost::filesystem::exists(imDir))
+            {
+                std::cout << "could not find directory: " << imDir.string() << std::endl;
+                continue;
+            }
+        }
+		
+        if (!boost::filesystem::exists(outPath))
 		{
 			boost::filesystem::create_directory(outPath);
 			std::cout << "created dir " << outPath.string() << std::endl;
 		}
+
 
 		try
 		{
@@ -122,7 +134,6 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 		}
 		catch (std::exception &e)
 		{
-			std::cout << outPath << std::endl;
 			std::cout << e.what() << std::endl;
 		}
 
