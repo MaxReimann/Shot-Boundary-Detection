@@ -23,6 +23,9 @@ int main(int argc, char** argv) {
     }
 
     std::string dataFolder(argv[1]);
+	GoldStandardStatistic::extractCuts(dataFolder, "../resources/extracted",true);
+	system("pause");
+	return 1;
     // std::string dataFolder("../resources/[type]/anni009");
 
 //    GoldStandardStatistic::create(dataFolder);
@@ -191,8 +194,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     std::cout << std::endl;
     Features features = { golds, diffs };
 
-    std::vector<float> absChanges = getAbsChanges(diffs);
-    drawAbsChanges(absChanges, golds);
+    //std::vector<float> absChanges = getAbsChanges(diffs);
+    //drawAbsChanges(absChanges, golds);
 
     return features;
 }

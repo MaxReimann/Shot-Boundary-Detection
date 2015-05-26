@@ -10,11 +10,13 @@ namespace sbd {
         std::string type;
         int startFrame;
         int endFrame;
+		std::string filePath; //optional
         bool operator==(const GoldStandardElement &other) const {
             return name == other.name && startFrame == other.startFrame && endFrame == other.endFrame;
         }
 
         GoldStandardElement(std::string, std::string, int, int);
+		GoldStandardElement(std::string n, std::string t, std::string path, int s, int e);
     };
 }
 

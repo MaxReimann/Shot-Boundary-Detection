@@ -1,6 +1,7 @@
 #include "util.hpp"
 #include <boost/filesystem.hpp>
 #include <src/gold_standard/gold_standard_element.hpp>
+#include <numeric>
 
 using namespace sbd;
 
@@ -63,11 +64,11 @@ bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd:
     return golds.find(gold) != golds.end();
 }
 
-
-std::vector<float> sbd::getAbsChanges(cv::Mat diffs) {
-
-}
-
-void sbd::drawAbsChanges(std::vector<float> absChanges, cv::Mat golds) {
-    
-}
+//
+//std::vector<float> sbd::getAbsChanges(cv::Mat diffs) {
+//
+//}
+//
+//void sbd::drawAbsChanges(std::vector<float> absChanges, cv::Mat golds) {
+//    
+//}
