@@ -167,3 +167,31 @@ std::vector<float> Histogram::getAbsChanges(const cv::Mat& diffs) {
 
     return absValues;
 }
+
+void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds) {
+    int MARGIN = 10;
+    int imageWidth = absChanges.size() + 2 * MARGIN;
+    int imageHeight = 400;
+
+    cv::Mat histImage(imageHeight, imageWidth, CV_8UC3, cv::Scalar(0, 0, 0));
+
+    cv::normalize(absChanges, absChanges, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+
+    for (unsigned int i = 0; i < absChanges.size(); i++) {
+        int absChange = cvRound(absChanges.at(i));
+        cv::Point start(MARGIN + i, imageHeight - absChange);
+        cv::Point end(MARGIN + i, imageHeight);
+
+        cv::line(histImage, start, end, cv::Scalar(255, 255, 255), 1, 8);
+    }
+
+    cv::namedWindow("Histogram Changes", CV_WINDOW_AUTOSIZE);
+    imshow("Histogram Changes", histImage);
+
+#ifdef _WIN32
+    system("pause");
+#else
+    cv::waitKey(0);
+#endif
+
+}
