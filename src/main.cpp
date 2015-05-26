@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     
     cv::FileStorage fs;
     std::string histogramCachePath = "../resources/differenceHistograms.yaml";
-    if (!boost::filesystem::exists(histogramCachePath))
+    if (!boost::filesystem::exists(histogramCachePath) || true)
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
@@ -127,7 +127,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     printf("Building histogram differences.\n");
 
     // create histograms with 32 bins
-    Histogram histBuilder(32);
+    Histogram histBuilder(24);
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
 
     cv::Mat diffs;

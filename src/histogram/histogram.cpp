@@ -2,6 +2,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
+#include <cmath>
 
 using namespace sbd;
 
@@ -153,6 +154,16 @@ cv::Mat Histogram::convertMat1Channel(const cv::Mat& hist) {
 
 std::vector<float> Histogram::getAbsChanges(const cv::Mat& diffs) {
     std::vector<float> absValues;
+
+    for (int i = 0; i < diffs.rows; ++i) {
+        float sum = 0;
+        for (int j = 0; j < diffs.cols; ++j) {
+            float val = diffs.at<float>(i, j);
+            sum += std::abs(val);
+        }
+
+        absValues.push_back(sum);
+    }
 
     return absValues;
 }
