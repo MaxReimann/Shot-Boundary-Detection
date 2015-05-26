@@ -125,7 +125,6 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 			std::cout << "created dir " << outPath.string() << std::endl;
 		}
 
-
 		try
 		{
 			if (hardCutsOnly)
@@ -144,7 +143,6 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 		}
 
 	}
-
 
 }
 

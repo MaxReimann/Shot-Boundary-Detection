@@ -19,6 +19,12 @@ build
 /lib
 
 resources/senses111
+resources/truth/BG_11362
+resources/frames/BG_11362
+resources/truth/BG_36506/
+resources/frames/BG_36506/
+resources/differenceHistograms.yaml
+resources/abs-changes.png
 
 CMakeLists.txt.user
 CMakeCache.txt
@@ -27,4 +33,3 @@ gold_standard_statistics.txt
 
 .idea
 
-resources/differenceHistograms.yaml

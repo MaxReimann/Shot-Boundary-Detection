@@ -15,6 +15,8 @@
 using namespace sbd;
 
 int main(int argc, char** argv) {
+    bool USE_CACHED_HISTOGRAMS = false;
+
     if (argc != 2) {
         std::cout << "Usage: sbd data_folder" << std::endl;
         std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
@@ -23,22 +25,18 @@ int main(int argc, char** argv) {
     }
 
     std::string dataFolder(argv[1]);
-	GoldStandardStatistic::extractCuts(dataFolder, "../resources/extracted",true);
-	system("pause");
-	return 1;
-    // std::string dataFolder("../resources/[type]/anni009");
 
 //    GoldStandardStatistic::create(dataFolder);
 
-    Features features;
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
 
-    // TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
-    // transitionGenerator.createRandomTransitions(10);
+//    TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
+//    transitionGenerator.createRandomTransitions(10);
     
     cv::FileStorage fs;
+    Features features;
     std::string histogramCachePath = "../resources/differenceHistograms.yaml";
-    if (!boost::filesystem::exists(histogramCachePath))
+    if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
@@ -111,13 +109,23 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
     std::sort(imagePaths.begin(), imagePaths.end(), [](boost::filesystem::path aPath, boost::filesystem::path bPath) {
         std::string a = aPath.filename().string();
         std::string b = bPath.filename().string();
-        return std::stoi(a) <= std::stoi(b);
+        std::string aParent = aPath.parent_path().filename().string();
+        std::string bParent = bPath.parent_path().filename().string();
+
+        int parentCompare = aParent.compare(bParent);
+
+        if (parentCompare == 0) {
+            return std::stoi(a) < std::stoi(b);
+        } else {
+            return parentCompare < 0;
+        }
     });
 
     std::vector<std::string> imageStrPaths;
     imageStrPaths.reserve(imagePaths.size());
-    for (auto img : imagePaths)
+    for (auto img : imagePaths) {
         imageStrPaths.push_back(img.string());
+    }
 
     return imageStrPaths;
 }
@@ -129,73 +137,40 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
 Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::unordered_set<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
-    Histogram histBuilder(8);
+    Histogram histBuilder(8, false); // using color histogram and 8 bins
+
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
 
     cv::Mat diffs;
     cv::Mat golds;
+    std::vector<std::string> frameNumbers;
 
     unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
-#pragma omp parallel for
+
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
-        cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
-        cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
-        assert(image1.total() > 0);
-        assert(image2.total() > 0);
+        std::string imagePath1 = imagePaths[i];
+        std::string imagePath2 = imagePaths[i + 1];
 
-		// extract the luma component
-		cv::Mat YUVimage1;
-		cv::Mat YUVimage2;
-		cv::cvtColor(image1, YUVimage1, CV_BGR2YCrCb);
-		cv::cvtColor(image2, YUVimage2, CV_BGR2YCrCb);
+        cv::Mat diff = histBuilder.getDiff(imagePath1, imagePath2);
+        float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
+        std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
 
-		std::vector<cv::Mat> channels1;
-		std::vector<cv::Mat> channels2;
-		cv::split(YUVimage1, channels1);
-		cv::split(YUVimage2, channels2);
+        frameNumbers.push_back(frameNumber);
+        diffs.push_back(diff);
+        golds.push_back(gold);
 
-		cv::Mat y1 = channels1[0];
-		cv::Mat y2 = channels2[0];
-
-		/*cv::imshow("Y test", y1);
-		cvWaitKey(0);
-
-		cv::imshow("Y test", y2);
-		cvWaitKey(0);*/
-
-        float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
-
-        cv::Mat hist1 = histBuilder.buildHistogram1Channel(y1);
-        cv::Mat oneDimHist1 = histBuilder.convertMat1Channel(hist1);
-
-        cv::Mat hist2 = histBuilder.buildHistogram1Channel(y2);
-        cv::Mat oneDimHist2 = histBuilder.convertMat1Channel(hist2);
-
-        /*cv::Mat hist1 = histBuilder.buildHistogram(image1);
-        cv::Mat oneDimHist1 = histBuilder.convertMat(hist1);
-
-        cv::Mat hist2 = histBuilder.buildHistogram(image1);
-        cv::Mat oneDimHist2 = histBuilder.convertMat(hist2);*/
-
-        cv::Mat diff = oneDimHist1 - oneDimHist2;
-
-        //Histogram::displayHistogram(hist1);
-        //std::cout << "diff = " << diff << std::endl;
-#pragma omp critical
-        {
-            diffs.push_back(diff);
-            golds.push_back(gold);
-
-            if (diffs.rows % tenPercent == 0)
-                std::cout << (diffs.rows / tenPercent * 10) << "% " << std::flush;
-        }
+        if (diffs.rows % tenPercent == 0)
+            std::cout << (diffs.rows / tenPercent * 10) << "% " << std::flush;
     }
     std::cout << std::endl;
+
     Features features = { golds, diffs };
 
-    //std::vector<float> absChanges = getAbsChanges(diffs);
-    //drawAbsChanges(absChanges, golds);
+    // Draw absolute changes of diffs
+    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
+    histBuilder.drawAbsChanges(absChanges, golds, frameNumbers);
+
 
     return features;
 }
