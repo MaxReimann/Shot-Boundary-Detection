@@ -110,13 +110,23 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
     std::sort(imagePaths.begin(), imagePaths.end(), [](boost::filesystem::path aPath, boost::filesystem::path bPath) {
         std::string a = aPath.filename().string();
         std::string b = bPath.filename().string();
-        return std::stoi(a) <= std::stoi(b);
+        std::string aParent = aPath.parent_path().filename().string();
+        std::string bParent = bPath.parent_path().filename().string();
+
+        int parentCompare = aParent.compare(bParent);
+
+        if (parentCompare == 0) {
+            return std::stoi(a) < std::stoi(b);
+        } else {
+            return parentCompare < 0;
+        }
     });
 
     std::vector<std::string> imageStrPaths;
     imageStrPaths.reserve(imagePaths.size());
-    for (auto img : imagePaths)
+    for (auto img : imagePaths) {
         imageStrPaths.push_back(img.string());
+    }
 
     return imageStrPaths;
 }
