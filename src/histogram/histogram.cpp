@@ -169,8 +169,11 @@ std::vector<float> Histogram::getAbsChanges(const cv::Mat& diffs) {
 }
 
 void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds) {
+    assert(absChanges.size() == golds.size().height);
+
     int MARGIN = 10;
-    int imageWidth = absChanges.size() + 2 * MARGIN;
+    int BINSIZE = 2;
+    int imageWidth = BINSIZE * absChanges.size() + 2 * MARGIN;
     int imageHeight = 400;
 
     cv::Mat histImage(imageHeight, imageWidth, CV_8UC3, cv::Scalar(0, 0, 0));
@@ -179,10 +182,12 @@ void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& gol
 
     for (unsigned int i = 0; i < absChanges.size(); i++) {
         int absChange = cvRound(absChanges.at(i));
-        cv::Point start(MARGIN + i, imageHeight - absChange);
-        cv::Point end(MARGIN + i, imageHeight);
+        cv::Point start(MARGIN + BINSIZE * i, imageHeight - absChange);
+        cv::Point end(MARGIN + BINSIZE * i, imageHeight);
 
-        cv::line(histImage, start, end, cv::Scalar(255, 255, 255), 1, 8);
+        cv::Scalar lineColor = golds.at<float>(i) ? cv::Scalar(0, 165, 255) : cv::Scalar(255, 255, 255);
+
+        cv::line(histImage, start, end, lineColor, BINSIZE, 8);
     }
 
     cv::namedWindow("Histogram Changes", CV_WINDOW_AUTOSIZE);
