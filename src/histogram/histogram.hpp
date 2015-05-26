@@ -6,8 +6,9 @@ namespace sbd {
     class Histogram {
     private:
         int m_histSize;
+        bool m_blackAndWhite;
     public:
-        Histogram(int);
+        Histogram(int, bool);
         int getHistSize();
         cv::Mat buildHistogram(const cv::Mat& image);
         cv::Mat buildHistogram1Channel(const cv::Mat& image);

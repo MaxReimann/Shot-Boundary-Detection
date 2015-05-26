@@ -137,7 +137,8 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
 Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::unordered_set<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
-    Histogram histBuilder(24);
+    Histogram histBuilder(8, false);
+
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
 
     cv::Mat diffs;
@@ -148,10 +149,14 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     std::cout << "0% " << std::flush;
 
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
-        cv::Mat diff = histBuilder.getDiff(imagePaths[i], imagePaths[i + 1]);
-        bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
+        std::string imagePath1 = imagePaths[i];
+        std::string imagePath2 = imagePaths[i + 1];
 
-        frameNumbers.push_back(boost::filesystem::path(imagePaths[i]).stem().string());
+        cv::Mat diff = histBuilder.getDiff(imagePath1, imagePath2);
+        bool gold = findGold(imagePath1, imagePath2, goldStandard);
+        std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
+
+        frameNumbers.push_back(frameNumber);
         diffs.push_back(diff);
         golds.push_back(gold);
 

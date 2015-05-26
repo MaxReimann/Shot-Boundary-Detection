@@ -8,9 +8,11 @@
 using namespace sbd;
 
 
-Histogram::Histogram(int histSize) {
+Histogram::Histogram(int histSize, bool useBlackAndWhite) {
     this->m_histSize = histSize;
+    this->m_blackAndWhite = useBlackAndWhite;
 }
+
 int Histogram::getHistSize() {
     return this->m_histSize;
 }
@@ -21,37 +23,41 @@ cv::Mat Histogram::getDiff(std::string image1Path, std::string image2Path) {
     assert(image1.total() > 0);
     assert(image2.total() > 0);
 
-    // extract the luma component
-    cv::Mat YUVimage1;
-    cv::Mat YUVimage2;
-    cv::cvtColor(image1, YUVimage1, CV_BGR2YCrCb);
-    cv::cvtColor(image2, YUVimage2, CV_BGR2YCrCb);
+    if (m_blackAndWhite) {
+        // extract the luma component
+        cv::Mat YUVimage1;
+        cv::Mat YUVimage2;
+        cv::cvtColor(image1, YUVimage1, CV_BGR2YCrCb);
+        cv::cvtColor(image2, YUVimage2, CV_BGR2YCrCb);
 
-    std::vector<cv::Mat> channels1;
-    std::vector<cv::Mat> channels2;
-    cv::split(YUVimage1, channels1);
-    cv::split(YUVimage2, channels2);
+        std::vector<cv::Mat> channels1;
+        std::vector<cv::Mat> channels2;
+        cv::split(YUVimage1, channels1);
+        cv::split(YUVimage2, channels2);
 
-    cv::Mat y1 = channels1[0];
-    cv::Mat y2 = channels2[0];
+        cv::Mat y1 = channels1[0];
+        cv::Mat y2 = channels2[0];
 
-    // build histograms
-    cv::Mat hist1 = buildHistogram1Channel(y1);
-    cv::Mat oneDimHist1 = convertMat1Channel(hist1);
-    cv::Mat hist2 = buildHistogram1Channel(y2);
-    cv::Mat oneDimHist2 = convertMat1Channel(hist2);
+        // build histograms
+        cv::Mat hist1 = buildHistogram1Channel(y1);
+        cv::Mat oneDimHist1 = convertMat1Channel(hist1);
+        cv::Mat hist2 = buildHistogram1Channel(y2);
+        cv::Mat oneDimHist2 = convertMat1Channel(hist2);
 
-//    // build histogram (color)
-//    cv::Mat hist1 = histBuilder.buildHistogram(image1);
-//    cv::Mat oneDimHist1 = histBuilder.convertMat(hist1);
-//    cv::Mat hist2 = histBuilder.buildHistogram(image1);
-//    cv::Mat oneDimHist2 = histBuilder.convertMat(hist2);
+        cv::Mat diff = oneDimHist1 - oneDimHist2;
+        return diff;
 
-    cv::Mat diff = oneDimHist1 - oneDimHist2;
+    } else {
+        // build histogram (color)
+        cv::Mat hist1 = buildHistogram(image1);
+        cv::Mat oneDimHist1 = convertMat(hist1);
+        cv::Mat hist2 = buildHistogram(image2);
+        cv::Mat oneDimHist2 = convertMat(hist2);
 
-    return diff;
+        cv::Mat diff = oneDimHist1 - oneDimHist2;
+        return diff;
+    }
 }
-
 
 cv::Mat Histogram::buildHistogram(const cv::Mat& image) {
     int nrImages = 1;
@@ -85,8 +91,7 @@ cv::Mat Histogram::buildHistogram1Channel(const cv::Mat& image) {
 
 cv::Mat Histogram::convertMat(const cv::Mat& hist) {
     // resize mat from a 3d Mat to a nx1 Mat. Only changes headers
-    cv::Mat oneDimMat(1, m_histSize * m_histSize * m_histSize, CV_32FC1,
-        hist.data);  // void cast, else false data type will be assumed
+    cv::Mat oneDimMat(1, m_histSize * m_histSize * m_histSize, CV_32FC1, hist.data);
     assert(oneDimMat.isContinuous());
 
     return oneDimMat;
@@ -108,7 +113,6 @@ std::vector<float> Histogram::getAbsChanges(const cv::Mat& diffs) {
             float val = diffs.at<float>(i, j);
             sum += std::abs(val);
         }
-
         absValues.push_back(sum);
     }
 
@@ -120,40 +124,37 @@ void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& gol
 
     int MARGIN = 10;
     int BINSIZE = 1;
-    int imageWidth = BINSIZE * absChanges.size() + 2 * MARGIN;
     int LEGEND_HEIGHT = 50;
+
     int imageHeight = 400;
+    int imageWidth = BINSIZE * absChanges.size() + 2 * MARGIN;
 
+    // create image
     cv::Mat histImage(imageHeight + LEGEND_HEIGHT, imageWidth, CV_8UC3, cv::Scalar(0, 0, 0));
-
+    // normalize absChanges
     cv::normalize(absChanges, absChanges, 0, imageHeight, cv::NORM_MINMAX, -1, cv::Mat());
 
     for (unsigned int i = 0; i < absChanges.size(); i++) {
         int absChange = cvRound(absChanges.at(i));
+
+        // high change?
         float topPercent = static_cast<float>(absChange) / imageHeight;
         bool isTop = topPercent > 0.75;
+
+        // draw line
         cv::Point start(MARGIN + BINSIZE * i, imageHeight - absChange);
         cv::Point end(MARGIN + BINSIZE * i, imageHeight);
-
-        cv::Scalar lineColor = golds.at<float>(i) ? cv::Scalar(0, 165, 255) : cv::Scalar(255, 255, 255);
-
+        cv::Scalar lineColor = golds.at<bool>(i) ? cv::Scalar(0, 165, 255) : cv::Scalar(255, 255, 255);
         cv::line(histImage, start, end, lineColor, BINSIZE, 8);
 
+        // add text
         if (i % 100 == 0) {
             cv::putText(histImage, frameNumbers[i], cv::Point(MARGIN + BINSIZE * i, imageHeight + LEGEND_HEIGHT / 2), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(255, 255, 255));
         }
         if (isTop) {
             cv::putText(histImage, frameNumbers[i], cv::Point(MARGIN + BINSIZE * i, 10), CV_FONT_HERSHEY_PLAIN, 0.8, cv::Scalar(255, 255, 255));
         }
-
     }
 
     cv::imwrite("../resources/abs-changes.png", histImage);
-
-#ifdef _WIN32
-    system("pause");
-#else
-    cv::waitKey(0);
-#endif
-
 }
