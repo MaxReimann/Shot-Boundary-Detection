@@ -151,6 +151,8 @@ cv::Mat Histogram::convertMat1Channel(const cv::Mat& hist) {
     return oneDimMat;
 }
 
-std::vector<float> getAbsChanges(const cv::Mat& diffs) {
+std::vector<float> Histogram::getAbsChanges(const cv::Mat& diffs) {
+    std::vector<float> absValues;
 
+    return absValues;
 }
