@@ -3,8 +3,9 @@
 #include "gold_standard_statistic.hpp"
 #include "file_reader.hpp"
 #include <numeric>
-#include "boost/filesystem.hpp"
-#include "boost/filesystem/operations.hpp"
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
+#undef BOOST_NO_CXX11_SCOPED_ENUMS
 
 using namespace sbd;
 
@@ -107,14 +108,22 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 			std::cout << "created dir " << outPath.string() << std::endl;
 		}
 
-		if (hardCutsOnly)
+		try
 		{
-			auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
-			auto in = imDir / strFrame(element.startFrame);
-			auto out = outPath / strFrame(element.startFrame);
-			copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
-			copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+			if (hardCutsOnly)
+			{
+				auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
+				auto in = imDir / strFrame(element.startFrame);
+				auto out = outPath / strFrame(element.startFrame);
+				copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
+				copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
 
+			}
+		}
+		catch (std::exception &e)
+		{
+			std::cout << outPath << std::endl;
+			std::cout << e.what() << std::endl;
 		}
 
 	}
