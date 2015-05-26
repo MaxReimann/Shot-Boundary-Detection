@@ -16,6 +16,6 @@ namespace sbd {
         cv::Mat convertMat(const cv::Mat& hist);
         cv::Mat convertMat1Channel(const cv::Mat& hist);
         std::vector<float> getAbsChanges(const cv::Mat& diffs);
-        static void drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds);
+        void drawAbsChanges(std::vector<float> absChanges, const cv::Mat& golds);
     };
 }
