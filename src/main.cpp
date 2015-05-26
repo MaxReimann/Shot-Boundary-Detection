@@ -137,7 +137,6 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
 Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::unordered_set<sbd::GoldStandardElement> &goldStandard) {
     printf("Building histogram differences.\n");
 
-    // create histograms with 32 bins
     Histogram histBuilder(24);
     std::cout << "Reading " << imagePaths.size() << " images .." << std::endl;
 
@@ -149,49 +148,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     std::cout << "0% " << std::flush;
 
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
-        cv::Mat image1 = cv::imread(imagePaths[i], CV_LOAD_IMAGE_COLOR);
-        cv::Mat image2 = cv::imread(imagePaths[i + 1], CV_LOAD_IMAGE_COLOR);
-        assert(image1.total() > 0);
-        assert(image2.total() > 0);
-
-		// extract the luma component
-		cv::Mat YUVimage1;
-		cv::Mat YUVimage2;
-		cv::cvtColor(image1, YUVimage1, CV_BGR2YCrCb);
-		cv::cvtColor(image2, YUVimage2, CV_BGR2YCrCb);
-
-		std::vector<cv::Mat> channels1;
-		std::vector<cv::Mat> channels2;
-		cv::split(YUVimage1, channels1);
-		cv::split(YUVimage2, channels2);
-
-		cv::Mat y1 = channels1[0];
-		cv::Mat y2 = channels2[0];
-
-		/*cv::imshow("Y test", y1);
-		cvWaitKey(0);
-
-		cv::imshow("Y test", y2);
-		cvWaitKey(0);*/
-
-        float gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
-
-        cv::Mat hist1 = histBuilder.buildHistogram1Channel(y1);
-        cv::Mat oneDimHist1 = histBuilder.convertMat1Channel(hist1);
-
-        cv::Mat hist2 = histBuilder.buildHistogram1Channel(y2);
-        cv::Mat oneDimHist2 = histBuilder.convertMat1Channel(hist2);
-
-        /*cv::Mat hist1 = histBuilder.buildHistogram(image1);
-        cv::Mat oneDimHist1 = histBuilder.convertMat(hist1);
-
-        cv::Mat hist2 = histBuilder.buildHistogram(image1);
-        cv::Mat oneDimHist2 = histBuilder.convertMat(hist2);*/
-
-        cv::Mat diff = oneDimHist1 - oneDimHist2;
-
-        //Histogram::displayHistogram(hist1);
-        //std::cout << "diff = " << diff << std::endl;
+        cv::Mat diff = histBuilder.getDiff(imagePaths[i], imagePaths[i + 1]);
+        bool gold = findGold(imagePaths[i], imagePaths[i + 1], goldStandard);
 
         frameNumbers.push_back(boost::filesystem::path(imagePaths[i]).stem().string());
         diffs.push_back(diff);
@@ -201,8 +159,10 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
             std::cout << (diffs.rows / tenPercent * 10) << "% " << std::flush;
     }
     std::cout << std::endl;
+
     Features features = { golds, diffs };
 
+    // Draw absolute changes of diffs
     std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
     histBuilder.drawAbsChanges(absChanges, golds, frameNumbers);
 
