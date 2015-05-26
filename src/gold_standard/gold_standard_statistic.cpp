@@ -4,6 +4,7 @@
 #include "file_reader.hpp"
 #include <numeric>
 #include "boost/filesystem.hpp"
+#include "boost/filesystem/operations.hpp"
 
 using namespace sbd;
 
