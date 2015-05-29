@@ -32,6 +32,10 @@ int main(int argc, char** argv) {
 
 //    TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
 //    transitionGenerator.createRandomTransitions(10);
+
+    GoldStandardStatistic::extractCuts(dataFolder, "../resources/extracted", true);
+    system("pause");
+    return 0;
     
     cv::FileStorage fs;
     Features features;

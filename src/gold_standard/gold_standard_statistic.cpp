@@ -3,9 +3,12 @@
 #include "gold_standard_statistic.hpp"
 #include "file_reader.hpp"
 #include <numeric>
+#include <random>
+#include "../util.hpp"
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
+
 
 using namespace sbd;
 
@@ -82,30 +85,30 @@ double GoldStandardStatistic::getMean(std::vector<double> v) {
 }
 
 
-
-void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outputFolder, bool hardCutsOnly)
+/*posOverNegRate = equal amount of positives and negatives copied, 1.0 for equal, 0.0 for only positive*/
+void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outputFolder, 
+    bool hardCutsOnly, float posOverNegRate)
 {
-	typedef boost::filesystem::path fp;
+    typedef boost::filesystem::path fp;
 	std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
 
 	// read all truth files
 	std::cout << "Read truth files..." << std::endl;
 	FileReader fileReader;
 	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
-    std::unordered_set<std::string> skipDirectories;
 
-	for (auto &element : goldStandard)
-	{
-		
-		auto imPath = fp(boost::replace_first_copy(element.filePath, "truth", "frames"));
-		std::string name = fileReader.extractName(imPath.string());
-		auto imDir = imPath.parent_path().parent_path() / name; //parentpath skips sbref folder
-        
+    std::unordered_set<std::string> skipDirectories;
+    GoldElementDict directories;
+    
+    for (auto &element : goldStandard)
+    {
+        auto imPath = fp(boost::replace_first_copy(element.filePath, "truth", "frames"));
+        std::string name = fileReader.extractName(imPath.string());
+        auto imDir = imPath.parent_path().parent_path() / name; //parentpath skips sbref folder
+
         if (skipDirectories.find(imDir.string()) != skipDirectories.end())
             continue;
 
-		fp outPath(outputFolder);
-		outPath = outPath / name;
 
         if (!boost::filesystem::exists(imDir))
         {
@@ -118,31 +121,120 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
                 continue;
             }
         }
-		
-        if (!boost::filesystem::exists(outPath))
-		{
-			boost::filesystem::create_directory(outPath);
-			std::cout << "created dir " << outPath.string() << std::endl;
-		}
 
-		try
-		{
-			if (hardCutsOnly)
-			{
-				auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
-				auto in = imDir / strFrame(element.startFrame);
-				auto out = outPath / strFrame(element.startFrame);
-				copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
-				copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+        if (directories.find(imDir.string()) != directories.end())
+            directories.at(imDir.string()).push_back(element);
+        else
+            directories[imDir.string()] = { element };
 
-			}
-		}
-		catch (std::exception &e)
-		{
-			std::cout << e.what() << std::endl;
-		}
+    }
 
-	}
+    fillNegatives(directories, posOverNegRate);
+    copyFiles(outputFolder, directories, hardCutsOnly);
+}
 
+
+void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float posOverNegRate)
+{
+    typedef boost::filesystem::path fp;
+    std::random_device rd;
+    std::mt19937 mt(rd());
+
+    std::cout << "Pick negative training examples..." << std::endl;
+
+    for (auto const &it : directories)
+    {
+        auto imDir = fp(it.first);
+        auto goldElements = it.second;
+        std::sort(goldElements.begin(), goldElements.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
+            return a.startFrame <= b.startFrame;
+        });
+
+        //last frame known to exist without counting frames
+        int maxFrame = goldElements.back().startFrame;
+
+        int numNegatives = static_cast<int>(round(goldElements.size() * posOverNegRate));
+        std::vector<sbd::GoldStandardElement> negatives;
+
+
+        //possible frames to be chosen
+        std::vector<int> choices(maxFrame);
+        std::iota(std::begin(choices), std::end(choices), 0); // Fill with 0, 1, ...,
+        random_selector<> selector{};
+
+        int pickedNegatives=0;
+        while (pickedNegatives < numNegatives)
+        {
+
+            auto choiceIt = selector(choices.begin(), choices.end());
+
+            int chosenIndex = *choiceIt;
+
+            auto equalIndex = [&chosenIndex](const sbd::GoldStandardElement &element) {
+                return element.startFrame == chosenIndex || element.endFrame == chosenIndex + 1; };
+
+            if (find_if(goldElements.begin(), goldElements.end(), equalIndex) == goldElements.end())
+            {
+                //assuming filenames are always ints and files always jpg
+                std::string name = std::to_string(chosenIndex) + ".jpg";
+                fp imPath = imDir / name;
+                negatives.push_back(GoldStandardElement(name, "CUT", imPath.string(), chosenIndex, chosenIndex + 1));
+                pickedNegatives++;
+            }
+
+            //remove chosenIndex and chosenIndex+1
+            choices.erase(choiceIt, choiceIt + 2); 
+        }
+
+        goldElements.insert(goldElements.end(), negatives.begin(), negatives.end()); //insert into original vector
+    }
+
+}
+
+
+void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict &inputFiles, bool hardCutsOnly)
+{
+    typedef boost::filesystem::path fp;
+    FileReader fileReader;
+
+    for (auto const &it : inputFiles)
+    {
+        auto imDir = fp(it.first);
+        auto goldElements = it.second;
+
+        for (auto &element : goldElements)
+        {
+            std::string name = fileReader.extractName(element.filePath);
+
+            fp outPath(outputFolder);
+            outPath = outPath / name;
+
+            if (!boost::filesystem::exists(outPath))
+            {
+                boost::filesystem::create_directory(outPath);
+                std::cout << "created dir " << outPath.string() << std::endl;
+            }
+
+            try
+            {
+                if (hardCutsOnly)
+                {
+                    auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
+                    auto in = imDir / strFrame(element.startFrame);
+                    auto out = outPath / strFrame(element.startFrame);
+                    copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
+                    copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+
+                }
+                else
+                    throw std::exception("soft cut extraction not implemented");
+            }
+            catch (std::exception &e)
+            {
+                std::cout << e.what() << std::endl;
+            }
+        }
+
+    }
 }
 
