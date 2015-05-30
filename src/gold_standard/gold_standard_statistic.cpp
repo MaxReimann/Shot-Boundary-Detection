@@ -229,9 +229,9 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
 
                 }
                 else
-                    throw std::exception("soft cut extraction not implemented");
+                    throw std::logic_error("soft cut extraction not implemented");
             }
-            catch (std::exception &e)
+            catch (std::logic_error &e)
             {
                 std::cout << e.what() << std::endl;
             }
