@@ -142,18 +142,18 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
 
     std::cout << "Pick negative training examples..." << std::endl;
 
-    for (auto const &it : directories)
+    for (auto &it : directories)
     {
         auto imDir = fp(it.first);
-        auto goldElements = it.second;
-        std::sort(goldElements.begin(), goldElements.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
+        auto &elements = it.second;
+        std::sort(elements.begin(), elements.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
             return a.startFrame <= b.startFrame;
         });
 
         //last frame known to exist without counting frames
-        int maxFrame = goldElements.back().startFrame;
+        int maxFrame = elements.back().startFrame;
 
-        int numNegatives = static_cast<int>(round(goldElements.size() * posOverNegRate));
+        int numNegatives = static_cast<int>(round(elements.size() * posOverNegRate));
         std::vector<sbd::GoldStandardElement> negatives;
 
 
@@ -173,12 +173,12 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
             auto equalIndex = [&chosenIndex](const sbd::GoldStandardElement &element) {
                 return element.startFrame == chosenIndex || element.endFrame == chosenIndex + 1; };
 
-            if (find_if(goldElements.begin(), goldElements.end(), equalIndex) == goldElements.end())
+            if (find_if(elements.begin(), elements.end(), equalIndex) == elements.end())
             {
                 //assuming filenames are always ints and files always jpg
                 std::string name = std::to_string(chosenIndex) + ".jpg";
                 fp imPath = imDir / name;
-                negatives.push_back(GoldStandardElement(name, "CUT", imPath.string(), chosenIndex, chosenIndex + 1));
+                negatives.push_back(GoldStandardElement(imDir.leaf().string(), "CUT", imPath.string(), chosenIndex, chosenIndex + 1));
                 pickedNegatives++;
             }
 
@@ -186,7 +186,7 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
             choices.erase(choiceIt, choiceIt + 2); 
         }
 
-        goldElements.insert(goldElements.end(), negatives.begin(), negatives.end()); //insert into original vector
+        elements.insert(elements.end(), negatives.begin(), negatives.end()); //insert into original vector
     }
 
 }
@@ -201,20 +201,22 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
     {
         auto imDir = fp(it.first);
         auto goldElements = it.second;
+        int copycount = 0;
+        
+        std::string name = fileReader.extractName(goldElements.front().filePath);
+
+        fp outPath(outputFolder);
+        outPath = outPath / name;
+
+        if (!boost::filesystem::exists(outPath))
+        {
+            boost::filesystem::create_directory(outPath);
+            std::cout << "created dir " << outPath.string() << std::endl;
+        }
+
 
         for (auto &element : goldElements)
         {
-            std::string name = fileReader.extractName(element.filePath);
-
-            fp outPath(outputFolder);
-            outPath = outPath / name;
-
-            if (!boost::filesystem::exists(outPath))
-            {
-                boost::filesystem::create_directory(outPath);
-                std::cout << "created dir " << outPath.string() << std::endl;
-            }
-
             try
             {
                 if (hardCutsOnly)
@@ -224,6 +226,7 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
                     auto out = outPath / strFrame(element.startFrame);
                     copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
                     copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+                    copycount++;
 
                 }
                 else
@@ -234,6 +237,8 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
                 std::cout << e.what() << std::endl;
             }
         }
+
+        std::cout << "copied " << std::to_string(copycount) << " images to " << outPath.string() << std::endl;
 
     }
 }
