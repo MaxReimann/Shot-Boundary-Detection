@@ -13,7 +13,6 @@ namespace sbd {
     private:
         typedef std::unordered_map<std::string, std::vector<sbd::GoldStandardElement>> GoldElementDict;
         
-
         static double getMean(std::vector<double> v);
         static void writeResult(std::ofstream& outfile, std::string type, int count, std::vector<double> length);
         static void fillNegatives(GoldElementDict &directories, float posOverNegRate = 1.0);

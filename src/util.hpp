@@ -9,16 +9,15 @@
 namespace sbd {
 	  void splitTrainTestSets(Features &input, float trainTestRatio, Features &trainSet, Features &testSet);
 	  bool findGold(std::string path1, std::string path2, std::unordered_set<sbd::GoldStandardElement> &golds);
-      
+      void writeVisualizationData(std::vector<std::string> &imagePaths, std::vector<float> diffs, cv::Mat& gold);
+
+
 #pragma warning(push)
 #pragma warning(disable:4244) //annoying template warning
-
-
       //Reference implementation for doing random number selection from a container.
       template <typename RandomGenerator = std::default_random_engine>
       struct random_selector
       {
-          //On most platforms, you probably want to use std::random_device("/dev/urandom")()
           random_selector(RandomGenerator g = RandomGenerator(std::random_device()()))
               : gen(g) {}
 
@@ -49,5 +48,4 @@ namespace sbd {
 
 
 }
-
 

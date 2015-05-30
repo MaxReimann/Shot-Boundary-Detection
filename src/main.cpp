@@ -175,6 +175,8 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
     histBuilder.drawAbsChanges(absChanges, golds, frameNumbers);
 
+    writeVisualizationData(imagePaths, absChanges, golds);
+
 
     return features;
 }

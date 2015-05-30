@@ -214,7 +214,6 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
             std::cout << "created dir " << outPath.string() << std::endl;
         }
 
-
         for (auto &element : goldElements)
         {
             try
@@ -239,7 +238,6 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
         }
 
         std::cout << "copied " << std::to_string(copycount) << " images to " << outPath.string() << std::endl;
-
     }
 }
 
