@@ -11,12 +11,44 @@
 #include "../gold_standard/gold_standard_element.hpp"
 #include <random>
 #include <fstream>
+#include <map>
+#include <functional>
+#include <iterator>
 
 using namespace sbd;
+
+// t : current time          i
+// b : start value           0
+// c : change in value       1
+// d : duration              transitionLength
+std::map<std::string, std::function<float(float, float, float, float)>> tweenerMap = {
+    { "linearTween", [](float t, float b, float c, float d) {
+        return c*t / d + b;
+    } },
+
+    { "linearTween", [](float t, float b, float c, float d) {
+        return c*t/d + b;
+    } },
+
+    { "easeInQuad", [](float t, float b, float c, float d) {
+        t /= d;
+        return c*t*t + b;
+    } },
+
+    { "easeOutQuad", [](float t, float b, float c, float d) {
+        t /= d;
+        return -c * t*(t-2) + b;
+    } }
+};
+
 
 TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardElement> &gold,
     std::string dataFolder,
     std::vector<std::string> imagePaths) {
+
+    for (auto el : tweenerMap) {
+        m_tweenerNames.push_back(el.first);
+    }
 
     std::vector<sbd::GoldStandardElement> orderedGold(gold.begin(), gold.end());
     std::sort(orderedGold.begin(), orderedGold.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
@@ -75,12 +107,17 @@ int sbd::TransitionGenerator::createRandomTransition()
     std::string frameFolder = boost::replace_first_copy(m_dataFolder, "[type]", "frames");
     std::string truthFolder = boost::replace_first_copy(m_dataFolder, "[type]", "truth");
 
+    std::uniform_int_distribution<int> tweenerDist(0, m_tweenerNames.size() - 1);
+    std::string tweenerName = m_tweenerNames[tweenerDist(mt)];
+    std::function<float(float, float, float, float)> tweener = tweenerMap[tweenerName];
+
     std::string datasetName = getDatasetName();
-    std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
+    std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + tweenerName + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
     std::string outputFramesFolder = "../output/frames/" + newDatasetName;
     std::string outputTruthFolder = "../output/truth/" + newDatasetName;
 
     boost::filesystem::create_directories(outputFramesFolder);
+
     
     for (size_t i = 0; i <= transitionLength; i++) {
 
@@ -96,24 +133,24 @@ int sbd::TransitionGenerator::createRandomTransition()
         }
 
         cv::Mat result;
-        
+
         float alpha, beta;
         if (currentType == DISSOLVE) {
-            alpha = static_cast<float>(i) / transitionLength;
+            alpha = tweener(i, 0, 1, transitionLength);
             beta = 1 - alpha;
         }
         else if (currentType == FADE) {
             if (i <= transitionLength / 2) {
-                alpha = 1 - static_cast<float>(i) / (transitionLength / 2);
+                alpha = 1 - tweener(i, 0, 1, transitionLength / 2);
                 beta = 0;
             }
             else {
                 alpha = 0;
-                beta = (static_cast<float>(i) - (transitionLength / 2)) / (transitionLength / 2);
+                beta = tweener(i - transitionLength / 2, 0, 1, transitionLength / 2);
             }
         }
         cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
-        
+
 
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
         bool b = cv::imwrite(outputFramesFolder + "/" + std::to_string(i) + ".jpg", result);

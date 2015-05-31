@@ -9,6 +9,7 @@ namespace sbd {
         std::vector<sbd::GoldStandardElement> m_gold;
         std::vector<std::string> m_imagePaths;
         std::string m_dataFolder;
+        std::vector<std::string> m_tweenerNames;
 
         std::string getDatasetName();
     public:
