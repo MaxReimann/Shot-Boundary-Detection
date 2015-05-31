@@ -1,7 +1,10 @@
 #include "util.hpp"
 #include <numeric>
+#include <iostream>
+#include <fstream>
 #include <boost/filesystem.hpp>
 #include <src/gold_standard/gold_standard_element.hpp>
+#include <numeric>
 
 using namespace sbd;
 
@@ -49,17 +52,53 @@ bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd:
     std::string frameNr1 = boost::filesystem::path(path1).stem().string();
     std::string frameNr2 = boost::filesystem::path(path2).stem().string();
 
+    /*if (std::stoi(frameNr1) + 1 != std::stoi(frameNr2)) {
+        return true;
+    }*/
+
     GoldStandardElement gold(videoName1, videoName2, std::stoi(frameNr1), std::stoi(frameNr2));
 
-//    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
-//    for (int i = 0; i < gold.size(); i++) {
-//        if (videoName1 == gold[i].name &&
-//                videoName2 == gold[i].name &&
-//                frameNr1 == std::to_string(gold[i].startFrame) &&
-//                frameNr2 == std::to_string(gold[i].endFrame))
-//            return true;
-//    }
-//    return false;
+    //    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
+    //    for (int i = 0; i < gold.size(); i++) {
+    //        if (videoName1 == gold[i].name &&
+    //                videoName2 == gold[i].name &&
+    //                frameNr1 == std::to_string(gold[i].startFrame) &&
+    //                frameNr2 == std::to_string(gold[i].endFrame))
+    //            return true;
+    //    }
+    //    return false;
 
     return golds.find(gold) != golds.end();
+}
+
+
+void sbd::writeVisualizationData(std::vector<std::string> &imagePaths, std::vector<float> diffs, cv::Mat& gold) {
+    std::string filepath = "../resources/d3/data/visData.tsv";
+
+    std::ofstream fout(filepath);
+
+    if (!fout) {
+        printf("Could not open visData file\n");
+        return;
+    }
+
+    fout << "idx\tframe1\tframe2\tabsDiff\tgold" << std::endl;
+    
+    for (int i = 0; i < gold.rows; ++i) {
+        float diffVal = diffs[i];
+        float goldVal = gold.at<float>(i, 0);
+        // get the name of the folder, that contains the current images
+        std::string videoFolder = boost::filesystem::path(imagePaths[i]).parent_path().filename().string();
+        std::string frame1 = videoFolder + "/" + boost::filesystem::path(imagePaths[i]).filename().string();
+        std::string frame2 = videoFolder + "/" + boost::filesystem::path(imagePaths[i + 1]).filename().string();
+
+        fout << (i+1) << "\t"
+            << frame1 << "\t"
+            << frame2 << "\t"
+            << diffVal << "\t"
+            << goldVal 
+            << std::endl;
+    }
+
+    fout.close();
 }

@@ -69,7 +69,7 @@ void FileReader::read(std::string fileName, std::unordered_set<GoldStandardEleme
             std::string startFrame = startFrameMatch[1].str();
             std::string endFrame   = endFrameMatch[1].str();
 
-            GoldStandardElement element(name, type, std::stoi(startFrame), std::stoi(endFrame));
+            GoldStandardElement element(name, type, fileName, std::stoi(startFrame), std::stoi(endFrame));
             goldStandard.insert(element);
         }
     }
