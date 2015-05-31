@@ -30,8 +30,15 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
 
 int sbd::TransitionGenerator::createRandomTransition()
 {
+    enum TransitionType { DISSOLVE, FADE, TYPE_COUNT };
+    static const char* transitionNames[TYPE_COUNT] = { "DIS", "FAD" };
+
     std::random_device rd;
     std::mt19937 mt(rd());
+
+    std::uniform_int_distribution<int> transitionTypeDist(0, TYPE_COUNT - 1);
+    TransitionType currentType = static_cast<TransitionType>(transitionTypeDist(mt));
+
     std::uniform_int_distribution<int> goldSizeDist(0, m_gold.size() - 2);
 
     int cutStart1 = goldSizeDist(mt);
@@ -67,16 +74,14 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     std::string frameFolder = boost::replace_first_copy(m_dataFolder, "[type]", "frames");
     std::string truthFolder = boost::replace_first_copy(m_dataFolder, "[type]", "truth");
-    
+
     std::string datasetName = getDatasetName();
-    std::cout << "datasetName: " << datasetName << std::endl;
-    std::string newDatasetName = datasetName + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
+    std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
     std::string outputFramesFolder = "../output/frames/" + newDatasetName;
     std::string outputTruthFolder = "../output/truth/" + newDatasetName;
-    
-    boost::filesystem::create_directories(outputFramesFolder);
-    boost::filesystem::create_directories(outputTruthFolder);
 
+    boost::filesystem::create_directories(outputFramesFolder);
+    
     for (size_t i = 0; i <= transitionLength; i++) {
 
         std::string imagePath1 = frameFolder + "/" + std::to_string(startFrame1 + i) + ".jpg";
@@ -91,21 +96,36 @@ int sbd::TransitionGenerator::createRandomTransition()
         }
 
         cv::Mat result;
-        float alpha = static_cast<float>(i) / transitionLength;
-        float beta = 1 - alpha;
+        
+        float alpha, beta;
+        if (currentType == DISSOLVE) {
+            alpha = static_cast<float>(i) / transitionLength;
+            beta = 1 - alpha;
+        }
+        else if (currentType == FADE) {
+            if (i <= transitionLength / 2) {
+                alpha = 1 - static_cast<float>(i) / (transitionLength / 2);
+                beta = 0;
+            }
+            else {
+                alpha = 0;
+                beta = (static_cast<float>(i) - (transitionLength / 2)) / (transitionLength / 2);
+            }
+        }
         cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
+        
 
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
         bool b = cv::imwrite(outputFramesFolder + "/" + std::to_string(i) + ".jpg", result);
     }
-    
-   
+
+    boost::filesystem::create_directories(outputTruthFolder);
     std::ofstream outfile;
 
     outfile.open(outputTruthFolder + "/ref_" + newDatasetName + ".xml", std::ios_base::app);
     outfile << "<!DOCTYPE refSeg SYSTEM \"shotBoundaryReferenceSegmentation.dtd\">" << std::endl;
     outfile << "<refSeg src = \"" + datasetName + ".mpg\" creationMethod = \"MANUAL\" totalFNum = \"" + std::to_string(transitionLength) + "\">" << std::endl;
-    outfile << "<trans type = \"DISSOLVE\" preFNum = \"0\" postFNum = \"" + std::to_string(transitionLength) + "\" / >" << std::endl;
+    outfile << "<trans type = \"" << transitionNames[currentType] << "\" preFNum = \"0\" postFNum = \"" + std::to_string(transitionLength) + "\" / >" << std::endl;
     outfile << "< / refSeg>" << std::endl;
 
     return 0;
