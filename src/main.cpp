@@ -104,6 +104,9 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
         if (extension.compare(rdi->path().extension().string()) == 0) {
             imagePaths.push_back(rdi->path());
         }
+        if (imagePaths.size() % 1000 == 0) {
+            std::cout << "imagePaths.size() == " + std::to_string(imagePaths.size()) << std::endl;
+        }
     }
 
     // sort according to int number of frame
