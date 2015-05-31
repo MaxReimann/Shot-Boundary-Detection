@@ -71,7 +71,7 @@ int sbd::TransitionGenerator::createRandomTransition()
     std::uniform_int_distribution<int> transitionTypeDist(0, TYPE_COUNT - 1);
     TransitionType currentType = static_cast<TransitionType>(transitionTypeDist(mt));
 
-    std::uniform_int_distribution<int> goldSizeDist(0, m_gold.size() - 2);
+    std::uniform_int_distribution<int> goldSizeDist(0, static_cast<int>(m_gold.size()) - 2);
 
     int cutStart1 = goldSizeDist(mt);
     int cutStart2 = goldSizeDist(mt);
@@ -107,7 +107,7 @@ int sbd::TransitionGenerator::createRandomTransition()
     std::string frameFolder = boost::replace_first_copy(m_dataFolder, "[type]", "frames");
     std::string truthFolder = boost::replace_first_copy(m_dataFolder, "[type]", "truth");
 
-    std::uniform_int_distribution<int> tweenerDist(0, m_tweenerNames.size() - 1);
+    std::uniform_int_distribution<int> tweenerDist(0, static_cast<int>(m_tweenerNames.size()) - 1);
     std::string tweenerName = m_tweenerNames[tweenerDist(mt)];
     std::function<float(float, float, float, float)> tweener = tweenerMap[tweenerName];
 
@@ -118,8 +118,8 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     boost::filesystem::create_directories(outputFramesFolder);
 
-    
-    for (size_t i = 0; i <= transitionLength; i++) {
+
+    for (int i = 0; i <= transitionLength; i++) {
 
         std::string imagePath1 = frameFolder + "/" + std::to_string(startFrame1 + i) + ".jpg";
         std::string imagePath2 = frameFolder + "/" + std::to_string(startFrame2 + i) + ".jpg";
@@ -135,18 +135,19 @@ int sbd::TransitionGenerator::createRandomTransition()
         cv::Mat result;
 
         float alpha, beta;
+        float halfTransitionLength = static_cast<float>(transitionLength / 2);
         if (currentType == DISSOLVE) {
-            alpha = tweener(i, 0, 1, transitionLength);
+            alpha = tweener(static_cast<float>(i), 0, 1, static_cast<float>(transitionLength));
             beta = 1 - alpha;
         }
         else if (currentType == FADE) {
-            if (i <= transitionLength / 2) {
-                alpha = 1 - tweener(i, 0, 1, transitionLength / 2);
+            if (i <= halfTransitionLength) {
+                alpha = 1 - tweener(static_cast<float>(i), 0, 1, halfTransitionLength);
                 beta = 0;
             }
             else {
                 alpha = 0;
-                beta = tweener(i - transitionLength / 2, 0, 1, transitionLength / 2);
+                beta = tweener(i - halfTransitionLength, 0, 1, halfTransitionLength);
             }
         }
         cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
