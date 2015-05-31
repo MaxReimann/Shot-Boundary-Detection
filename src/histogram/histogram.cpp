@@ -20,8 +20,12 @@ int Histogram::getHistSize() {
 cv::Mat Histogram::getDiff(std::string image1Path, std::string image2Path) {
     cv::Mat image1 = cv::imread(image1Path, CV_LOAD_IMAGE_COLOR);
     cv::Mat image2 = cv::imread(image2Path, CV_LOAD_IMAGE_COLOR);
-    assert(image1.total() > 0);
-    assert(image2.total() > 0);
+
+    if (image1.total() == 0 || image2.total() == 0)
+    {
+        auto imPath = image1.total() == 0 ? image1Path : image2Path;
+        throw std::logic_error("corrupt File: " + imPath);
+    }
 
     if (m_blackAndWhite) {
         // extract the luma component

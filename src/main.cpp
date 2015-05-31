@@ -15,7 +15,7 @@
 using namespace sbd;
 
 int main(int argc, char** argv) {
-    bool USE_CACHED_HISTOGRAMS = false;
+    bool USE_CACHED_HISTOGRAMS = true;
 
     if (argc != 2) {
         std::cout << "Usage: sbd data_folder" << std::endl;
@@ -42,10 +42,13 @@ int main(int argc, char** argv) {
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
-        std::cout << "Caching built histograms." << std::endl;
-        fs.open(histogramCachePath, cv::FileStorage::WRITE);
-        fs << "Histograms" << features.values;
-        fs << "Labels" << features.classes;
+        if (USE_CACHED_HISTOGRAMS)
+        {
+            std::cout << "Caching built histograms." << std::endl;
+            fs.open(histogramCachePath, cv::FileStorage::WRITE);
+            fs << "Histograms" << features.values;
+            fs << "Labels" << features.classes;
+        }
     }
     else
     {
@@ -149,12 +152,20 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
 
     unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
+    cv::Mat diff;
 
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         std::string imagePath1 = imagePaths[i];
         std::string imagePath2 = imagePaths[i + 1];
 
-        cv::Mat diff = histBuilder.getDiff(imagePath1, imagePath2);
+        try {
+            diff = histBuilder.getDiff(imagePath1, imagePath2);
+        }
+        catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
+            continue;
+        }
+
         float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
         std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
 
