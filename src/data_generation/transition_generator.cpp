@@ -58,6 +58,8 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
     m_gold = orderedGold;
     m_imagePaths = imagePaths;
     m_dataFolder = dataFolder;
+
+    m_lldbOut.open("../output/lldb.xml");
 }
 
 int sbd::TransitionGenerator::createRandomTransition()
@@ -65,11 +67,14 @@ int sbd::TransitionGenerator::createRandomTransition()
     enum TransitionType { DISSOLVE, FADE, TYPE_COUNT };
     static const char* transitionNames[TYPE_COUNT] = { "DIS", "FAD" };
 
+    cv::Size size(227, 227);
+
     std::random_device rd;
     std::mt19937 mt(rd());
 
     std::uniform_int_distribution<int> transitionTypeDist(0, TYPE_COUNT - 1);
-    TransitionType currentType = static_cast<TransitionType>(transitionTypeDist(mt));
+    //TransitionType currentType = static_cast<TransitionType>(transitionTypeDist(mt));
+    TransitionType currentType = DISSOLVE;
 
     std::uniform_int_distribution<int> goldSizeDist(0, static_cast<int>(m_gold.size()) - 2);
 
@@ -88,7 +93,8 @@ int sbd::TransitionGenerator::createRandomTransition()
     int sequence2End = m_gold[cutStart2 + 1].startFrame;
 
     std::uniform_int_distribution<int> transitionLengthDist(10, 25);
-    int transitionLength = transitionLengthDist(mt);
+    //int transitionLength = transitionLengthDist(mt);
+    int transitionLength = 10;
 
     if ((sequence1End - sequence1Start) < transitionLength ||
         (sequence2End - sequence2Start) < transitionLength) {
@@ -115,9 +121,10 @@ int sbd::TransitionGenerator::createRandomTransition()
     std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + tweenerName + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
     std::string outputFramesFolder = "../output/frames/" + newDatasetName;
     std::string outputTruthFolder = "../output/truth/" + newDatasetName;
+    std::string noTransitionFolder = "../output/frames/noTransition-" + datasetName + "-" + std::to_string(startFrame1);
 
     boost::filesystem::create_directories(outputFramesFolder);
-
+    boost::filesystem::create_directories(noTransitionFolder);
 
     for (int i = 0; i <= transitionLength; i++) {
 
@@ -151,20 +158,40 @@ int sbd::TransitionGenerator::createRandomTransition()
             }
         }
         cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
-
-
+        cv::resize(result, result, size);
+        
+        std::string fileName = outputFramesFolder + "/" + std::to_string(i) + ".jpg";
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
-        bool b = cv::imwrite(outputFramesFolder + "/" + std::to_string(i) + ".jpg", result);
+        cv::imwrite(fileName, result);
+        
+        m_lldbOut << fileName << " 1" << std::endl;
+    }
+
+    for (int i = 0; i <= transitionLength; i++) {
+
+        std::string imagePath1 = frameFolder + "/" + std::to_string(startFrame1 + i) + ".jpg";
+        
+        cv::Mat image1 = cv::imread(imagePath1, CV_LOAD_IMAGE_COLOR);
+        cv::resize(image1, image1, size);
+        
+        std::string fileName = noTransitionFolder + "/" + std::to_string(i) + ".jpg";
+        std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
+        cv::imwrite(fileName, image1);
+
+        m_lldbOut << fileName << " 0" << std::endl;
     }
 
     boost::filesystem::create_directories(outputTruthFolder);
-    std::ofstream outfile;
+    std::ofstream groundTruthOut;
 
-    outfile.open(outputTruthFolder + "/ref_" + newDatasetName + ".xml", std::ios_base::app);
-    outfile << "<!DOCTYPE refSeg SYSTEM \"shotBoundaryReferenceSegmentation.dtd\">" << std::endl;
-    outfile << "<refSeg src = \"" + datasetName + ".mpg\" creationMethod = \"MANUAL\" totalFNum = \"" + std::to_string(transitionLength) + "\">" << std::endl;
-    outfile << "<trans type = \"" << transitionNames[currentType] << "\" preFNum = \"0\" postFNum = \"" + std::to_string(transitionLength) + "\" / >" << std::endl;
-    outfile << "< / refSeg>" << std::endl;
+    // create ground truth xml
+    groundTruthOut.open(outputTruthFolder + "/ref_" + newDatasetName + ".xml", std::ios_base::app);
+    groundTruthOut << "<!DOCTYPE refSeg SYSTEM \"shotBoundaryReferenceSegmentation.dtd\">" << std::endl;
+    groundTruthOut << "<refSeg src = \"" + newDatasetName + ".mpg\" creationMethod = \"MANUAL\" totalFNum = \"" + std::to_string(transitionLength) + "\">" << std::endl;
+    groundTruthOut << "<trans type = \"" << transitionNames[currentType] << "\" preFNum = \"0\" postFNum = \"" + std::to_string(transitionLength) + "\" / >" << std::endl;
+    groundTruthOut << "< / refSeg>" << std::endl;
+
+    
 
     return 0;
 }

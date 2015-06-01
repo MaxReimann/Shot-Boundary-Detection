@@ -10,7 +10,7 @@ namespace sbd {
         std::vector<std::string> m_imagePaths;
         std::string m_dataFolder;
         std::vector<std::string> m_tweenerNames;
-
+        std::ofstream m_lldbOut;
         std::string getDatasetName();
     public:
         TransitionGenerator(std::unordered_set<sbd::GoldStandardElement> &gold, std::string dataFolder, std::vector<std::string> imagePaths);
