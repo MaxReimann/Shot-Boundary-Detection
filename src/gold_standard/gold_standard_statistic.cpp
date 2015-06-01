@@ -149,6 +149,7 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
         std::sort(elements.begin(), elements.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
             return a.startFrame <= b.startFrame;
         });
+	std::cout <<"ok"<<std::endl;
 
         //last frame known to exist without counting frames
         int maxFrame = elements.back().startFrame;
@@ -231,7 +232,7 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
                 else
                     throw std::logic_error("soft cut extraction not implemented");
             }
-            catch (std::logic_error &e)
+            catch (std::exception &e)
             {
                 std::cout << e.what() << std::endl;
             }
