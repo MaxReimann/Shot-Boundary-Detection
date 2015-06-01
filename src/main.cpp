@@ -15,7 +15,7 @@
 using namespace sbd;
 
 int main(int argc, char** argv) {
-    bool USE_CACHED_HISTOGRAMS = false;
+    bool USE_CACHED_HISTOGRAMS = true;
 
     if (argc != 2) {
         std::cout << "Usage: sbd data_folder" << std::endl;
@@ -156,10 +156,14 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         std::string imagePath1 = imagePaths[i];
         std::string imagePath2 = imagePaths[i + 1];
+        std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
+        std::string frameNumber2 = boost::filesystem::path(imagePath2).stem().string();
+
+        if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1 )
+            continue;
 
         cv::Mat diff = histBuilder.getDiff(imagePath1, imagePath2);
         float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
-        std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
 
         frameNumbers.push_back(frameNumber);
         diffs.push_back(diff);
