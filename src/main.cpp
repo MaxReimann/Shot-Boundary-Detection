@@ -12,52 +12,65 @@
 #include "util.hpp"
 #include "data_generation/transition_generator.hpp"
 
+void wrongUsage();
+
 using namespace sbd;
 
 int main(int argc, char** argv) {
-    bool USE_CACHED_HISTOGRAMS = false;
+    bool USE_CACHED_HISTOGRAMS = true;
 
-    if (argc != 2) {
-        std::cout << "Usage: sbd data_folder" << std::endl;
-        std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
-        std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
-        exit(1);
-    }
+     if (argc != 3) {
+         wrongUsage();
+     }
+     std::string dataFolder(argv[2]);
 
-    std::string dataFolder(argv[1]);
+     std::string trainStr = "train";
+     std::string generateStr = "generate";
+     if (trainStr.compare(argv[1]) == 0) {
+         //    GoldStandardStatistic::create(dataFolder);
 
-//    GoldStandardStatistic::create(dataFolder);
+         std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
 
-    std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
+         //GoldStandardStatistic::extractCuts(dataFolder, "../resources/extracted", true);
 
-//    TransitionGenerator transitionGenerator(gold, getFileNames(dataFolder));
-//    transitionGenerator.createRandomTransitions(10);
-    
-    cv::FileStorage fs;
-    Features features;
-    std::string histogramCachePath = "../resources/differenceHistograms.yaml";
-    if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
-    {
-        std::vector<std::string> imagePaths = getFileNames(dataFolder);
-        features = buildHistogramDifferences(imagePaths, gold);
-        std::cout << "Caching built histograms." << std::endl;
-        fs.open(histogramCachePath, cv::FileStorage::WRITE);
-        fs << "Histograms" << features.values;
-        fs << "Labels" << features.classes;
-    }
-    else
-    {
-        std::cout << "Using cached histogram differences." << std::endl;
-        fs.open(histogramCachePath, cv::FileStorage::READ);
-        fs["Histograms"] >> features.values;
-        fs["Labels"] >> features.classes;
-    }
-    fs.release();
+         cv::FileStorage fs;
+         Features features;
+         std::string histogramCachePath = "../resources/differenceHistograms.yaml";
+         if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
+         {
+             std::vector<std::string> imagePaths = getFileNames(dataFolder);
+             features = buildHistogramDifferences(imagePaths, gold);
+             std::cout << "Caching built histograms." << std::endl;
+             fs.open(histogramCachePath, cv::FileStorage::WRITE);
+             fs << "Histograms" << features.values;
+             fs << "Labels" << features.classes;
+         }
+         else
+         {
+             std::cout << "Using cached histogram differences." << std::endl;
+             fs.open(histogramCachePath, cv::FileStorage::READ);
+             fs["Histograms"] >> features.values;
+             fs["Labels"] >> features.classes;
+         }
+         fs.release();
 
-    Features trainSet, testSet;
-    splitTrainTestSets(features, 0.7, trainSet, testSet);
-    cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
-    evaluate(testSet, learner);
+         Features trainSet, testSet;
+         splitTrainTestSets(features, 0.7, trainSet, testSet);
+         cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
+         evaluate(testSet, learner);
+     }
+     else if (generateStr.compare(argv[1]) == 0) {
+         // std::string dataFolder("../resources/[type]/senses111-rest");
+         
+         std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
+         
+         TransitionGenerator transitionGenerator(gold, dataFolder, getFileNames(dataFolder));
+         transitionGenerator.createRandomTransitions(10);
+     }
+     else {
+         wrongUsage();
+     }
+
 
     // wait for key, so we can read the console output
 #ifdef _WIN32
@@ -102,6 +115,9 @@ std::vector<std::string> getFileNames(std::string dataFolder) {
     for (; rdi != end_rdi; rdi++) {
         if (extension.compare(rdi->path().extension().string()) == 0) {
             imagePaths.push_back(rdi->path());
+        }
+        if (imagePaths.size() % 1000 == 0) {
+            std::cout << "imagePaths.size() == " + std::to_string(imagePaths.size()) << std::endl;
         }
     }
 
@@ -151,10 +167,14 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         std::string imagePath1 = imagePaths[i];
         std::string imagePath2 = imagePaths[i + 1];
+        std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
+        std::string frameNumber2 = boost::filesystem::path(imagePath2).stem().string();
+
+        if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1 )
+            continue;
 
         cv::Mat diff = histBuilder.getDiff(imagePath1, imagePath2);
         float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
-        std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
 
         frameNumbers.push_back(frameNumber);
         diffs.push_back(diff);
@@ -241,4 +261,12 @@ void evaluate(Features &testSet, SVMLearner *learner) {
     std::cout << std::setw(11) << "Recall: "    << recall << std::endl;
     std::cout << std::setw(11) << "F1: "        << f1 << std::endl;
     std::cout << std::setw(11) << "Accuracy: "  << accuracy << std::endl;
+}
+
+void wrongUsage()
+{
+    std::cout << "Usage: sbd [train|generate] data_folder" << std::endl;
+    std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
+    std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
+    exit(1);
 }
