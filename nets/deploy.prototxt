@@ -1,12 +1,4 @@
-# This network is used for activity recognition on the UCF-101 dataset.
-# It is based on the network by Jeff Donahue in [1], and the lrcn.prototxt in his github branch.
-# We adapted it for the action recognition use case.
-#
-# [1] J. Donahue, L. A. Hendricks, S. Guadarrama, M. Rohrbach, S. Venugopalan,
-#     K. Saenko, T. Darrell. "Long-term Recurrent Convolutional Networks for
-#     Visual Recognition and Description." arXiv preprint arXiv:1411.4389 (2014).
-
-name: "activity_recognition_caffenet"
+name: "soft_cut_net"
 layer {
   name: "data"
   type: "MemoryData"
@@ -20,7 +12,7 @@ layer {
     mean_value: 123
   }
   memory_data_param {
-    batch_size: 64
+    batch_size: 70
     channels: 3
     width: 227
     height: 227
@@ -32,12 +24,12 @@ layer {
   top: "sequence"
   dummy_data_param {
     shape {
-      dim: 16
-      dim: 4
+      dim: 10
+      dim: 7
     }
     data_filler {
       type: "sequence"
-      value: 16
+      value: 10
     }
   }
 }
@@ -252,8 +244,8 @@ layer {
   bottom: "fc6"
   reshape_param {
     shape {
-      dim: 16
-      dim: 4
+      dim: 10
+      dim: 7
       dim: 4096
     }
   }
@@ -291,7 +283,7 @@ layer {
     decay_mult: 1
   }
   inner_product_param {
-    num_output: 101
+    num_output: 2
     weight_filler {
       type: "uniform"
       min: -0.08
@@ -332,8 +324,8 @@ layer {
   bottom: "prediction"
   reshape_param {
     shape {
-      dim: 64
-      dim: 101
+      dim: 70
+      dim: 2
     }
   }
 }
