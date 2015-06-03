@@ -11,7 +11,7 @@ SVMLearner::SVMLearner()
 {
     // Set up SVM's parameters
     m_params.svm_type = CvSVM::C_SVC;
-    m_params.kernel_type = CvSVM::LINEAR;
+    m_params.kernel_type = CvSVM::RBF;
     m_params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
 }
 

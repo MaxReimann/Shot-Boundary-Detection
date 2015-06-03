@@ -279,5 +279,10 @@ void wrongUsage()
     std::cout << "Usage: sbd [train|generate] data_folder" << std::endl;
     std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
     std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
+#ifdef _WIN32
+    system("pause");
+#else
+    cv::waitKey(0);
+#endif
     exit(1);
 }
