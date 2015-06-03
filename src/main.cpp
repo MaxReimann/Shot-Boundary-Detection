@@ -61,11 +61,11 @@ int main(int argc, char** argv) {
      }
      else if (generateStr.compare(argv[1]) == 0) {
          // std::string dataFolder("../resources/[type]/senses111-rest");
-         
+
          std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
-         
+
          TransitionGenerator transitionGenerator(gold, dataFolder, getFileNames(dataFolder));
-         transitionGenerator.createRandomTransitions(10);
+         transitionGenerator.createRandomTransitions(10000);
      }
      else {
          wrongUsage();

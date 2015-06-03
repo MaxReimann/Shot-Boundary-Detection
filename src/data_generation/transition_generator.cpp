@@ -59,7 +59,7 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
     m_imagePaths = imagePaths;
     m_dataFolder = dataFolder;
 
-    m_lldbOut.open("../output/lldb.xml");
+    m_filesTxtOut.open("../output/files.txt");
 }
 
 int sbd::TransitionGenerator::createRandomTransition()
@@ -164,7 +164,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
         cv::imwrite(fileName, result);
         
-        m_lldbOut << fileName << " 1" << std::endl;
+        m_filesTxtOut << fileName << " 1" << std::endl;
     }
 
     for (int i = 0; i <= transitionLength; i++) {
@@ -178,7 +178,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
         cv::imwrite(fileName, image1);
 
-        m_lldbOut << fileName << " 0" << std::endl;
+        m_filesTxtOut << fileName << " 0" << std::endl;
     }
 
     boost::filesystem::create_directories(outputTruthFolder);
