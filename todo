@@ -1,0 +1,22 @@
+- Hard Cut Detection: Visualisierungen
+  Verbesserungsideen:  - Hinzunahme der vorherigen Frames
+                       - Edges
+                       - Subraktion der beiden Frames -> einfarbiges Bild?
+                       - Trainingsverhältnis
+                       - 2007
+- Soft Cut Generierung
+- Soft Cut Detection:
+  Frage:   - Wie soll der Input aussehen? Einzelne Frames. Erkennen von Fade In/Out durch das Schwarzerwerden.
+           - Erkennen von Dissolves durch das Überlappen zweier Frames.
+           - Reine Pixel als input
+           - Preprocessing? Komprimierung der Frames?
+
+           - Input Size: 10 Frames
+           - Training: Fix Länge, klein
+                       Auf selbst generierten Daten
+           - Test: True -> rechts und links schauen
+                           Sozusagen schrittweise ueber das Video gehen, und jeweils 5 Frames links und rechts mit in das Sliding Window nehmen.
+                           Wenn mehrfach nacheinander ein dissolve vorausgesagt wird 
+
+                   Test auf 2007er Daten
+

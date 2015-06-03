@@ -145,15 +145,15 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
     for (auto &it : directories)
     {
         auto imDir = fp(it.first);
-        auto &elements = it.second;
-        std::sort(elements.begin(), elements.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
+        auto &positives = it.second;
+        std::sort(positives.begin(), positives.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
             return a.startFrame <= b.startFrame;
         });
 
         //last frame known to exist without counting frames
-        int maxFrame = elements.back().startFrame;
+        int maxFrame = positives.back().startFrame;
 
-        int numNegatives = static_cast<int>(round(elements.size() * posOverNegRate));
+        int numNegatives = static_cast<int>(round(positives.size() * posOverNegRate));
         std::vector<sbd::GoldStandardElement> negatives;
 
 
@@ -173,12 +173,12 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
             auto equalIndex = [&chosenIndex](const sbd::GoldStandardElement &element) {
                 return element.startFrame == chosenIndex || element.endFrame == chosenIndex + 1; };
 
-            if (find_if(elements.begin(), elements.end(), equalIndex) == elements.end())
+            if (find_if(positives.begin(), positives.end(), equalIndex) == positives.end())
             {
                 //assuming filenames are always ints and files always jpg
                 std::string name = std::to_string(chosenIndex) + ".jpg";
                 fp imPath = imDir / name;
-                negatives.push_back(GoldStandardElement(imDir.leaf().string(), "CUT", imPath.string(), chosenIndex, chosenIndex + 1));
+                negatives.push_back(GoldStandardElement(imDir.leaf().string(), "NEG", imPath.string(), chosenIndex, chosenIndex + 1));
                 pickedNegatives++;
             }
 
@@ -186,7 +186,7 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
             choices.erase(choiceIt, choiceIt + 2); 
         }
 
-        elements.insert(elements.end(), negatives.begin(), negatives.end()); //insert into original vector
+        positives.insert(positives.end(), negatives.begin(), negatives.end()); //insert into original vector
     }
 
 }
@@ -218,14 +218,18 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
         {
             try
             {
-                if (hardCutsOnly)
+                // extracts only hardcuts and proportional negative examples
+                if (hardCutsOnly) 
                 {
-                    auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
-                    auto in = imDir / strFrame(element.startFrame);
-                    auto out = outPath / strFrame(element.startFrame);
-                    copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
-                    copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
-                    copycount++;
+                    if (element.type == "CUT" || element.type == "NEG")
+                    {
+                        auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
+                        auto in = imDir / strFrame(element.startFrame);
+                        auto out = outPath / strFrame(element.startFrame);
+                        copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
+                        copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+                        copycount++;
+                    }
 
                 }
                 else

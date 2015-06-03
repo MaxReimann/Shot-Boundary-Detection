@@ -1,0 +1,32 @@
+net: "net.prototxt"
+# Test every nth iteration
+test_interval: 250
+# How many iterations per test
+test_iter: 400
+# Base learning rate
+base_lr: 0.01
+
+# Policy for changing the learning rate - multiply by gamma every stepsize iterations
+lr_policy: "step"
+gamma: 0.5
+stepsize: 20000
+momentum: 0.9
+# Regularization parameter for the weights
+weight_decay: 0.0
+
+# Display training loss every nth iteration
+display: 100
+# After how many iterations to stop
+max_iter: 110000
+
+# Snapshot every nth iteration in the specified directory
+snapshot: 5000
+snapshot_prefix: "./snapshots/"
+
+random_seed: 1701
+# Display the loss averaged over the last average_loss iterations
+average_loss: 100
+clip_gradients: 10
+
+# GPU for the win!
+solver_mode: GPU
