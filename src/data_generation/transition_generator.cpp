@@ -128,8 +128,8 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     for (int i = 0; i <= transitionLength; i++) {
 
-        std::string imagePath1 = frameFolder + "/" + std::to_string(startFrame1 + i) + ".jpg";
-        std::string imagePath2 = frameFolder + "/" + std::to_string(startFrame2 + i) + ".jpg";
+        std::string imagePath1 = m_imagePaths[startFrame1 + i];
+        std::string imagePath2 = m_imagePaths[startFrame2 + i];
 
         cv::Mat image1 = cv::imread(imagePath1, CV_LOAD_IMAGE_COLOR);
         cv::Mat image2 = cv::imread(imagePath2, CV_LOAD_IMAGE_COLOR);
