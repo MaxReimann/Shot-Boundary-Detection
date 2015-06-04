@@ -38,12 +38,15 @@ int main(int argc, char** argv) {
          std::string histogramCachePath = "../resources/differenceHistograms.yaml";
          if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
          {
-             std::vector<std::string> imagePaths = getFileNames(dataFolder);
-             features = buildHistogramDifferences(imagePaths, gold);
-             std::cout << "Caching built histograms." << std::endl;
-             fs.open(histogramCachePath, cv::FileStorage::WRITE);
-             fs << "Histograms" << features.values;
-             fs << "Labels" << features.classes;
+            std::vector<std::string> imagePaths = getFileNames(dataFolder);
+            features = buildHistogramDifferences(imagePaths, gold);
+            if (USE_CACHED_HISTOGRAMS)
+            {
+                std::cout << "Caching built histograms." << std::endl;
+                fs.open(histogramCachePath, cv::FileStorage::WRITE);
+                fs << "Histograms" << features.values;
+                fs << "Labels" << features.classes;
+            }
          }
          else
          {
@@ -163,6 +166,7 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
 
     unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
+    cv::Mat diff;
 
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         std::string imagePath1 = imagePaths[i];
@@ -173,7 +177,14 @@ Features buildHistogramDifferences(std::vector<std::string> &imagePaths, std::un
         if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1 )
             continue;
 
-        cv::Mat diff = histBuilder.getDiff(imagePath1, imagePath2);
+        try {
+            diff = histBuilder.getDiff(imagePath1, imagePath2);
+        }
+        catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
+            continue;
+        }
+
         float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
 
         frameNumbers.push_back(frameNumber);
@@ -268,5 +279,10 @@ void wrongUsage()
     std::cout << "Usage: sbd [train|generate] data_folder" << std::endl;
     std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
     std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
+#ifdef _WIN32
+    system("pause");
+#else
+    cv::waitKey(0);
+#endif
     exit(1);
 }
