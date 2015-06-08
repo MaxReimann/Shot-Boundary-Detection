@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../forwarddeclarations.hpp"
-#include "HardCutMain.hpp"
+#include "hardcut_detection.hpp"
 #include <random>
 #include <iterator>
 

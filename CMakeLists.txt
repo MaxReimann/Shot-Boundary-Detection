@@ -99,12 +99,12 @@ endif()
 find_package( OpenCV REQUIRED )
 
 add_definitions(-DBOOST_ALL_NO_LIB)
-find_package(Boost COMPONENTS system filesystem regex REQUIRED)
+find_package(Boost COMPONENTS system filesystem regex program_options REQUIRED)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} /MP")
 endif()
 
 #################################################
@@ -115,8 +115,8 @@ set(sources
 	src/main.cpp
 	src/main.hpp
 	src/forwarddeclarations.hpp
-	src/hard_cut/HardCutMain.cpp
-	src/hard_cut/HardCutMain.hpp
+	src/hard_cut/hardcut_detection.cpp
+	src/hard_cut/hardcut_detection.hpp
 	src/hard_cut/util.cpp
 	src/hard_cut/util.hpp
 	src/hard_cut/histogram/histogram.hpp
@@ -131,6 +131,10 @@ set(sources
     src/hard_cut/gold_standard/gold_standard_element.cpp
     src/hard_cut/data_generation/transition_generator.cpp
     src/hard_cut/data_generation/transition_generator.hpp
+    src/option_printing/custom_option_description.cpp
+    src/option_printing/custom_option_description.hpp
+    src/option_printing/option_printer.cpp
+    src/option_printing/option_printer.hpp
 
 )
 
@@ -144,7 +148,7 @@ source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
 # Set target name
 set(target ${META_PROJECT_NAME})
 
-add_executable(${target} ${sources} src/hard_cut/HardCutMain.cpp src/hard_cut/HardCutMain.hpp)
+add_executable(${target} ${sources})
 
 
 include_directories(
