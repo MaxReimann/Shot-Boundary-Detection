@@ -107,6 +107,8 @@ if (OPENMP_FOUND)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
+find_package( Caffe )
+
 #################################################
 # SOURCES
 #################################################
@@ -114,6 +116,8 @@ endif()
 set(sources
 	src/main.cpp
 	src/main.hpp
+	src/util.cpp
+	src/util.hpp
 	src/forwarddeclarations.hpp
 	src/hard_cut/HardCutMain.cpp
 	src/hard_cut/HardCutMain.hpp
@@ -123,14 +127,14 @@ set(sources
 	src/hard_cut/histogram/histogram.cpp
 	src/hard_cut/svm/svm.hpp
 	src/hard_cut/svm/svm.cpp
-    src/hard_cut/gold_standard/file_reader.hpp
-    src/hard_cut/gold_standard/file_reader.cpp
-    src/hard_cut/gold_standard/gold_standard_statistic.hpp
-    src/hard_cut/gold_standard/gold_standard_statistic.cpp
-    src/hard_cut/gold_standard/gold_standard_element.hpp
-    src/hard_cut/gold_standard/gold_standard_element.cpp
-    src/hard_cut/data_generation/transition_generator.cpp
-    src/hard_cut/data_generation/transition_generator.hpp
+    src/gold_standard/file_reader.hpp
+    src/gold_standard/file_reader.cpp
+    src/gold_standard/gold_standard_statistic.hpp
+    src/gold_standard/gold_standard_statistic.cpp
+    src/gold_standard/gold_standard_element.hpp
+    src/gold_standard/gold_standard_element.cpp
+    src/data_generation/transition_generator.cpp
+    src/data_generation/transition_generator.hpp
     src/soft_cut/classification/caffe_classifier.cpp
     src/soft_cut/classification/caffe_classifier.hpp
 
@@ -146,20 +150,23 @@ source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
 # Set target name
 set(target ${META_PROJECT_NAME})
 
-add_executable(${target} ${sources} src/hard_cut/HardCutMain.cpp src/hard_cut/HardCutMain.hpp)
+add_executable(${target} ${sources} src/hard_cut/HardCutMain.cpp src/hard_cut/HardCutMain.hpp src/soft_cut/SoftCutMain.cpp src/soft_cut/SoftCutMain.hpp src/data_generation/DataGenerationMain.cpp src/data_generation/DataGenerationMain.hpp)
 
 
 include_directories(
 	${CMAKE_SOURCE_DIR}
 	${OpenCV_INCLUDE_DIR}
+    ${Caffe_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIR}
 	${PROJECT_BINARY_DIR} #for the generated files
 )
 
+add_definitions(${Caffe_DEFINITIONS})
 
 link_directories(${Boost_LIBRARY_DIR})
 
 target_link_libraries( ${target}
     ${OpenCV_LIBS}
     ${Boost_LIBRARIES}
+    ${Caffe_LIBRARIES}
 )

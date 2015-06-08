@@ -11,7 +11,7 @@ using namespace std;
 using namespace caffe;
 using namespace cv;
 
-namespace ic {
+namespace sbd {
 
     CaffeClassifier::CaffeClassifier(bool _cpu,
                                      string _modelFile,

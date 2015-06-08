@@ -12,6 +12,8 @@
 
 // openCV forward declarations
 #include <opencv2/opencv.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace cv {
     class Mat;

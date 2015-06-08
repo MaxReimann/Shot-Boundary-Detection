@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../forwarddeclarations.hpp"
+#include "../../forwarddeclarations.hpp"
 
-namespace ic {
+namespace sbd {
 
 class CaffeClassifier {
     public:

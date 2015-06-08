@@ -1,13 +1,13 @@
 #include <boost/algorithm/string.hpp>
 #include <fstream>
-#include "gold_standard_statistic.hpp"
-#include "file_reader.hpp"
 #include <numeric>
 #include <random>
-#include "../util.hpp"
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
+#include "gold_standard_statistic.hpp"
+#include "file_reader.hpp"
+#include <src/util.hpp>
 
 
 using namespace sbd;
