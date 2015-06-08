@@ -140,6 +140,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         }
 
         cv::Mat result;
+	cv::Mat resizedResult;
 
         float alpha, beta;
         float halfTransitionLength = static_cast<float>(transitionLength / 2);
@@ -158,25 +159,32 @@ int sbd::TransitionGenerator::createRandomTransition()
             }
         }
         cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
-        cv::resize(result, result, size);
+        cv::resize(result, resizedResult, size);
         
         std::string fileName = outputFramesFolder + "/" + std::to_string(i) + ".jpg";
-        std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
-        cv::imwrite(fileName, result);
+        std::cout << "writing file" << fileName << std::endl;
+        cv::imwrite(fileName, resizedResult);
         
         m_filesTxtOut << fileName << " 1" << std::endl;
     }
 
     for (int i = 0; i <= transitionLength; i++) {
 
-        std::string imagePath1 = frameFolder + "/" + std::to_string(startFrame1 + i) + ".jpg";
-        
+        std::string imagePath1 = m_imagePaths[startFrame1 + i];
         cv::Mat image1 = cv::imread(imagePath1, CV_LOAD_IMAGE_COLOR);
-        cv::resize(image1, image1, size);
+
+        if (image1.data == NULL) {
+            std::cout << "image not found: " << imagePath1 << std::endl;
+            return -1;
+        }
+
+        
+	cv::Mat resizedImage1;
+        cv::resize(image1, resizedImage1, size);
         
         std::string fileName = noTransitionFolder + "/" + std::to_string(i) + ".jpg";
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
-        cv::imwrite(fileName, image1);
+        cv::imwrite(fileName, resizedImage1);
 
         m_filesTxtOut << fileName << " 0" << std::endl;
     }
