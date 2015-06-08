@@ -23,7 +23,7 @@ def prepareData(pathPattern):
       truthFilePath = getCorrespondingTruthFile(truthFolderRoot, video)
 
       newTruthPath = truthFilePath.replace(truthFolderRoot, truthFolderRoot + "-" + str(setIndex))
-      newTruthFolder = os.pathsep.join(newTruthPath.split(os.pathsep)[0:-1])
+      newTruthFolder = os.path.sep.join(newTruthPath.split(os.path.sep)[0:-1])
 
       if not os.path.exists(newTruthFolder):
         os.makedirs(newTruthFolder)
@@ -36,7 +36,7 @@ def prepareData(pathPattern):
       # move frames
       frameFolderPath = os.path.join(frameFolderRoot, video)
       newFrameFolderPath = frameFolderPath.replace(frameFolderRoot, frameFolderRoot + "-" + str(setIndex))
-      frameParentPath = os.pathsep.join(newFrameFolderPath.split(os.pathsep)[0:-1])
+      frameParentPath = os.path.sep.join(newFrameFolderPath.split(os.path.sep)[0:-1])
 
       if not os.path.exists(frameParentPath):
         os.makedirs(frameParentPath)
@@ -46,7 +46,7 @@ def prepareData(pathPattern):
 
 
 def getCorrespondingTruthFile(truthFolderRoot, frameFolderPath):
-  folderName = frameFolderPath.split(os.pathsep)[-1]
+  folderName = frameFolderPath.split(os.path.sep)[-1]
 
   matches = []
   for root, dirnames, filenames in os.walk(truthFolderRoot):
