@@ -4,14 +4,17 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/program_options.hpp>
-#include <src/hard_cut/hardcut_detection.hpp>
 #include "option_printing/option_printer.hpp"
+#include "hard_cut/hardcut_detection.hpp"
+#include "gold_standard/gold_standard_statistic.hpp"
+#include "data_generation/transition_generator.hpp"
+#include "data_generation/DataGenerationMain.hpp"
+#include "soft_cut/SoftCutMain.hpp"
+
 #include "main.hpp"
 
 
 using namespace sbd;
-namespace po = boost::program_options;
 
 int main(int argc, char** argv) {
     // TODO split soft and hard cut
@@ -19,14 +22,16 @@ int main(int argc, char** argv) {
   
     //specify new commandline flags here
     desc.add_options()
-        ("help", "Print help messages")
-        ("train", "train and test classifier")
-        ("generate", "generate softcuts");
+        ("hard_cut", "detection of hard cuts")
+        ("soft_cut", "detection of soft cuts")
+        ("generate", "generation of soft cuts")
+        ("gold_statistic", "calculation of gold statistics")
+        ("help", "print help messages");
 
     //specify string arguments here
     std::map<std::string, std::string> inputArguments = { { "data_folder", "" } };
     desc.add_options()
-        ("data_folder", po::value<std::string>(&inputArguments["data_folder"])->required(), "Folder for the images and the truth data.");
+        ("data_folder", po::value<std::string>(&inputArguments["data_folder"]), "folder for the images and the truth data.");
 
 
     // declare arguments which are dependent on position
@@ -38,8 +43,7 @@ int main(int argc, char** argv) {
     {
         po::store(po::command_line_parser(argc, argv).options(desc)
             .positional(positionalOptions).run(), vmap); // throws on error 
-        /** --help option
-        */
+        // --help option
         if (vmap.count("help"))
         {
             std::map<std::string, std::string> verboseHelp = {
@@ -49,11 +53,10 @@ int main(int argc, char** argv) {
             usage(desc, positionalOptions, &verboseHelp);
         }
 
-		if (1 != (vmap.count("train") + vmap.count("generate")))
-			throw po::error("must specify --train OR --generate");
+        if (1 != (vmap.count("hard_cut") + vmap.count("generate") + vmap.count("gold_statistic")))
+			throw po::error("must specify --hard_cut OR --soft_cut OR gold_statistic OR --generate");
 
-        po::notify(vmap); // throws on error, so do after help in case 
-        // there are any problems 
+        po::notify(vmap); // throws on error, so do after help in case there are any problems 
     }
     catch (po::error& e)
     {
@@ -61,21 +64,36 @@ int main(int argc, char** argv) {
 		usage(desc, positionalOptions);
     }
 
+    
+    if (vmap.count("hard_cut")) {
+        HardCutMain hardCutMain;
+        hardCutMain.main(vmap, inputArguments);
+    
+    } else if (vmap.count("soft_cut")) {
+        SoftCutMain softCutMain;
+        softCutMain.main(vmap, inputArguments);
 
-    HardCutMain hardCutMain;
-    hardCutMain.main(vmap, inputArguments);
+    } else if (vmap.count("generate")) {
+        DataGenerationMain dataGenerationMain;
+        dataGenerationMain.main(vmap, inputArguments);
 
+    } else if (vmap.count("gold_statistic")) {
+        GoldStandardStatistic::create(inputArguments["data_folder"]);
+    }
 }
+
+
 
 void usage(po::options_description desc,
     po::positional_options_description positionalOptions,
     std::map<std::string, std::string> *verboseExplanation)
 {
     std::cout << "Shot boundary detection application" << std::endl;
-    std::cout << "Usage: sbd [--train|--generate] data_folder" << std::endl;
+    std::cout << "Usage: sbd [--hard_cut|--soft_cut|--generate|--gold_statistic] data_folder" << std::endl;
     rad::OptionPrinter::printStandardAppDesc("sbd",
         std::cout, desc, &positionalOptions, verboseExplanation);
     // wait for key, so we can read the console output
+
 #ifdef _WIN32
     system("pause");
 #else

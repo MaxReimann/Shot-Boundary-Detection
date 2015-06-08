@@ -108,6 +108,10 @@ if (OPENMP_FOUND)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} /MP")
 endif()
 
+
+find_package( Caffe )
+
+
 #################################################
 # SOURCES
 #################################################
@@ -115,6 +119,8 @@ endif()
 set(sources
 	src/main.cpp
 	src/main.hpp
+	src/util.cpp
+	src/util.hpp
 	src/forwarddeclarations.hpp
 	src/hard_cut/hardcut_detection.cpp
 	src/hard_cut/hardcut_detection.hpp
@@ -124,20 +130,24 @@ set(sources
 	src/hard_cut/histogram/histogram.cpp
 	src/hard_cut/svm/svm.hpp
 	src/hard_cut/svm/svm.cpp
-    src/hard_cut/gold_standard/file_reader.hpp
-    src/hard_cut/gold_standard/file_reader.cpp
-    src/hard_cut/gold_standard/gold_standard_statistic.hpp
-    src/hard_cut/gold_standard/gold_standard_statistic.cpp
-    src/hard_cut/gold_standard/gold_standard_element.hpp
-    src/hard_cut/gold_standard/gold_standard_element.cpp
-    src/hard_cut/data_generation/transition_generator.cpp
-    src/hard_cut/data_generation/transition_generator.hpp
     src/option_printing/custom_option_description.cpp
     src/option_printing/custom_option_description.hpp
     src/option_printing/option_printer.cpp
     src/option_printing/option_printer.hpp
+    src/gold_standard/file_reader.hpp
+    src/gold_standard/file_reader.cpp
+    src/gold_standard/gold_standard_statistic.hpp
+    src/gold_standard/gold_standard_statistic.cpp
+    src/gold_standard/gold_standard_element.hpp
+    src/gold_standard/gold_standard_element.cpp
+    src/data_generation/transition_generator.cpp
+    src/data_generation/transition_generator.hpp
+    src/data_generation/DataGenerationMain.cpp 
+    src/data_generation/DataGenerationMain.hpp
     src/soft_cut/classification/caffe_classifier.cpp
     src/soft_cut/classification/caffe_classifier.hpp
+    src/soft_cut/SoftCutMain.cpp 
+    src/soft_cut/SoftCutMain.hpp 
 
 )
 
@@ -158,13 +168,25 @@ include_directories(
 	${CMAKE_SOURCE_DIR}
 	${OpenCV_INCLUDE_DIR}
 	${Boost_INCLUDE_DIR}
+	${Caffe_INCLUDE_DIRS}
 	${PROJECT_BINARY_DIR} #for the generated files
 )
 
 
+
+# for now exclude caffe for windows
+if (NOT WIN32)
+	add_definitions(${Caffe_DEFINITIONS})
+endif()
+
 link_directories(${Boost_LIBRARY_DIR})
+
+if (WIN32)
+	SET(Caffe_LIBRARIES "")
+endif()
 
 target_link_libraries( ${target}
     ${OpenCV_LIBS}
     ${Boost_LIBRARIES}
+    ${Caffe_LIBRARIES}
 )

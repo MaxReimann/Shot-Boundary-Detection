@@ -1,6 +1,13 @@
 #include <string>
 #include <vector>
 #include <opencv2/opencv.hpp>
+
+#ifdef _WIN32
+//on windows, disable cuda to avoid errors
+//also, the caffe build is cpu only
+#define CPU_ONLY 
+#endif
+
 #include <caffe/caffe.hpp>
 #include <caffe/proto/caffe.pb.h>
 #include <caffe/util/io.hpp>
@@ -11,7 +18,7 @@ using namespace std;
 using namespace caffe;
 using namespace cv;
 
-namespace ic {
+namespace sbd {
 
     CaffeClassifier::CaffeClassifier(bool _cpu,
                                      string _modelFile,

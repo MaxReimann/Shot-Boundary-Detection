@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../forwarddeclarations.hpp"
+#include "../forwarddeclarations.hpp"
 
 namespace sbd {
 
