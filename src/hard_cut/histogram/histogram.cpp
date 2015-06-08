@@ -160,5 +160,5 @@ void Histogram::drawAbsChanges(std::vector<float> absChanges, const cv::Mat& gol
         }
     }
 
-    cv::imwrite("../../resources/abs-changes.png", histImage);
+    cv::imwrite("../resources/abs-changes.png", histImage);
 }

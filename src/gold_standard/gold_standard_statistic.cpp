@@ -52,7 +52,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     // write results
     std::cout << "Write results..." << std::endl;
     std::ofstream outfile;
-    outfile.open ("../gold_standard_statistics.txt");
+    outfile.open ("../resources/gold_standard_statistics.txt");
     writeResult(outfile, "CUT", cut, cutLength);
     writeResult(outfile, "DIS", dis, disLength);
     writeResult(outfile, "OTH", oth, othLength);

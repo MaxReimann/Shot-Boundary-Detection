@@ -73,7 +73,7 @@ bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd:
 
 
 void sbd::writeVisualizationData(std::vector<std::string> &imagePaths, std::vector<float> diffs, cv::Mat& gold) {
-    std::string filepath = "../../resources/d3/data/visData.tsv";
+    std::string filepath = "../resources/d3/data/visData.tsv";
 
     std::ofstream fout(filepath);
 

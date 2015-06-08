@@ -17,7 +17,7 @@ void wrongUsageHardCut();
 using namespace sbd;
 
 int HardCutMain::main(int argc, char** argv) {
-    bool USE_CACHED_HISTOGRAMS = false;
+    bool USE_CACHED_HISTOGRAMS = true;
 
     if (argc != 3) {
         wrongUsageHardCut();
@@ -30,7 +30,7 @@ int HardCutMain::main(int argc, char** argv) {
 
     cv::FileStorage fs;
     Features features;
-    std::string histogramCachePath = "../../resources/differenceHistograms.yaml";
+    std::string histogramCachePath = "../resources/differenceHistograms.yaml";
     if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
