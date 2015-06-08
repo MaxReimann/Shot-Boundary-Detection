@@ -14,7 +14,7 @@ namespace sbd
 
     class HardCutMain {
     public:
-		int main(po::variables_map vmap);
+        int main(po::variables_map vmap, std::map<std::string, std::string> inputArguments);
     private:
         std::unordered_set<sbd::GoldStandardElement> readGoldStandard(std::string);
         std::vector<std::string> getFileNames(std::string);

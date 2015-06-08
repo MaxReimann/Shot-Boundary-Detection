@@ -21,7 +21,7 @@ namespace
   const size_t SHORT_PREPENDED_IF_EXIST_ELSE_LONG = 4;
 
   const size_t SHORT_OPTION_STRING_LENGTH = 2; // -x
-  const size_t ADEQUATE_WIDTH_FOR_OPTION_NAME = 20;
+  const size_t ADEQUATE_WIDTH_FOR_OPTION_NAME = 10;
 
   const bool HAS_ARGUMENT = true;
   const bool DOES_NOT_HAVE_ARGUMENT = false;
@@ -79,13 +79,27 @@ namespace rad
   std::string CustomOptionDescription::getOptionUsageString()
   {
     std::stringstream usageString;
-    if ( isPositional_ )
+    std::string lineDesc;
+    std::string description = optionDescription_;
+    int maxlineLength = 55;
+    int i = 0;
+    while (description.length() > 0)
     {
-      usageString << "\t" << std::setw(ADEQUATE_WIDTH_FOR_OPTION_NAME) << std::left << optionDisplayName_ << "\t" << optionDescription_;
-    }
-    else
-    {
-      usageString << "\t" << std::setw(ADEQUATE_WIDTH_FOR_OPTION_NAME) << std::left << optionFormatName_ << "\t" << optionDescription_;
+        if (description.length() > maxlineLength)
+        {
+            lineDesc = description.substr(0, maxlineLength);
+            description = description.substr(maxlineLength, description.length());
+        }
+        else
+        {
+            lineDesc = description;
+            description = "";
+        }
+        std::string leftSide = i == 0 ? optionDisplayName_ : "";
+        
+        usageString << (i==0 ? "\t" : "\n\t") << std::setw(ADEQUATE_WIDTH_FOR_OPTION_NAME) << std::left << leftSide << "\t" << lineDesc;
+
+        i++;
     }
 
     return usageString.str();

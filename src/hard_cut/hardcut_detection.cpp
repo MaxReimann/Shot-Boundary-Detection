@@ -15,14 +15,14 @@
 using namespace sbd;
 
 
-int HardCutMain::main(po::variables_map vmap) {
+int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
     bool USE_CACHED_HISTOGRAMS = true;
 
-	std::string dataFolder = "empty";
+    std::string dataFolder = inputArguments.at("data_folder");
 
     std::string trainStr = "train";
     std::string generateStr = "generate";
-    if (vmap.count("train")) {
+    if (flagArgs.count("train")) {
         //    GoldStandardStatistic::create(dataFolder);
 
         std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
@@ -58,7 +58,7 @@ int HardCutMain::main(po::variables_map vmap) {
         cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
         evaluate(testSet, learner);
     }
-    else if (vmap.count("generate")) {
+    else if (flagArgs.count("generate")) {
         // std::string dataFolder("../resources/[type]/senses111-rest");
 
         std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
@@ -68,12 +68,6 @@ int HardCutMain::main(po::variables_map vmap) {
     }
 
 
-    // wait for key, so we can read the console output
-#ifdef _WIN32
-    system("pause");
-#else
-    cv::waitKey(0);
-#endif
     return 0;
 }
 

@@ -24,14 +24,15 @@ namespace rad
     /** Print the single line application usage description */
     std::string usage();
 
-    std::string positionalOptionDetails();
-    std::string optionDetails();
+    std::string positionalOptionDetails(std::map<std::string, std::string> *verboseExplanations = NULL);
+    std::string optionDetails(std::map<std::string, std::string> *verboseExplanations = NULL);
 
   public: // static
     static void printStandardAppDesc(const std::string& appName,
                                      std::ostream& out,
                                      boost::program_options::options_description desc,
-                                     boost::program_options::positional_options_description* positionalDesc=NULL);
+                                     boost::program_options::positional_options_description* positionalDesc=NULL,
+                                     std::map<std::string, std::string> *verboseExplanations=NULL);
     static void formatRequiredOptionError(boost::program_options::required_option& error);
 
   private: // data

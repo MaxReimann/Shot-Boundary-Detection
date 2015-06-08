@@ -98,6 +98,7 @@ endif()
 # OpenCV
 find_package( OpenCV REQUIRED )
 
+add_definitions(-DBOOST_ALL_DYN_LINK)
 add_definitions(-DBOOST_ALL_NO_LIB)
 find_package(Boost COMPONENTS system filesystem regex program_options REQUIRED)
 

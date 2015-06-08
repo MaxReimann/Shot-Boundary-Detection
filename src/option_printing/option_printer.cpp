@@ -101,13 +101,18 @@ namespace rad
   }
 
 //---------------------------------------------------------------------------------------------------------------------
-  std::string OptionPrinter::positionalOptionDetails()
+  std::string OptionPrinter::positionalOptionDetails(std::map<std::string, std::string> *verboseExplanations)
   {
     std::stringstream output;
     for (std::vector<rad::CustomOptionDescription>::iterator it = positionalOptions_.begin();
          it != positionalOptions_.end();
          ++it)
     {
+        if (verboseExplanations != NULL &&
+            verboseExplanations->find(it->optionDisplayName_) != verboseExplanations->end())
+        {
+            it->optionDescription_ = verboseExplanations->at(it->optionDisplayName_);
+        }
       output << it->getOptionUsageString() << std::endl;
     }
 
@@ -115,7 +120,7 @@ namespace rad
   }
 
 //---------------------------------------------------------------------------------------------------------------------
-  std::string OptionPrinter::optionDetails()
+  std::string OptionPrinter::optionDetails(std::map<std::string, std::string> *verboseExplanations)
   {
     std::stringstream output;
     for (std::vector<rad::CustomOptionDescription>::iterator it = options_.begin();
@@ -133,7 +138,8 @@ namespace rad
   void OptionPrinter::printStandardAppDesc(const std::string& appName,
                                            std::ostream& out,
                                            boost::program_options::options_description desc,
-                                           boost::program_options::positional_options_description* positionalDesc)
+                                           boost::program_options::positional_options_description* positionalDesc,
+                                           std::map<std::string,std::string> *verboseExplanations)
   {
     rad::OptionPrinter optionPrinter;
 
@@ -153,15 +159,13 @@ namespace rad
 
     } // foreach option
 
-    out << "USAGE: " << appName << " " << optionPrinter.usage() << std::endl
-        << std::endl
-        << "-- Option Descriptions --" << std::endl
+    out << "-- Option Descriptions --" << std::endl
         << std::endl
         << "Positional arguments:" << std::endl
-        << optionPrinter.positionalOptionDetails()
+        << optionPrinter.positionalOptionDetails(verboseExplanations)
         << std::endl
         << "Option Arguments: " << std::endl
-        << optionPrinter.optionDetails()
+        << optionPrinter.optionDetails(verboseExplanations)
         << std::endl;
 
 
