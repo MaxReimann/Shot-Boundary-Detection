@@ -136,6 +136,8 @@ set(sources
     src/option_printing/custom_option_description.hpp
     src/option_printing/option_printer.cpp
     src/option_printing/option_printer.hpp
+    src/soft_cut/classification/caffe_classifier.cpp
+    src/soft_cut/classification/caffe_classifier.hpp
 
 )
 
