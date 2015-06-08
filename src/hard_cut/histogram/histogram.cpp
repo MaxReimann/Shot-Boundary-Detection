@@ -3,7 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <cmath>
-#include <src/util.hpp>
+#include <src/hard_cut/util.hpp>
 
 using namespace sbd;
 

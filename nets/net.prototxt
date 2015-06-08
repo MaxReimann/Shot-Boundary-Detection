@@ -14,7 +14,7 @@ layer {
   }
   data_param {
     backend: LMDB
-    source: "/opt/data_sets/video_sbd_dataset/lmdbs/soft_cut/train/"
+    source: "/opt/data_sets/video_sbd_dataset/lmdb/soft_cut/train/"
     batch_size: 70
   }
 }
@@ -35,7 +35,7 @@ layer {
   }
   data_param {
     backend: LMDB
-    source: "/opt/data_sets/video_sbd_dataset/lmdbs/soft_cut/test/"
+    source: "/opt/data_sets/video_sbd_dataset/lmdb/soft_cut/test/"
     batch_size: 70
   }
 }
@@ -234,10 +234,10 @@ layer {
   bottom: "pool5"
   top: "fc6"
   param {
-    lr_mult: 0.0
+    lr_mult: 0.1
   }
   param {
-    lr_mult: 0.0
+    lr_mult: 0.1
   }
   inner_product_param {
     num_output: 4096
