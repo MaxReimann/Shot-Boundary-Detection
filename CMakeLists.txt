@@ -131,6 +131,8 @@ set(sources
     src/hard_cut/gold_standard/gold_standard_element.cpp
     src/hard_cut/data_generation/transition_generator.cpp
     src/hard_cut/data_generation/transition_generator.hpp
+    src/soft_cut/classification/caffe_classifier.cpp
+    src/soft_cut/classification/caffe_classifier.hpp
 
 )
 
