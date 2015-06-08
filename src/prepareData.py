@@ -23,7 +23,7 @@ def prepareData(pathPattern):
       truthFilePath = getCorrespondingTruthFile(truthFolderRoot, video)
 
       newTruthPath = truthFilePath.replace(truthFolderRoot, truthFolderRoot + "-" + str(setIndex))
-      newTruthFolder = "\\".join(newTruthPath.split("\\")[0:-1])
+      newTruthFolder = os.pathsep.join(newTruthPath.split(os.pathsep)[0:-1])
 
       if not os.path.exists(newTruthFolder):
         os.makedirs(newTruthFolder)
@@ -36,7 +36,7 @@ def prepareData(pathPattern):
       # move frames
       frameFolderPath = os.path.join(frameFolderRoot, video)
       newFrameFolderPath = frameFolderPath.replace(frameFolderRoot, frameFolderRoot + "-" + str(setIndex))
-      frameParentPath = "\\".join(newFrameFolderPath.split("\\")[0:-1])
+      frameParentPath = os.pathsep.join(newFrameFolderPath.split(os.pathsep)[0:-1])
 
       if not os.path.exists(frameParentPath):
         os.makedirs(frameParentPath)
@@ -46,7 +46,7 @@ def prepareData(pathPattern):
 
 
 def getCorrespondingTruthFile(truthFolderRoot, frameFolderPath):
-  folderName = frameFolderPath.split("\\")[-1]
+  folderName = frameFolderPath.split(os.pathsep)[-1]
 
   matches = []
   for root, dirnames, filenames in os.walk(truthFolderRoot):
@@ -75,7 +75,7 @@ def split(frameSubfolders):
   return partitions
 
 if len(sys.argv) == 2:
-  prepareData(sys.argv[0])
+  prepareData(sys.argv[1])
 else:
-  path = "..\\resources\\[type]\\2007"
+  path = os.path.join("..", "resources", "[type]", "2007")
   print("Provide the path as an argument. E.g.:", path)
