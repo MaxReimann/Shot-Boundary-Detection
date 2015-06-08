@@ -1,7 +1,7 @@
 #pragma once
 
-#include "forwarddeclarations.hpp"
-#include "main.hpp"
+#include "../forwarddeclarations.hpp"
+#include "HardCutMain.hpp"
 #include <random>
 #include <iterator>
 

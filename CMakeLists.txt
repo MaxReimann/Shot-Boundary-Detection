@@ -115,20 +115,22 @@ set(sources
 	src/main.cpp
 	src/main.hpp
 	src/forwarddeclarations.hpp
-	src/util.cpp
-	src/util.hpp
-	src/histogram/histogram.hpp
-	src/histogram/histogram.cpp
-	src/svm/svm.hpp
-	src/svm/svm.cpp
-    src/gold_standard/file_reader.hpp
-    src/gold_standard/file_reader.cpp
-    src/gold_standard/gold_standard_statistic.hpp
-    src/gold_standard/gold_standard_statistic.cpp
-    src/gold_standard/gold_standard_element.hpp
-    src/gold_standard/gold_standard_element.cpp
-    src/data_generation/transition_generator.cpp
-    src/data_generation/transition_generator.hpp
+	src/hard_cut/HardCutMain.cpp
+	src/hard_cut/HardCutMain.hpp
+	src/hard_cut/util.cpp
+	src/hard_cut/util.hpp
+	src/hard_cut/histogram/histogram.hpp
+	src/hard_cut/histogram/histogram.cpp
+	src/hard_cut/svm/svm.hpp
+	src/hard_cut/svm/svm.cpp
+    src/hard_cut/gold_standard/file_reader.hpp
+    src/hard_cut/gold_standard/file_reader.cpp
+    src/hard_cut/gold_standard/gold_standard_statistic.hpp
+    src/hard_cut/gold_standard/gold_standard_statistic.cpp
+    src/hard_cut/gold_standard/gold_standard_element.hpp
+    src/hard_cut/gold_standard/gold_standard_element.cpp
+    src/hard_cut/data_generation/transition_generator.cpp
+    src/hard_cut/data_generation/transition_generator.hpp
 
 )
 
@@ -142,7 +144,7 @@ source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/src"
 # Set target name
 set(target ${META_PROJECT_NAME})
 
-add_executable(${target} ${sources})
+add_executable(${target} ${sources} src/hard_cut/HardCutMain.cpp src/hard_cut/HardCutMain.hpp)
 
 
 include_directories(
