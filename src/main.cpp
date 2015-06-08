@@ -8,8 +8,8 @@
 #include "hard_cut/hardcut_detection.hpp"
 #include "gold_standard/gold_standard_statistic.hpp"
 #include "data_generation/transition_generator.hpp"
-#include "data_generation/DataGenerationMain.hpp"
-#include "soft_cut/SoftCutMain.hpp"
+#include "data_generation/data_generation.hpp"
+#include "soft_cut/softcut_detection.hpp"
 
 #include "main.hpp"
 
@@ -48,12 +48,13 @@ int main(int argc, char** argv) {
         {
             std::map<std::string, std::string> verboseHelp = {
                     { "data_folder", "Folder for the images and the truth data."
+                        "Must be supplied for every option except soft-cut"
                         "Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'"
                         "For local execution, just set this to '../resources/[type]/'" } };
             usage(desc, positionalOptions, &verboseHelp);
         }
 
-        if (1 != (vmap.count("hard_cut") + vmap.count("generate") + vmap.count("gold_statistic")))
+        if (1 != (vmap.count("hard_cut") + vmap.count("generate") + vmap.count("gold_statistic") + vmap.count("soft_cut")))
 			throw po::error("must specify --hard_cut OR --soft_cut OR gold_statistic OR --generate");
 
         po::notify(vmap); // throws on error, so do after help in case there are any problems 
@@ -80,6 +81,13 @@ int main(int argc, char** argv) {
     } else if (vmap.count("gold_statistic")) {
         GoldStandardStatistic::create(inputArguments["data_folder"]);
     }
+
+#ifdef _WIN32
+    system("pause");
+#else
+    cv::waitKey(0);
+#endif
+    exit(1);
 }
 
 

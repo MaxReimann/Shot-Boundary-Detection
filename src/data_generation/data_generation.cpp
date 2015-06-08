@@ -1,5 +1,5 @@
 #include <src/gold_standard/file_reader.hpp>
-#include "DataGenerationMain.hpp"
+#include "data_generation.hpp"
 #include "transition_generator.hpp"
 
 void wrongUsage();

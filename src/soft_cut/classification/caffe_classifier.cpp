@@ -18,6 +18,8 @@ using namespace std;
 using namespace caffe;
 using namespace cv;
 
+#ifndef _WIN32 //temporary, until caffe is tame
+
 namespace sbd {
 
     CaffeClassifier::CaffeClassifier(bool _cpu,
@@ -130,4 +132,6 @@ namespace sbd {
     }
 
 }
+
+#endif
 

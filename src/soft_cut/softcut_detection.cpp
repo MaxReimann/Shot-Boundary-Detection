@@ -1,4 +1,4 @@
-#include "SoftCutMain.hpp"
+#include "softcut_detection.hpp"
 
 void wrongUsage();
 

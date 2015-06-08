@@ -21,7 +21,7 @@ namespace
   const size_t SHORT_PREPENDED_IF_EXIST_ELSE_LONG = 4;
 
   const size_t SHORT_OPTION_STRING_LENGTH = 2; // -x
-  const size_t ADEQUATE_WIDTH_FOR_OPTION_NAME = 10;
+  const size_t ADEQUATE_WIDTH_FOR_OPTION_NAME = 20;
 
   const bool HAS_ARGUMENT = true;
   const bool DOES_NOT_HAVE_ARGUMENT = false;
@@ -81,7 +81,7 @@ namespace rad
     std::stringstream usageString;
     std::string lineDesc;
     std::string description = optionDescription_;
-    int maxlineLength = 55;
+    int maxlineLength = 42;
     int i = 0;
     while (description.length() > 0)
     {

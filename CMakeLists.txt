@@ -142,12 +142,12 @@ set(sources
     src/gold_standard/gold_standard_element.cpp
     src/data_generation/transition_generator.cpp
     src/data_generation/transition_generator.hpp
-    src/data_generation/DataGenerationMain.cpp 
-    src/data_generation/DataGenerationMain.hpp
+    src/data_generation/data_generation.cpp 
+    src/data_generation/data_generation.hpp
     src/soft_cut/classification/caffe_classifier.cpp
     src/soft_cut/classification/caffe_classifier.hpp
-    src/soft_cut/SoftCutMain.cpp 
-    src/soft_cut/SoftCutMain.hpp 
+    src/soft_cut/softcut_detection.cpp 
+    src/soft_cut/softcut_detection.hpp 
 
 )
 
@@ -174,14 +174,14 @@ include_directories(
 
 
 
-# for now exclude caffe for windows
 if (NOT WIN32)
 	add_definitions(${Caffe_DEFINITIONS})
 endif()
 
 link_directories(${Boost_LIBRARY_DIR})
 
-if (WIN32)
+#prevent linking of caffe libaries on windows
+if (WIN32) 
 	SET(Caffe_LIBRARIES "")
 endif()
 
