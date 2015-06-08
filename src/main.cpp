@@ -15,6 +15,7 @@
 void wrongUsage();
 
 using namespace sbd;
+namespace po = boost::program_options;
 
 int main(int argc, char** argv) {
     bool USE_CACHED_HISTOGRAMS = true;
