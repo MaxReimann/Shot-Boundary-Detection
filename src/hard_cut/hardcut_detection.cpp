@@ -258,7 +258,7 @@ void HardCutMain::evaluate(Features &testSet, SVMLearner *learner) {
 
 void wrongUsageHardCut()
 {
-    std::cout << "Usage: sbd hard_cut <data_folder>" << std::endl;
+    std::cout << "Usage: sbd --hard_cut <data_folder>" << std::endl;
     std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
     std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
 #ifdef _WIN32

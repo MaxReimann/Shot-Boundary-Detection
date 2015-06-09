@@ -17,7 +17,6 @@
 using namespace sbd;
 
 int main(int argc, char** argv) {
-    // TODO split soft and hard cut
     po::options_description desc("Options");
   
     //specify new commandline flags here
@@ -55,7 +54,7 @@ int main(int argc, char** argv) {
         }
 
         if (1 != (vmap.count("hard_cut") + vmap.count("generate") + vmap.count("gold_statistic") + vmap.count("soft_cut")))
-			throw po::error("must specify --hard_cut OR --soft_cut OR gold_statistic OR --generate");
+			throw po::error("must specify --hard_cut OR --soft_cut OR --gold_statistic OR --generate");
 
         po::notify(vmap); // throws on error, so do after help in case there are any problems 
     }
@@ -97,7 +96,7 @@ void usage(po::options_description desc,
     std::map<std::string, std::string> *verboseExplanation)
 {
     std::cout << "Shot boundary detection application" << std::endl;
-    std::cout << "Usage: sbd [--hard_cut|--soft_cut|--generate|--gold_statistic] data_folder" << std::endl;
+    std::cout << "Usage: sbd [--hard_cut | --soft_cut | --generate | --gold_statistic] data_folder" << std::endl;
     rad::OptionPrinter::printStandardAppDesc("sbd",
         std::cout, desc, &positionalOptions, verboseExplanation);
     // wait for key, so we can read the console output

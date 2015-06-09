@@ -18,6 +18,9 @@ int DataGenerationMain::main(po::variables_map flagArgs, std::map<std::string, s
 std::unordered_set<sbd::GoldStandardElement> DataGenerationMain::readGoldStandard(std::string dataFolder) {
     printf("Reading gold standard.\n");
 
+    if (dataFolder.find("[type]") == std::string::npos)
+        wrongUsageDataGeneration();
+
     std::string truthFolder = boost::replace_first_copy(dataFolder, "[type]", "truth");
     std::cout << "Reading truth from " << truthFolder << std::endl;
 
@@ -73,7 +76,7 @@ std::vector<std::string> DataGenerationMain::getFileNames(std::string dataFolder
 
 void wrongUsageDataGeneration()
 {
-    std::cout << "Usage: sbd generate <data_folder>" << std::endl;
+    std::cout << "Usage: sbd --generate <data_folder>" << std::endl;
     std::cout << "  data_folder: Folder for the images and the truth data. Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'" << std::endl;
     std::cout << "               For local execution, just set this to '../resources/[type]/'" << std::endl;
 #ifdef _WIN32
