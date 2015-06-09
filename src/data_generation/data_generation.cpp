@@ -2,7 +2,7 @@
 #include "data_generation.hpp"
 #include "transition_generator.hpp"
 
-void wrongUsage();
+void wrongUsageDataGeneration();
 
 using namespace sbd;
 

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <caffe/caffe.hpp>
+#include <caffe/proto/caffe.pb.h>
+#include <caffe/util/io.hpp>
+#include <caffe/data_layers.hpp>
 #include "../../forwarddeclarations.hpp"
 
 namespace sbd {
