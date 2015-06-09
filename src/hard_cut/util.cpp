@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <src/hard_cut/gold_standard/gold_standard_element.hpp>
+#include <src/gold_standard/gold_standard_element.hpp>
 #include <numeric>
 
 using namespace sbd;

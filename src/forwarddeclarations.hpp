@@ -12,6 +12,12 @@
 
 // openCV forward declarations
 #include <opencv2/opencv.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/program_options.hpp>
+
+namespace po = boost::program_options;
+typedef unsigned int uint;
 
 namespace cv {
     class Mat;

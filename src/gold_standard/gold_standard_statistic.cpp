@@ -1,13 +1,13 @@
 #include <boost/algorithm/string.hpp>
 #include <fstream>
-#include "gold_standard_statistic.hpp"
-#include "file_reader.hpp"
 #include <numeric>
 #include <random>
-#include "../util.hpp"
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
+#include "gold_standard_statistic.hpp"
+#include "file_reader.hpp"
+#include <src/util.hpp>
 
 
 using namespace sbd;
@@ -52,7 +52,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     // write results
     std::cout << "Write results..." << std::endl;
     std::ofstream outfile;
-    outfile.open ("../gold_standard_statistics.txt");
+    outfile.open ("../resources/gold_standard_statistics.txt");
     writeResult(outfile, "CUT", cut, cutLength);
     writeResult(outfile, "DIS", dis, disLength);
     writeResult(outfile, "OTH", oth, othLength);

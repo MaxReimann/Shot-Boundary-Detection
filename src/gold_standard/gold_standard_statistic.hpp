@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../forwarddeclarations.hpp"
+#include "../forwarddeclarations.hpp"
 #include "gold_standard_element.hpp"
 #include <unordered_map>
 
