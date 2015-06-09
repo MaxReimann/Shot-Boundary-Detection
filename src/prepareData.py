@@ -29,7 +29,9 @@ def prepareData(pathPattern):
         os.makedirs(newTruthFolder)
 
 
-      print("truth", truthFilePath, newTruthPath)
+      print("truth")
+      print("  " + truthFilePath)
+      print(" >" + newTruthPath)
       shutil.copy(truthFilePath, newTruthPath)
 
 
@@ -41,18 +43,25 @@ def prepareData(pathPattern):
       if not os.path.exists(frameParentPath):
         os.makedirs(frameParentPath)
 
-      print("frames", frameFolderPath, newFrameFolderPath)
-      shutil.copy(frameFolderPath, newFrameFolderPath)
+      print("frames")
+      print("  " + frameFolderPath)
+      print(" >" + newFrameFolderPath)
+      shutil.copytree(frameFolderPath, newFrameFolderPath)
 
 
 def getCorrespondingTruthFile(truthFolderRoot, frameFolderPath):
-  folderName = frameFolderPath.split(os.path.sep)[-1]
+  folderName = frameFolderPath.split(os.path.sep)[-1].lower()
 
   matches = []
   for root, dirnames, filenames in os.walk(truthFolderRoot):
     for filename in fnmatch.filter(filenames, '*' + folderName + '*'):
       matches.append(os.path.join(root, filename))
-
+  if len(matches) != 1:
+    print("too many matches?", matches)
+    print("truthFolderRoot", truthFolderRoot)
+    print("frameFolderPath", frameFolderPath)
+    print("folderName", folderName)
+    print("")
   assert(len(matches) == 1)
   return matches[0]
 
