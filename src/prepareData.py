@@ -57,8 +57,10 @@ def getCorrespondingTruthFile(truthFolderRoot, frameFolderPath):
 
   matches = []
   for root, dirnames, filenames in os.walk(truthFolderRoot):
-    for filename in fnmatch.filter(filenames, '*' + folderName + '*'):
-      matches.append(os.path.join(root, filename))
+    for filename in filenames:
+        if folderName.lower() in filename.lower():
+            matches.append(os.path.join(root, filename))
+
   if len(matches) != 1:
     print("too many matches?", matches)
     print("truthFolderRoot", truthFolderRoot)
