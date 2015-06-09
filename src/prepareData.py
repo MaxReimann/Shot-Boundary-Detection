@@ -2,7 +2,11 @@ import os
 import fnmatch
 import shutil
 import sys
+import logging
 
+def _logpath(path, names):
+    logging.info('Working in %s' % path)
+    return []   # nothing will be ignored
 
 def getImmediateSubdirectories(aDirectory):
   return [name for name in os.listdir(aDirectory)
@@ -11,7 +15,8 @@ def getImmediateSubdirectories(aDirectory):
 def prepareData(pathPattern):
   frameFolderRoot = pathPattern.replace("[type]", "frames")
   truthFolderRoot = pathPattern.replace("[type]", "truth")
-
+  newTruthFolderRoot = pathPattern.replace("[type]", "generated_soft_cuts" + os.path.sep + "truth")
+  newFrameFolderRoot = pathPattern.replace("[type]", "generated_soft_cuts" + os.path.sep + "frame")
   frameSubfolders = getImmediateSubdirectories(frameFolderRoot)
 
   split(frameSubfolders)
@@ -22,22 +27,20 @@ def prepareData(pathPattern):
       # move truth
       truthFilePath = getCorrespondingTruthFile(truthFolderRoot, video)
 
-      newTruthPath = truthFilePath.replace(truthFolderRoot, truthFolderRoot + "-" + str(setIndex))
+      newTruthPath = truthFilePath.replace(truthFolderRoot, newTruthFolderRoot + "-" + str(setIndex))
       newTruthFolder = os.path.sep.join(newTruthPath.split(os.path.sep)[0:-1])
 
       if not os.path.exists(newTruthFolder):
         os.makedirs(newTruthFolder)
-
 
       print("truth")
       print("  " + truthFilePath)
       print(" >" + newTruthPath)
       shutil.copy(truthFilePath, newTruthPath)
 
-
       # move frames
       frameFolderPath = os.path.join(frameFolderRoot, video)
-      newFrameFolderPath = frameFolderPath.replace(frameFolderRoot, frameFolderRoot + "-" + str(setIndex))
+      newFrameFolderPath = frameFolderPath.replace(frameFolderRoot, newFrameFolderRoot + "-" + str(setIndex))
       frameParentPath = os.path.sep.join(newFrameFolderPath.split(os.path.sep)[0:-1])
 
       if not os.path.exists(frameParentPath):
@@ -46,7 +49,7 @@ def prepareData(pathPattern):
       print("frames")
       print("  " + frameFolderPath)
       print(" >" + newFrameFolderPath)
-      shutil.copytree(frameFolderPath, newFrameFolderPath)
+      shutil.copytree(frameFolderPath, newFrameFolderPath, ignore=_logpath)
 
 
 def getCorrespondingTruthFile(truthFolderRoot, frameFolderPath):
