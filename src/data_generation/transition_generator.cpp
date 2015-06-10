@@ -119,9 +119,11 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     std::string datasetName = getDatasetName();
     std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + tweenerName + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
-    std::string outputFramesFolder = "../output/frames/" + newDatasetName;
-    std::string outputTruthFolder = "../output/truth/" + newDatasetName;
-    std::string noTransitionFolder = "../output/frames/noTransition-" + datasetName + "-" + std::to_string(startFrame1);
+    //std::string baseFolder = "../output/";
+    std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-1/";
+    std::string outputFramesFolder = baseFolder + "frames/" + newDatasetName;
+    std::string outputTruthFolder = baseFolder + "truth/" + newDatasetName;
+    std::string noTransitionFolder = baseFolder + "frames/noTransition-" + datasetName + "-" + std::to_string(startFrame1);
 
     boost::filesystem::create_directories(outputFramesFolder);
     boost::filesystem::create_directories(noTransitionFolder);
@@ -140,7 +142,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         }
 
         cv::Mat result;
-	cv::Mat resizedResult;
+        cv::Mat resizedResult;
 
         float alpha, beta;
         float halfTransitionLength = static_cast<float>(transitionLength / 2);
@@ -160,11 +162,11 @@ int sbd::TransitionGenerator::createRandomTransition()
         }
         cv::addWeighted(image1, alpha, image2, beta, 0.0, result);
         cv::resize(result, resizedResult, size);
-        
+
         std::string fileName = outputFramesFolder + "/" + std::to_string(i) + ".jpg";
         std::cout << "writing file" << fileName << std::endl;
         cv::imwrite(fileName, resizedResult);
-        
+
         m_filesTxtOut << fileName << " 1" << std::endl;
     }
 
@@ -178,10 +180,9 @@ int sbd::TransitionGenerator::createRandomTransition()
             return -1;
         }
 
-        
-	cv::Mat resizedImage1;
+        cv::Mat resizedImage1;
         cv::resize(image1, resizedImage1, size);
-        
+
         std::string fileName = noTransitionFolder + "/" + std::to_string(i) + ".jpg";
         std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
         cv::imwrite(fileName, resizedImage1);
@@ -199,7 +200,7 @@ int sbd::TransitionGenerator::createRandomTransition()
     groundTruthOut << "<trans type = \"" << transitionNames[currentType] << "\" preFNum = \"0\" postFNum = \"" + std::to_string(transitionLength) + "\" / >" << std::endl;
     groundTruthOut << "< / refSeg>" << std::endl;
 
-    
+
 
     return 0;
 }

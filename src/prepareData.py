@@ -22,6 +22,8 @@ def prepareData(pathPattern):
   split(frameSubfolders)
   sets = [train, validation, test] = split(frameSubfolders)
 
+  print("sets", sets)
+
   for setIndex, currentSet in enumerate(sets):
     for video in currentSet:
       # move truth
@@ -46,10 +48,23 @@ def prepareData(pathPattern):
       if not os.path.exists(frameParentPath):
         os.makedirs(frameParentPath)
 
+      # if os.path.exists(newFrameFolderPath):
+      #   print(newFrameFolderPath, "already exists. skipping this dataset")
+      #   continue
+
       print("frames")
       print("  " + frameFolderPath)
       print(" >" + newFrameFolderPath)
-      shutil.copytree(frameFolderPath, newFrameFolderPath, ignore=_logpath)
+      # shutil.copytree(frameFolderPath, newFrameFolderPath, ignore=_logpath)
+      for root, dirnames, filenames in os.walk(frameFolderPath):
+        for filename in filenames:
+          oldFilePath = os.path.join(frameFolderPath, filename)
+          newFilePath = os.path.join(newFrameFolderPath, filename)
+          if not os.path.exists(newFilePath):
+            print("copy", oldFilePath, "to", newFilePath)
+            shutil.copy(oldFilePath, newFilePath)
+          else:
+            print("skip", oldFilePath)
 
 
 def getCorrespondingTruthFile(truthFolderRoot, frameFolderPath):
@@ -75,10 +90,10 @@ def split(frameSubfolders):
   def idxToClass(idx):
     percentage = 1.0 * idx / len(frameSubfolders)
     if percentage < 0.65:
-      return 0 # train
+      return 0 # train 0.65
     if percentage < 0.8:
-      return 1 # validation
-    return 2   # test
+      return 1 # validation 0.15
+    return 2   # test 0.20
 
   values = set(map(lambda x : idxToClass(x[0]), enumerate(frameSubfolders)))
   partitions = [[x[1] for x in enumerate(frameSubfolders) if idxToClass(x[0]) == v] for v in values]
