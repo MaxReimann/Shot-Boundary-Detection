@@ -112,7 +112,7 @@ else()
 endif()
 endif()
 
-
+set (Caffe_DIR "/home/mpss2015/caffe-tmbo/build-cmake/")
 find_package( Caffe )
 
 
