@@ -59,7 +59,7 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
     m_imagePaths = imagePaths;
     m_dataFolder = dataFolder;
 
-    m_filesTxtOut.open("../output/files.txt");
+    m_filesTxtOut.open("../output/files0.txt");
 }
 
 int sbd::TransitionGenerator::createRandomTransition()
@@ -120,7 +120,7 @@ int sbd::TransitionGenerator::createRandomTransition()
     std::string datasetName = getDatasetName();
     std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + tweenerName + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
     //std::string baseFolder = "../output/";
-    std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-1/";
+    std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/";
     std::string outputFramesFolder = baseFolder + "frames/" + newDatasetName;
     std::string outputTruthFolder = baseFolder + "truth/" + newDatasetName;
     std::string noTransitionFolder = baseFolder + "frames/noTransition-" + datasetName + "-" + std::to_string(startFrame1);
@@ -180,7 +180,8 @@ int sbd::TransitionGenerator::createRandomTransition()
             return -1;
         }
 
-        cv::Mat resizedImage1;
+
+    cv::Mat resizedImage1;
         cv::resize(image1, resizedImage1, size);
 
         std::string fileName = noTransitionFolder + "/" + std::to_string(i) + ".jpg";
