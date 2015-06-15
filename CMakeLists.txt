@@ -150,6 +150,10 @@ set(sources
     src/data_generation/data_generation.hpp
     src/soft_cut/classification/caffe_classifier.cpp
     src/soft_cut/classification/caffe_classifier.hpp
+    src/soft_cut/io/file_writer.cpp
+    src/soft_cut/io/file_writer.hpp
+    src/soft_cut/io/file_reader.cpp
+    src/soft_cut/io/file_reader.cpp
     src/soft_cut/softcut_detection.cpp 
     src/soft_cut/softcut_detection.hpp 
 

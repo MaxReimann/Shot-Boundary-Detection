@@ -1,6 +1,9 @@
 #include "softcut_detection.hpp"
 #include <glog/logging.h>
 #include <src/soft_cut/classification/caffe_classifier.hpp>
+#include "src/soft_cut/io/file_writer.hpp"
+#include <boost/format.hpp>
+#include <src/soft_cut/io/file_reader.hpp>
 
 void wrongUsage();
 
@@ -10,7 +13,7 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     // Disable logging (1: log warnings, 3: log nothing)
     FLAGS_minloglevel = 1;
 
-    // Caffee parameters
+    // Caffe parameters
     std::string preModel = "path_to_model";
     std::string protoFile = "path_to_deploy_prototxt";
     bool cpuSetting = false;
@@ -19,32 +22,106 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     bool isDebug = true;
     std::string resultLayer = "argmax";
     std::string dataLayer = "data";
-    int batchSize = 64;
+    int batchSize = 70;
     int nrClasses = 2;
 
+    // programm parameters
+    int sequenceSize = 10;
+    int sequenceBatchSize = batchSize / sequenceSize;
+    std::string txtFile = "txtFile";
+    std::string outputFile = "outputFile";
 
-    // 1. Get all frames of an video with their class label
-    std::vector<cv::Mat> frames;
-    std::vector<int> labels;
+
+    /**
+     * MAIN
+     */
+
+
+    // 1. Get all sequences with frame paths and class label
+    std::vector<Sequence> sequences;
+    FileReader::load(txtFile, sequenceSize, sequences);
+
+    if (sequences.size() % sequenceBatchSize != 0) {
+        std::cout << "Number of sequences (" << sequences.size() << ") modulo " << sequenceBatchSize << " is not equal to 0!" << std::endl;
+        exit(99);
+    }
 
     // 2. Initialize classifier
     std::cout << "Initialize classifier ..." << std::endl;
     CaffeClassifier classifier(cpuSetting, preModel, protoFile, size, channels, isDebug);
 
-    // 3. Predict a sequence of frames
-    std::vector<float> predictions;
-    classifier.predict(frames, labels, resultLayer, dataLayer, predictions);
+    FileWriter writer(outputFile);
 
-    // 4. Get the prediction result for each of the frames
-    for (int k = 0; k < predictions.size(); k++) {
-        int pred   = (int) predictions[k];
-        int actual = labels.at(k);
+    // 4. Predict all sequences
+    for (int i = 0; i < sequences.size(); i += sequenceBatchSize) {
+        std::cout << (i * 100) / sequences.size() << "% " << std::flush;
+
+        // get data for the batch of sequences
+        SequenceBatch sequenceBatch = getSequenceBatch(sequences, i, sequenceBatchSize);
+
+        // get prediction for frames
+        std::vector<float> predictions;
+        classifier.predict(sequenceBatch.frames, sequenceBatch.labels, resultLayer, dataLayer, predictions);
+
+        // write predictions
+        writePrediction(sequences, predictions, i,  sequenceSize, writer);
+
+        predictions.clear();
     }
 
-    // 5. Write some algorithm, which test different sequences of the video
-    //    and which can than tell where exactly a soft cut takes place.
+    std::cout << std::endl;
+
+    writer.close();
 
     return 0;
+}
+
+
+void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
+                     std::vector<float> predictions,
+                     int i, int sequenceSize,
+                     FileWriter &writer) {
+    for (int k = 0; k < predictions.size(); k++) {
+        Sequence sequence = sequences[i + k / sequenceSize];
+
+        int pred   = (int) predictions[k];
+        int actual = sequence.clazz;
+
+        boost::format line("Frame: %s Predicted: %-3d Actual: %-3d");
+        line % sequence.frames[k];
+        line % pred;
+        line % actual;
+        writer.writeLine(line.str());
+    }
+}
+
+SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int start, int nrSequences) {
+    std::vector<cv::Mat> frames;
+    std::vector<int> labels;
+
+    for (int i = start; i < start + nrSequences; i++) {
+        Sequence sequence = sequences[i];
+
+        // reading frames and labels of sequence
+        for (int j = 0; j < sequence.frames.size(); j++) {
+            std::string frameFile = sequence.frames[j];
+            cv::Mat frame = cv::imread(frameFile);
+
+            // check if image contains data
+            if (!frame.data) {
+                std::cerr << "Warning: input image (" << frameFile << ") for caffe classifier is empty." << std::endl;
+                exit(1);
+            }
+
+            frames.push_back(frame);
+            labels.push_back(sequence.clazz);
+        }
+    }
+
+    SequenceBatch sequenceBatch;
+    sequenceBatch.frames = frames;
+    sequenceBatch.labels = labels;
+    return sequenceBatch;
 }
 
 void wrongUsageSoftCut()
