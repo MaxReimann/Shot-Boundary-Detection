@@ -11,7 +11,7 @@ int DataGenerationMain::main(po::variables_map flagArgs, std::map<std::string, s
     std::string dataFolder = inputArguments.at("data_folder");
     std::unordered_set<sbd::GoldStandardElement> gold = readGoldStandard(dataFolder);
     TransitionGenerator transitionGenerator(gold, dataFolder, getFileNames(dataFolder));
-    transitionGenerator.createRandomTransitions(10000);
+    transitionGenerator.createRandomTransitions(10);
     return 0;
 }
 
