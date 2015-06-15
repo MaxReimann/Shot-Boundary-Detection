@@ -11,3 +11,6 @@
     -> Verbessern des RNN:  - CNN fine-tunen
                             - 2 LSTM statt 1 LSTM
 
+                            
+    -> Existiert bereits ein Split der Daten von TrecVid (http://www-nlpir.nist.gov/projects/trecvid/trecvid.data.html)?
+
