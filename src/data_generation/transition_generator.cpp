@@ -129,9 +129,9 @@ int sbd::TransitionGenerator::createRandomTransition()
         tweenerName + "-" +
         std::to_string(startFrame1) + "-" +
         std::to_string(startFrame2) + "-" +
-        std::to_string(transitionLength) + "-" +
-        (flipperParam1 < 2 ? std::to_string(flipperParam1) : "") + "-" +
-        (flipperParam2 < 2 ? std::to_string(flipperParam2) : "");
+        std::to_string(transitionLength) +
+        (flipperParam1 < 2 ? ("-" + std::to_string(flipperParam1)) : "") +
+        (flipperParam2 < 2 ? ("-" + std::to_string(flipperParam2)) : "");
 
     //std::string baseFolder = "../output/";
     std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/";
