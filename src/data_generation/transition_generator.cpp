@@ -59,7 +59,7 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
     m_imagePaths = imagePaths;
     m_dataFolder = dataFolder;
 
-    m_filesTxtOut.open("../output/files0.txt");
+    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/files0-new.txt");
 }
 
 int sbd::TransitionGenerator::createRandomTransition()
@@ -96,6 +96,11 @@ int sbd::TransitionGenerator::createRandomTransition()
     //int transitionLength = transitionLengthDist(mt);
     int transitionLength = 10;
 
+    std::uniform_int_distribution<int> flipperDist(-1, 2);
+    int flipperParam1 = flipperDist(mt);
+    int flipperParam2 = flipperDist(mt);
+    
+
     if ((sequence1End - sequence1Start) < transitionLength ||
         (sequence2End - sequence2Start) < transitionLength) {
         std::cout << "retry due to too short sequence";
@@ -118,7 +123,16 @@ int sbd::TransitionGenerator::createRandomTransition()
     std::function<float(float, float, float, float)> tweener = tweenerMap[tweenerName];
 
     std::string datasetName = getDatasetName();
-    std::string newDatasetName = datasetName + "-" + transitionNames[currentType] + "-" + tweenerName + "-" + std::to_string(startFrame1) + "-" + std::to_string(startFrame2) + "-" + std::to_string(transitionLength);
+    std::string newDatasetName =
+        datasetName + "-" +
+        transitionNames[currentType] + "-" +
+        tweenerName + "-" +
+        std::to_string(startFrame1) + "-" +
+        std::to_string(startFrame2) + "-" +
+        std::to_string(transitionLength) + "-" +
+        (flipperParam1 < 2 ? std::to_string(flipperParam1) : "") + "-" +
+        (flipperParam2 < 2 ? std::to_string(flipperParam2) : "");
+
     //std::string baseFolder = "../output/";
     std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/";
     std::string outputFramesFolder = baseFolder + "frames/" + newDatasetName;
@@ -139,6 +153,13 @@ int sbd::TransitionGenerator::createRandomTransition()
         if (image1.data == NULL || image2.data == NULL) {
             std::cout << "image not found: " << imagePath1 << " " << imagePath2 << std::endl;
             return -1;
+        }
+
+        if (flipperParam1 < 2) {
+            cv::flip(image1, image1, flipperParam1);
+        }
+        if (flipperParam2 < 2) {
+            cv::flip(image2, image2, flipperParam2);
         }
 
         cv::Mat result;
