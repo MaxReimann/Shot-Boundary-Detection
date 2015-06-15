@@ -148,10 +148,10 @@ set(sources
     src/data_generation/transition_generator.hpp
     src/data_generation/data_generation.cpp 
     src/data_generation/data_generation.hpp
-    src/soft_cut/classification/caffe_classifier.cpp
-    src/soft_cut/classification/caffe_classifier.hpp
-    src/soft_cut/softcut_detection.cpp 
-    src/soft_cut/softcut_detection.hpp 
+#    src/soft_cut/classification/caffe_classifier.cpp
+#    src/soft_cut/classification/caffe_classifier.hpp
+#    src/soft_cut/softcut_detection.cpp 
+#    src/soft_cut/softcut_detection.hpp 
 
 )
 

@@ -9,7 +9,7 @@
 #include "gold_standard/gold_standard_statistic.hpp"
 #include "data_generation/transition_generator.hpp"
 #include "data_generation/data_generation.hpp"
-#include "soft_cut/softcut_detection.hpp"
+// #include "soft_cut/softcut_detection.hpp"
 
 #include "main.hpp"
 
@@ -70,8 +70,8 @@ int main(int argc, char** argv) {
         hardCutMain.main(vmap, inputArguments);
     
     } else if (vmap.count("soft_cut")) {
-        SoftCutMain softCutMain;
-        softCutMain.main(vmap, inputArguments);
+//        SoftCutMain softCutMain;
+//       softCutMain.main(vmap, inputArguments);
 
     } else if (vmap.count("generate")) {
         DataGenerationMain dataGenerationMain;
