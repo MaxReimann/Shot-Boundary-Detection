@@ -202,7 +202,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         }
 
 
-    cv::Mat resizedImage1;
+        cv::Mat resizedImage1;
         cv::resize(image1, resizedImage1, size);
 
         std::string fileName = noTransitionFolder + "/" + std::to_string(i) + ".jpg";

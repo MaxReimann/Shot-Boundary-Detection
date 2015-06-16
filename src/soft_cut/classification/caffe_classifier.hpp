@@ -1,5 +1,5 @@
 #pragma once
-
+#ifndef _WIN32
 #include <caffe/caffe.hpp>
 #include <caffe/proto/caffe.pb.h>
 #include <caffe/util/io.hpp>
@@ -32,3 +32,4 @@ class CaffeClassifier {
     };
 
 }
+#endif

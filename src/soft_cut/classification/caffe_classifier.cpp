@@ -8,6 +8,8 @@
 #define CPU_ONLY 
 #endif
 
+#ifndef _WIN32 //temporary, until caffe is tame
+
 #include <caffe/caffe.hpp>
 #include <caffe/proto/caffe.pb.h>
 #include <caffe/util/io.hpp>
@@ -18,7 +20,7 @@ using namespace std;
 using namespace caffe;
 using namespace cv;
 
-#ifndef _WIN32 //temporary, until caffe is tame
+
 
 namespace sbd {
 

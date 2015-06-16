@@ -1,5 +1,7 @@
 #include "softcut_detection.hpp"
+#ifndef _WIN32
 #include <glog/logging.h>
+#endif
 #include <src/soft_cut/classification/caffe_classifier.hpp>
 
 void wrongUsage();
@@ -8,6 +10,7 @@ using namespace sbd;
 
 int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
     // Disable logging (1: log warnings, 3: log nothing)
+#ifndef _WIN32
     FLAGS_minloglevel = 1;
 
     // Caffee parameters
@@ -44,6 +47,7 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     // 5. Write some algorithm, which test different sequences of the video
     //    and which can than tell where exactly a soft cut takes place.
 
+#endif
     return 0;
 }
 
