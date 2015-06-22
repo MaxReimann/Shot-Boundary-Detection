@@ -42,9 +42,7 @@ std::map<std::string, std::function<float(float, float, float, float)>> tweenerM
 };
 
 
-TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardElement> &gold,
-    std::string dataFolder,
-    std::vector<std::string> imagePaths) {
+TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardElement> &gold, std::string dataFolder) {
 
     for (auto el : tweenerMap) {
         m_tweenerNames.push_back(el.first);
@@ -56,11 +54,58 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
     });
 
     m_gold = orderedGold;
-    m_imagePaths = imagePaths;
     m_dataFolder = dataFolder;
 
-    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/files0-new.txt");
+    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/files-0-new.txt");
 }
+
+int sbd::TransitionGenerator::writeFilesTxtForTestData() {
+    m_filesTxtOut.close();
+    m_filesTxtOut.open("files-2.txt");
+
+    int currentFrameIdx = 0;
+    std::string previousVideoName;
+
+    for (auto gold : m_gold) {
+        // semantic: startFrame/endFrame belong to transition
+
+        if (previousVideoName != "" && gold.videoName != previousVideoName) {
+            // we have to write the frames after the last cut of the previous video
+            while (true) {
+                fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
+                
+                if (!boost::filesystem::exists(framePath)) {
+                    std::cout << "framePath" << framePath << "does not exist. exit!";
+                    break;
+                }
+                
+                m_filesTxtOut << framePath.string() << " " << "0" << std::endl;
+                currentFrameIdx++;
+            }
+            
+            currentFrameIdx = 0;
+        }
+
+        while (currentFrameIdx < gold.startFrame) {
+            // output the frames before the cut
+            fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
+
+            m_filesTxtOut << framePath.string() << " " << "0" << std::endl;
+            currentFrameIdx++;
+        }
+        while (currentFrameIdx <= gold.endFrame) {
+            // output the frames within the cut
+            fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
+
+            m_filesTxtOut << framePath.string() << " " << "1" << std::endl;
+            currentFrameIdx++;
+        }
+
+        previousVideoName = gold.videoName;
+    }
+    return 0;
+}
+
 
 int sbd::TransitionGenerator::createRandomTransition()
 {
@@ -141,11 +186,11 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     boost::filesystem::create_directories(outputFramesFolder);
     boost::filesystem::create_directories(noTransitionFolder);
-
+    
     for (int i = 0; i <= transitionLength; i++) {
 
-        std::string imagePath1 = m_imagePaths[startFrame1 + i];
-        std::string imagePath2 = m_imagePaths[startFrame2 + i];
+        std::string imagePath1 = (m_gold[cutStart1].videoFolderPath / (std::to_string(startFrame1 + i) + ".jpg")).string();
+        std::string imagePath2 = (m_gold[cutStart2].videoFolderPath / (std::to_string(startFrame2 + i) + ".jpg")).string();
 
         cv::Mat image1 = cv::imread(imagePath1, CV_LOAD_IMAGE_COLOR);
         cv::Mat image2 = cv::imread(imagePath2, CV_LOAD_IMAGE_COLOR);
@@ -192,8 +237,7 @@ int sbd::TransitionGenerator::createRandomTransition()
     }
 
     for (int i = 0; i <= transitionLength; i++) {
-
-        std::string imagePath1 = m_imagePaths[startFrame1 + i];
+        std::string imagePath1 = (m_gold[cutStart1].videoFolderPath / (std::to_string(startFrame1 + i) + ".jpg")).string();
         cv::Mat image1 = cv::imread(imagePath1, CV_LOAD_IMAGE_COLOR);
 
         if (image1.data == NULL) {

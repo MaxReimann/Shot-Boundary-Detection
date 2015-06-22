@@ -56,7 +56,7 @@ bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd:
         return true;
     }*/
 
-    GoldStandardElement gold(videoName1, videoName2, std::stoi(frameNr1), std::stoi(frameNr2));
+    GoldStandardElement gold(videoName1, videoName2, "", std::stoi(frameNr1), std::stoi(frameNr2));
 
     //    std::cout << videoName1 << "-" << videoName2 << "-" << frameNr1 << "-" << frameNr2 << std::endl;
     //    for (int i = 0; i < gold.size(); i++) {
