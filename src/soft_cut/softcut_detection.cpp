@@ -35,7 +35,6 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     std::string txtFile = "/opt/data_sets/video_sbd_dataset/frames/test_test.txt"; // TODO adapt to correct file
     std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions.txt";
 
-
     /**
     * MAIN
     */
@@ -86,6 +85,7 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
     std::vector<float> predictions,
     int i, int sequenceSize,
     FileWriter &writer) {
+
     for (int k = 0; k < predictions.size(); k++) {
         Sequence sequence = sequences[i + k / sequenceSize];
 
@@ -93,7 +93,7 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
         int actual = sequence.clazz;
 
         boost::format line("Frame: %s Predicted: %-3d Actual: %-3d");
-        line % sequence.frames[k];
+        line % sequence.frames[k % sequenceSize];
         line % pred;
         line % actual;
         writer.writeLine(line.str());
