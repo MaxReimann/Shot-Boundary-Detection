@@ -18,6 +18,7 @@
 
 namespace po = boost::program_options;
 typedef unsigned int uint;
+typedef boost::filesystem::path fp;
 
 namespace cv {
     class Mat;

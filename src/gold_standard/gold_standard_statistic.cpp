@@ -32,20 +32,20 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     std::vector<double> othLength;
 
     for (const auto& element : goldStandard) {
-        if (element.type == "CUT") {
+        if (element.cutType== "CUT") {
             cut++;
             cutLength.push_back(element.endFrame - element.startFrame);
-        } else if (element.type == "DIS") {
+        } else if (element.cutType == "DIS") {
             dis++;
             disLength.push_back(element.endFrame - element.startFrame);
-        } else if (element.type == "OTH" || element.type == "OHT") {
+        } else if (element.cutType == "OTH" || element.cutType == "OHT") {
             oth++;
             othLength.push_back(element.endFrame - element.startFrame);
-        } else if (element.type == "FOI") {
+        } else if (element.cutType== "FOI") {
             foi++;
             foiLength.push_back(element.endFrame - element.startFrame);
         } else {
-            std::cout << element.type << std::endl;
+            std::cout << element.cutType << std::endl;
         }
     }
 
@@ -102,7 +102,7 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
     
     for (auto &element : goldStandard)
     {
-        auto imPath = fp(boost::replace_first_copy(element.filePath, "truth", "frames"));
+        auto imPath = fp(boost::replace_first_copy(element.truthFilePath, "truth", "frames"));
         std::string name = fileReader.extractName(imPath.string());
         auto imDir = imPath.parent_path().parent_path() / name; //parentpath skips sbref folder
 
@@ -203,7 +203,7 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
         auto goldElements = it.second;
         int copycount = 0;
         
-        std::string name = fileReader.extractName(goldElements.front().filePath);
+        std::string name = fileReader.extractName(goldElements.front().truthFilePath);
 
         fp outPath(outputFolder);
         outPath = outPath / name;
@@ -221,7 +221,7 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
                 // extracts only hardcuts and proportional negative examples
                 if (hardCutsOnly) 
                 {
-                    if (element.type == "CUT" || element.type == "NEG")
+                    if (element.cutType == "CUT" || element.cutType == "NEG")
                     {
                         auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
                         auto in = imDir / strFrame(element.startFrame);

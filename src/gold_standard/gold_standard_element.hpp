@@ -6,16 +6,16 @@ namespace sbd {
 
     class GoldStandardElement {
     public:
-        std::string name;
-        std::string type;
+        std::string videoName;
+        std::string cutType;
+        fp videoFolderPath;
         int startFrame;
         int endFrame;
-		std::string filePath; //optional
+		std::string truthFilePath; //optional
         bool operator==(const GoldStandardElement &other) const {
-            return name == other.name && startFrame == other.startFrame && endFrame == other.endFrame;
+            return videoName == other.videoName && startFrame == other.startFrame && endFrame == other.endFrame;
         }
 
-        GoldStandardElement(std::string name, std::string type, int startFrame, int endFrame);
         GoldStandardElement(std::string name, std::string type, std::string path, int startFrame, int endFrame);
     };
 }
@@ -29,7 +29,7 @@ namespace std {
 
             std::stringstream ss;
             // Do not include the type in the hashing!
-            ss << gold.name << "-" << gold.startFrame << "-" << gold.endFrame;
+            ss << gold.videoName << "-" << gold.startFrame << "-" << gold.endFrame;
             std::string goldString = ss.str();
 
            return hash<string>()(goldString);

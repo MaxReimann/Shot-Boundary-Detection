@@ -35,10 +35,18 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     std::string txtFile = "/opt/data_sets/video_sbd_dataset/frames/test_test.txt"; // TODO adapt to correct file
     std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions.txt";
 
-
     /**
     * MAIN
     */
+
+    // TODO
+    // (1) Die Sequenzen werden pro Video erzeugt, aber zusammen in den Sequenze-Vektor gespeichert.
+    //     Eine Sequenze-Batch darf nicht über Videos hinaus gehen.
+    // (2) Wir müsen alle Sequenzen von einem Video bestimmen!
+    // (3) Evaluierung einbauen: Frame-Level, Sequence-Level, Video-Level
+    // (4) Mergen von 10er Sequenzen die einen Soft-Cut darstellen. -> Macht Felix
+    //     Beispiel: 5 Sequenzen wurden als Soft Cut erkannt, eine nicht und dann wieder 5 als Soft Cut.
+    //               Die 11 Sequenzen sind wahrscheinlich ein Soft Cut.
 
 
     // 1. Get all sequences with frame paths and class label
@@ -73,9 +81,9 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 
         predictions.clear();
     }
-
     std::cout << std::endl;
 
+    std::cout << "Wrote prediction to " << outputFile << std::endl;
     writer.close();
 #endif
     return 0;
@@ -86,6 +94,7 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
     std::vector<float> predictions,
     int i, int sequenceSize,
     FileWriter &writer) {
+
     for (int k = 0; k < predictions.size(); k++) {
         Sequence sequence = sequences[i + k / sequenceSize];
 
@@ -93,7 +102,7 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
         int actual = sequence.clazz;
 
         boost::format line("Frame: %s Predicted: %-3d Actual: %-3d");
-        line % sequence.frames[k];
+        line % sequence.frames[k % sequenceSize];
         line % pred;
         line % actual;
         writer.writeLine(line.str());
