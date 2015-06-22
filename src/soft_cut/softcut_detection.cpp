@@ -56,6 +56,7 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     FileWriter writer(outputFile);
 
     // 4. Predict all sequences
+    std::cout << "Predicting " << sequences.size() << " sequences ..." << std::endl;
     for (int i = 0; i < sequences.size(); i += sequenceBatchSize) {
         std::cout << (i * 100) / sequences.size() << "% " << std::flush;
 
