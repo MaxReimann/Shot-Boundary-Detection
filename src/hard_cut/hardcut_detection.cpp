@@ -51,7 +51,18 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     fs.release();
 
     Features trainSet, testSet;
-    splitTrainTestSets(features, 0.7, trainSet, testSet);
+	if (flagArgs.count("classify_folder"))
+	{
+		trainSet = features;
+		std::string classifyPath = flagArgs["classify_folder"].as<std::string>();
+		std::vector<std::string> imagePathsTest = getFileNames(classifyPath);
+		testSet = buildHistogramDifferences(imagePathsTest, gold);
+		
+	}
+	else{
+
+		splitTrainTestSets(features, 0.7, trainSet, testSet);
+	}
     cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
     evaluate(testSet, learner);
 
