@@ -17,8 +17,9 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     FLAGS_minloglevel = 1;
 
     // Caffe parameters
-    std::string preModel = "path_to_model";
-    std::string protoFile = "path_to_deploy_prototxt";
+    std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_110000.caffemodel";
+    std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
+
     bool cpuSetting = false;
     cv::Size size(227, 227);
     int channels = 3;
@@ -31,9 +32,8 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     // programm parameters
     int sequenceSize = 10;
     int sequenceBatchSize = batchSize / sequenceSize;
-    std::string txtFile = "txtFile";
-    std::string outputFile = "outputFile";
-
+    std::string txtFile = "/opt/data_sets/video_sbd_dataset/frames/test_test.txt"; // TODO adapt to correct file
+    std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions.txt";
 
     /**
     * MAIN
@@ -56,6 +56,7 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     FileWriter writer(outputFile);
 
     // 4. Predict all sequences
+    std::cout << "Predicting " << sequences.size() << " sequences ..." << std::endl;
     for (int i = 0; i < sequences.size(); i += sequenceBatchSize) {
         std::cout << (i * 100) / sequences.size() << "% " << std::flush;
 
@@ -84,6 +85,7 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
     std::vector<float> predictions,
     int i, int sequenceSize,
     FileWriter &writer) {
+
     for (int k = 0; k < predictions.size(); k++) {
         Sequence sequence = sequences[i + k / sequenceSize];
 
@@ -91,7 +93,7 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
         int actual = sequence.clazz;
 
         boost::format line("Frame: %s Predicted: %-3d Actual: %-3d");
-        line % sequence.frames[k];
+        line % sequence.frames[k % sequenceSize];
         line % pred;
         line % actual;
         writer.writeLine(line.str());

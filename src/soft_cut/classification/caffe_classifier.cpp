@@ -74,22 +74,20 @@ namespace sbd {
                                   string dataLayer, vector<float> & predictions) {
         vector<Datum> vecDatum;
 
-        std::cout << "Prediction" << std::endl;
         for (int i = 0; i < originImages.size(); i++) {
             cv::Mat originImage = originImages[i];
-            std::cout << "Refcount (bef): " << *originImage.refcount << std::endl;
 
             // resize image
             Mat image;
             if (originImage.cols != imageSize.width || originImage.rows != imageSize.height) {
-//                resize(originImage, image, imageSize);
-                std::cout << "Image does not have correct size. Exiting." << std::endl;
-                exit(99);
+                resize(originImage, image, imageSize);
+//                std::cout << "Image does not have correct size. Exiting." << std::endl;
+//                exit(99);
             } else
                 image = originImage;
 
             // check channels
-            if (channels != image.channels()){
+            if (channels != image.channels()) {
                 cerr << "Error: the channel number of input image is invalid for CNN classifier!" << endl;
                 exit(1);
             }
@@ -100,7 +98,6 @@ namespace sbd {
             datum.set_label(labels[i]);
             vecDatum.push_back(datum);
             image.release();
-            std::cout << "Refcount (aft): " << *originImage.refcount << std::endl;
         }
 
         // get the data layer
@@ -118,6 +115,7 @@ namespace sbd {
         const caffe::shared_ptr<Blob<float> > featureBlob = caffeNet->blob_by_name(resultLayer);
         int batchSize = featureBlob->num();
         int dimFeatures = featureBlob->count() / batchSize;
+//        std::cout << "Batch size is " << batchSize << "/ dim features is " << dimFeatures << std::endl;
 
         // get output from each channel
         for (int n = 0; n < batchSize; ++n) {
@@ -129,10 +127,10 @@ namespace sbd {
         }
 
         // release data
-        for (Datum d : vecDatum)
-            d.release_data();
+        // for (Datum d : vecDatum) {
+        //     d.release_data();
+        // }
     }
-
 }
 
 #endif
