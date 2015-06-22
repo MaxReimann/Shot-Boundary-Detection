@@ -39,6 +39,15 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     * MAIN
     */
 
+    // TODO
+    // (1) Die Sequenzen werden pro Video erzeugt, aber zusammen in den Sequenze-Vektor gespeichert.
+    //     Eine Sequenze-Batch darf nicht über Videos hinaus gehen.
+    // (2) Wir müsen alle Sequenzen von einem Video bestimmen!
+    // (3) Evaluierung einbauen: Frame-Level, Sequence-Level, Video-Level
+    // (4) Mergen von 10er Sequenzen die einen Soft-Cut darstellen. -> Macht Felix
+    //     Beispiel: 5 Sequenzen wurden als Soft Cut erkannt, eine nicht und dann wieder 5 als Soft Cut.
+    //               Die 11 Sequenzen sind wahrscheinlich ein Soft Cut.
+
 
     // 1. Get all sequences with frame paths and class label
     std::vector<Sequence> sequences;
