@@ -50,7 +50,13 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
 
     std::vector<sbd::GoldStandardElement> orderedGold(gold.begin(), gold.end());
     std::sort(orderedGold.begin(), orderedGold.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
-        return a.startFrame < b.startFrame;
+        if (a.videoName == b.videoName) {
+            return a.startFrame < b.startFrame;
+        }
+        else {
+            return a.videoName < b.videoName;
+        }
+        
     });
 
     m_gold = orderedGold;
@@ -64,45 +70,48 @@ int sbd::TransitionGenerator::writeFilesTxtForTestData() {
     m_filesTxtOut.open("files-2.txt");
 
     int currentFrameIdx = 0;
-    std::string previousVideoName;
-
-    for (auto gold : m_gold) {
+    
+    
+    for (int goldIndex = 0; goldIndex < m_gold.size(); goldIndex++) {
+        auto gold = m_gold[goldIndex];
         // semantic: startFrame/endFrame belong to transition
-
-        if (previousVideoName != "" && gold.videoName != previousVideoName) {
-            // we have to write the frames after the last cut of the previous video
-            while (true) {
-                fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
-                
-                if (!boost::filesystem::exists(framePath)) {
-                    std::cout << "framePath" << framePath << "does not exist. exit!";
-                    break;
-                }
-                
-                m_filesTxtOut << framePath.string() << " " << "0" << std::endl;
-                currentFrameIdx++;
-            }
-            
-            currentFrameIdx = 0;
-        }
 
         while (currentFrameIdx < gold.startFrame) {
             // output the frames before the cut
             fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
 
-            m_filesTxtOut << framePath.string() << " " << "0" << std::endl;
+            m_filesTxtOut << framePath.string() << " 0" << std::endl;
             currentFrameIdx++;
         }
         while (currentFrameIdx <= gold.endFrame) {
             // output the frames within the cut
             fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
 
-            m_filesTxtOut << framePath.string() << " " << "1" << std::endl;
+            m_filesTxtOut << framePath.string() << " 1" << std::endl;
             currentFrameIdx++;
         }
 
-        previousVideoName = gold.videoName;
+        int offset = goldIndex + 1 < m_gold.size() ? 1 : 0;
+        std::string nextVideoName = m_gold[goldIndex + offset].videoName;
+        if (gold.videoName != nextVideoName) {
+            // we have reached the last gold element in the current video
+            // now we have to output the remaining frames
+            while (true) {
+                fp framePath = gold.videoFolderPath / (std::to_string(currentFrameIdx) + ".jpg");
+
+                if (!boost::filesystem::exists(framePath)) {
+                    std::cout << " framePath " << framePath << " does not exist. exit! " << std::endl;
+                    break;
+                }
+
+                m_filesTxtOut << framePath.string() << " 0" << std::endl;
+                currentFrameIdx++;
+            }
+
+            currentFrameIdx = 0;
+        }
     }
+
     return 0;
 }
 
