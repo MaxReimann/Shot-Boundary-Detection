@@ -72,9 +72,9 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 
         predictions.clear();
     }
-
     std::cout << std::endl;
 
+    std::cout << "Wrote prediction to " << outputFile << std::endl;
     writer.close();
 #endif
     return 0;

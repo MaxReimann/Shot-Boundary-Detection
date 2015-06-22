@@ -20,6 +20,13 @@ std::vector<Sequence> FileReader::load(std::string txtFile, int sequenceSize, st
             std::vector<std::string> tokens = splitLine(line);
             std::string file = tokens.at(0);
             int clazz = std::stoi(tokens.at(1));
+
+            // skip files, which do not exists
+            if ( !boost::filesystem::exists(file)) {
+                std::cout << "Can't find " << file << std::endl;
+                continue;
+            }
+
             // get video name
             boost::filesystem::path path(file);
             std::string curVideoName = boost::filesystem::basename(path.parent_path());
