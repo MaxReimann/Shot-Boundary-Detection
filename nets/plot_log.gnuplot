@@ -20,7 +20,7 @@ reset
 set style data lines
 set key right
 
-file(test_or_train) = sprintf("uc101.tlog.%s", test_or_train)
+file(test_or_train) = sprintf("soft_cuts.tlog.%s", test_or_train)
 ucf_101_title = "Learning on six classes of UCF 101"
 
 ###### Fields in the training data
