@@ -7,38 +7,25 @@
 #include <boost/format.hpp>
 #include <src/soft_cut/io/file_reader.hpp>
 #include <algorithm>
+#include <src/evaluation/evaluation.hpp>
 
 void wrongUsage();
 
 using namespace sbd;
 
 int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
-    // Disable logging (1: log warnings, 3: log nothing)
 #ifndef _WIN32
+    // Disable caffe logging (1: log warnings, 3: log nothing)
     FLAGS_minloglevel = 1;
 
-    // Caffe parameters
-    std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_110000.caffemodel";
-    std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
 
-    bool cpuSetting = false;
-    cv::Size size(227, 227);
-    int channels = 3;
-    bool isDebug = true;
-    std::string resultLayer = "argmax";
-    std::string dataLayer = "data";
-    int batchSize = 70;
-    int nrClasses = 2;
+    SoftCutMain softcut = SoftCutMain();
+    softcut.findSoftCuts();
+#endif
+    return 0;
+}
 
-    // programm parameters
-    int sequenceSize = 10;
-    int sequenceBatchSize = batchSize / sequenceSize;
-    std::string txtFile = "/opt/data_sets/video_sbd_dataset/frames/test_test.txt"; // TODO adapt to correct file
-    std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions.txt";
-
-    /**
-    * MAIN
-    */
+void SoftCutMain::findSoftCuts() {
 
     // TODO
     // (1) Die Sequenzen werden pro Video erzeugt, aber zusammen in den Sequenze-Vektor gespeichert.
@@ -50,44 +37,31 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     //               Die 11 Sequenzen sind wahrscheinlich ein Soft Cut.
 
 
-    // 1. Get all sequences with frame paths and class label
-    std::vector<Sequence> sequences;
-    FileReader::load(txtFile, sequenceSize, sequences);
-
-    if (sequences.size() % sequenceBatchSize != 0) {
-        std::cout << "Number of sequences (" << sequences.size() << ") modulo " << sequenceBatchSize << " is not equal to 0!" << std::endl;
-        exit(99);
-    }
+    // 1. Get all videos with frame paths and class label
+    std::vector<Video> videos;
+    FileReader::load(txtFile, sequenceSize, videos);
 
     // 2. Initialize classifier
     std::cout << "Initialize classifier ..." << std::endl;
-    CaffeClassifier classifier(cpuSetting, preModel, protoFile, size, channels, isDebug);
+    CaffeClassifier classifier(useCPU, preModel, protoFile, size, channels, isDebug);
 
-    FileWriter writer(outputFile);
 
-    // 4. Predict all sequences
-    std::cout << "Predicting " << sequences.size() << " sequences ..." << std::endl;
-    for (int i = 0; i < sequences.size(); i += sequenceBatchSize) {
-        std::cout << (i * 100) / sequences.size() << "% " << std::flush;
-
-        // get data for the batch of sequences
-        SequenceBatch sequenceBatch = getSequenceBatch(sequences, i, sequenceBatchSize);
-
-        // get prediction for frames
+    Evaluation<float> evaluation("Sequence-Level-Evaluation", 2);
+    // 3. Predict all videos
+    for (auto video : videos) {
+        std::cout << "Predicting video " << video.videoName << std::endl;
         std::vector<float> predictions;
-        classifier.predict(sequenceBatch.frames, sequenceBatch.labels, resultLayer, dataLayer, predictions);
-
-        // write predictions
-        writePrediction(sequences, predictions, i, sequenceSize, writer);
-
-        predictions.clear();
+        processVideo(video, classifier, predictions);
+        assert(predictions.size == video.sequences.size);
+        for (int i = 0; i < predictions.size(); i++) {
+            float actual = static_cast<float>(video.sequences[i].clazz);
+            evaluation.prediction(predictions[i], actual);
+        }
     }
-    std::cout << std::endl;
+    std::cout << evaluation.summaryString() << std::endl;
 
-    std::cout << "Wrote prediction to " << outputFile << std::endl;
-    writer.close();
-#endif
-    return 0;
+
+
 }
 
 
@@ -110,12 +84,12 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
     }
 }
 
-SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int start, int nrSequences) {
+SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int start) {
     std::vector<cv::Mat> frames;
     std::vector<int> labels;
 
-    for (int i = start; i < start + nrSequences; i++) {
-        Sequence sequence = sequences[i];
+    for (int i = start; i < start + sequenceBatchSize; i++) {
+        Sequence sequence = sequences[std::min(i, static_cast<int>(sequences.size()) - 1)];
 
         // reading frames and labels of sequence
         for (int j = 0; j < sequence.frames.size(); j++) {
@@ -129,15 +103,19 @@ SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int
             }
 
             frames.push_back(frame);
-            labels.push_back(sequence.clazz);
+            labels.push_back(sequence.clazzes[j]);
         }
     }
 
     SequenceBatch sequenceBatch;
     sequenceBatch.frames = frames;
     sequenceBatch.labels = labels;
+    sequenceBatch.relevantSize = std::min(batchSize, static_cast<int>(sequences.size()) - start);
+
+    assert(sequenceBatch.relevantSize % sequenceSize == 0);
     return sequenceBatch;
 }
+
 
 std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize) {
     std::vector<int> centers;
@@ -170,8 +148,7 @@ std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int
     return softcuts;
 }
 
-void wrongUsageSoftCut()
-{
+void wrongUsageSoftCut() {
     std::cout << "Usage: sbd --soft_cut" << std::endl;
 #ifdef _WIN32
     system("pause");
@@ -180,3 +157,44 @@ void wrongUsageSoftCut()
 #endif
     exit(1);
 }
+
+void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<float>& predictions) {
+    std::cout << "Predicting " << video.sequences.size() << " sequences" << std::endl;
+
+    FileWriter writer(outputFile);
+
+    Evaluation<float> videoFrameEvaluation(video.videoName, 2);
+
+    for (int i = 0; i < video.sequences.size(); i += sequenceBatchSize) {
+        std::cout << (i * 100) / video.sequences.size() << "% " << std::flush;
+
+        // get data for the batch of videos
+        SequenceBatch sequenceBatch = getSequenceBatch(video.sequences, i);
+
+        // get prediction for frames
+        std::vector<float> framePredictions;
+        classifier.predict(sequenceBatch.frames, sequenceBatch.labels, resultLayer, dataLayer, framePredictions);
+        framePredictions = std::vector<float>(framePredictions.begin(), framePredictions.begin() + sequenceBatch.relevantSize);
+        assert(framePredictions.size() == sequenceBatch.relevantSize);
+
+        for (int j = 0; j < framePredictions.size(); j++) {
+            float actual = static_cast<float>(sequenceBatch.labels[j]);
+            videoFrameEvaluation.prediction(framePredictions[j], actual);
+            if (j % sequenceSize == sequenceSize - 1)
+                predictions.push_back(framePredictions[j]);
+        }
+
+        // write predictions
+        writePrediction(video.sequences, framePredictions, i, sequenceSize, writer);
+
+        framePredictions.clear();
+
+    }
+    std::cout << std::endl;
+
+    std::cout << videoFrameEvaluation.summaryString() << std::endl;
+    std::cout << "Wrote prediction to " << outputFile << std::endl;
+    writer.close();
+
+}
+

@@ -7,7 +7,7 @@ namespace sbd {
 
     class FileReader {
         public:
-        static std::vector<Sequence> load(std::string dir, int sequenceSize, std::vector<Sequence>& sequences);
+        static void load(std::string dir, int sequenceSize, std::vector<Video>& videos);
         private:
         static std::vector<std::string> splitLine(std::string basic_string);
     };

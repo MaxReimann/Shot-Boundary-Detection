@@ -134,6 +134,8 @@ set(sources
 	src/hard_cut/histogram/histogram.cpp
 	src/hard_cut/svm/svm.hpp
 	src/hard_cut/svm/svm.cpp
+    src/evaluation/evaluation.hpp
+    src/evaluation/evaluation.cpp
     src/option_printing/custom_option_description.cpp
     src/option_printing/custom_option_description.hpp
     src/option_printing/option_printer.cpp
