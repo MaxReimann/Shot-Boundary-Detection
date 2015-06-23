@@ -45,13 +45,14 @@ void SoftCutMain::findSoftCuts() {
     std::cout << "Initialize classifier ..." << std::endl;
     CaffeClassifier classifier(useCPU, preModel, protoFile, size, channels, isDebug);
 
-
     Evaluation<float> evaluation("Sequence-Level-Evaluation", 2);
     // 3. Predict all videos
     for (auto video : videos) {
         std::cout << "Predicting video " << video.videoName << std::endl;
         std::vector<float> predictions;
         processVideo(video, classifier, predictions);
+        std::cout << "Prediction Size: " << predictions.size() << std::endl;
+        std::cout << "Video sequence Size: " << video.sequences.size() << std::endl;
         assert(predictions.size() == video.sequences.size());
         for (int i = 0; i < predictions.size(); i++) {
             float actual = static_cast<float>(video.sequences[i].clazz);
@@ -59,9 +60,6 @@ void SoftCutMain::findSoftCuts() {
         }
     }
     std::cout << evaluation.summaryString() << std::endl;
-
-
-
 }
 
 
@@ -89,7 +87,9 @@ SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int
     std::vector<int> labels;
 
     for (int i = start; i < start + sequenceBatchSize; i++) {
-        Sequence sequence = sequences[std::min(i, static_cast<int>(sequences.size()) - 1)];
+        int index = std::min(i, static_cast<int>(sequences.size()) - 1);
+        std::cout << index << std::endl;
+        Sequence sequence = sequences[index];
 
         // reading frames and labels of sequence
         for (int j = 0; j < sequence.frames.size(); j++) {
@@ -112,7 +112,6 @@ SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int
     sequenceBatch.labels = labels;
     sequenceBatch.relevantSize = std::min(batchSize, static_cast<int>(sequences.size()) - start);
 
-    assert(sequenceBatch.relevantSize % sequenceSize == 0);
     return sequenceBatch;
 }
 
@@ -175,6 +174,7 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
         std::vector<float> framePredictions;
         classifier.predict(sequenceBatch.frames, sequenceBatch.labels, resultLayer, dataLayer, framePredictions);
         framePredictions = std::vector<float>(framePredictions.begin(), framePredictions.begin() + sequenceBatch.relevantSize);
+        std::cout << "Frame Prediction Size: " << framePredictions.size() << " ; Relevant Size: " << sequenceBatch.relevantSize << std::endl;
         assert(framePredictions.size() == sequenceBatch.relevantSize);
 
         for (int j = 0; j < framePredictions.size(); j++) {

@@ -35,17 +35,24 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
         boost::filesystem::path path(file);
         std::string curVideoName = boost::filesystem::basename(path.parent_path());
 
+        if (videoName == "") {
+            videoName = curVideoName;
+        }
+
         // create new video and clear everything when we reach a new video
-        if (curVideoName != videoName && !sequences.empty()) {
+        if (curVideoName != videoName) {
+            videoName = curVideoName;
             Video video;
             video.videoName = videoName;
             video.sequences = sequences;
             videos.push_back(video);
 
+            std::cout << "Video: " << std::endl;
+            std::cout << "    Name: " << videoName << "; Sequences: " << sequences.size() << std::endl;
+
             sequences = std::vector<Sequence>();
             frames = std::vector<std::string>();
             clazzes = std::vector<int>();
-            videoName = curVideoName;
         }
 
         // add frame and clazz to vectors
@@ -72,6 +79,12 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
             sequences.push_back(seq);
         }
     }
+
+    // add the last video
+    Video video;
+    video.videoName = videoName;
+    video.sequences = sequences;
+    videos.push_back(video);
     input.close();
 }
 

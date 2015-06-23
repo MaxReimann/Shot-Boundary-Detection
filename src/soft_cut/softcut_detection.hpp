@@ -60,7 +60,7 @@ namespace sbd
         std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_110000.caffemodel";
         std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
 
-        bool useCPU = false;
+        bool useCPU = true;
         cv::Size size;
         int channels = 3;
         bool isDebug = true;
