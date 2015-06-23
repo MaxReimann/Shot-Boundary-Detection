@@ -11,11 +11,8 @@ std::vector<Sequence> FileReader::load(std::string txtFile, int sequenceSize, st
     std::ifstream input(txtFile);
     std::string line;
     std::vector<std::string> frames;
-    int count = 1;
-
-    // TODO:
-    // create a sequence with every frame as start frame
-    // do not create sequence containing frames of two videos
+    std::vector<int> clazzes;
+    std::string videoName = "";
 
     if (input.is_open()) {
         while (std::getline(input, line)) {
@@ -23,27 +20,46 @@ std::vector<Sequence> FileReader::load(std::string txtFile, int sequenceSize, st
             std::vector<std::string> tokens = splitLine(line);
             std::string file = tokens.at(0);
             int clazz = std::stoi(tokens.at(1));
-            // add frame to frames vector
+
+            // skip files, which do not exists
+            if ( !boost::filesystem::exists(file)) {
+                std::cout << "Can't find " << file << std::endl;
+                continue;
+            }
+
+            // get video name
+            boost::filesystem::path path(file);
+            std::string curVideoName = boost::filesystem::basename(path.parent_path());
+
+            // clear everything when we reach a new video
+            if (curVideoName != videoName) {
+                frames = std::vector<std::string>();
+                clazzes = std::vector<int>();
+                videoName = curVideoName;
+            }
+
+            // add frame and clazz to vectors
             frames.push_back(file);
+            clazzes.push_back(clazz);
 
             // if sequence is complete, create sequence and
             // add it to the sequence vector
-            if (count == sequenceSize) {
-                // get video name
-                boost::filesystem::path path(file);
-                std::string videoName = boost::filesystem::basename(path.parent_path());
+            if (frames.size() >= sequenceSize) {
+                // get last 10 frames
+                std::vector<std::string> curFrames(frames.end() - sequenceSize, frames.end());
+                // if the last 10 frames contain a frame, which does not belong to a soft cut
+                // set the current class to 0, otherwise set it to 1
+                int curClazz = 0;
+                if(std::find(clazzes.end() - sequenceSize, clazzes.end(), 0) != clazzes.end()) {
+                    curClazz = 1;
+                }
 
                 Sequence seq;
-                seq.frames = frames;
-                seq.clazz = clazz;
+                seq.frames = curFrames;
+                seq.clazz = curClazz;
+                seq.videoName = videoName;
                 sequences.push_back(seq);
-
-                // clear count and frames vector
-                count = 0;
-                frames = std::vector<std::string>();
             }
-
-            count++;
         }
         input.close();
     }

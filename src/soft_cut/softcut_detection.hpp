@@ -9,6 +9,7 @@ namespace sbd
     struct Sequence {
         std::vector<std::string> frames;
         int clazz;
+        std::string videoName;
     };
 
     struct SequenceBatch {

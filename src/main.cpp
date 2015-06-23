@@ -20,12 +20,13 @@ int main(int argc, char** argv) {
     po::options_description desc("Options");
   
     //specify new commandline flags here
-    desc.add_options()
-        ("hard_cut", "detection of hard cuts")
-        ("soft_cut", "detection of soft cuts")
-        ("generate", "generation of soft cuts")
-        ("gold_statistic", "calculation of gold statistics")
-        ("help", "print help messages");
+	desc.add_options()
+		("hard_cut", "detection of hard cuts")
+		("soft_cut", "detection of soft cuts")
+		("generate", "generation of soft cuts")
+		("gold_statistic", "calculation of gold statistics")
+		("help", "print help messages")
+		("classify_folder", po::value<std::string>(), "[opt, for hardcuts] specify external testfolder");
 
     //specify string arguments here
     std::map<std::string, std::string> inputArguments = { { "data_folder", "" } };
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
     // declare arguments which are dependent on position
 	po::positional_options_description positionalOptions;
 	positionalOptions.add("data_folder", 1);
+	positionalOptions.add("classify_folder", 2);
 
     po::variables_map vmap;
     try
@@ -43,13 +45,17 @@ int main(int argc, char** argv) {
         po::store(po::command_line_parser(argc, argv).options(desc)
             .positional(positionalOptions).run(), vmap); // throws on error 
         // --help option
-        if (vmap.count("help"))
-        {
-            std::map<std::string, std::string> verboseHelp = {
-                    { "data_folder", "Folder for the images and the truth data."
-                        "Must be supplied for every option except soft-cut"
-                        "Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'"
-                        "For local execution, just set this to '../resources/[type]/'" } };
+		if (vmap.count("help"))
+		{
+			std::map<std::string, std::string> verboseHelp = {
+					{ "data_folder", "Folder for the images and the truth data."
+					"Must be supplied for every option except soft-cut"
+					"Must contain the placeholder [type], which will be replaced by 'frames' or 'truth'"
+					"For local execution, just set this to '../resources/[type]/'" },
+					{"classify_folder", "Use all of the frames in data_folder"
+					"for training and test on classify folder" }
+			};
+		
             usage(desc, positionalOptions, &verboseHelp);
         }
 
