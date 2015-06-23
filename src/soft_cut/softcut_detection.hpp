@@ -73,6 +73,6 @@ namespace sbd
         int sequenceSize = 10;
         int sequenceBatchSize = batchSize / sequenceSize;
         std::string txtFile = "/opt/data_sets/video_sbd_dataset/frames/test_test.txt"; // TODO adapt to correct file
-        std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions.txt";
+        std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions";
     };
 }
