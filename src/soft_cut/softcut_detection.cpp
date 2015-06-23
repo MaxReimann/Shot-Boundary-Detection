@@ -52,7 +52,7 @@ void SoftCutMain::findSoftCuts() {
         std::cout << "Predicting video " << video.videoName << std::endl;
         std::vector<float> predictions;
         processVideo(video, classifier, predictions);
-        assert(predictions.size == video.sequences.size);
+        assert(predictions.size() == video.sequences.size());
         for (int i = 0; i < predictions.size(); i++) {
             float actual = static_cast<float>(video.sequences[i].clazz);
             evaluation.prediction(predictions[i], actual);
