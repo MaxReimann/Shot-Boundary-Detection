@@ -6,6 +6,7 @@
 #include "src/soft_cut/io/file_writer.hpp"
 #include <boost/format.hpp>
 #include <src/soft_cut/io/file_reader.hpp>
+#include <algorithm>
 
 void wrongUsage();
 
@@ -126,6 +127,37 @@ SequenceBatch SoftCutMain::getSequenceBatch(std::vector<Sequence> sequences, int
     sequenceBatch.frames = frames;
     sequenceBatch.labels = labels;
     return sequenceBatch;
+}
+
+std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize) {
+    std::vector<int> centers;
+    std::vector<Softcut> softcuts;
+    int i = 0;
+    while (i < sequences.size()) {
+        std::vector<std::string> mergedFrames;
+        // collect sequences of detected sequemces
+        while (sequences[i].clazz) {
+            for (int j = 0; j < sequenceSize; j++) {
+                // check if current frame already is in mergedFrames
+                if (std::find(mergedFrames.begin(), mergedFrames.end(), sequences[i].frames[j]) == mergedFrames.end()) {
+                    // it is not, so add it
+                    mergedFrames.push_back(sequences[i].frames[j]);
+                }
+            }
+            i++;
+        }
+
+        // mergedFrames now contains the full sequence of frames that belong to the softcut (or at least the major part of it)
+        Softcut cut;
+        cut.firstFrame = mergedFrames[0];
+        cut.lastFrame = mergedFrames.back();
+        cut.length = mergedFrames.size();
+        softcuts.push_back(cut);
+
+        i++;
+    }
+
+    return softcuts;
 }
 
 void wrongUsageSoftCut()
