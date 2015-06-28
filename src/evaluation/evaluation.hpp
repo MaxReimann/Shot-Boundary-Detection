@@ -31,6 +31,8 @@ class Evaluation {
 
     Evaluation::Evaluation(std::string name, int nrClasses) : _nrClasses(nrClasses), _name(name) {
         _confusionMatrix = new unsigned int[nrClasses * nrClasses];
+        for (auto i = 0u; i < _nrClasses * _nrClasses)
+            _confusionMatrix[i] = 0;
     }
 
     Evaluation::~Evaluation() {
