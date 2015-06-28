@@ -86,7 +86,7 @@ std::unordered_set<sbd::GoldStandardElement> HardCutMain::readGoldStandard(std::
     std::cout << "Reading truth from " << truthFolder << std::endl;
 
     FileReader fileReader;
-    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), "CUT");
 
     return goldStandard;
 }

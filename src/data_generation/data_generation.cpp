@@ -28,7 +28,7 @@ std::unordered_set<sbd::GoldStandardElement> DataGenerationMain::readGoldStandar
     std::cout << "Reading truth from " << truthFolder << std::endl;
 
     FileReader fileReader;
-    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), "DIS");
 
     return goldStandard;
 }

@@ -11,7 +11,7 @@
 
 using namespace sbd;
 
-std::unordered_set<GoldStandardElement> FileReader::readDir(const char *dir, bool cutsOnly) {
+std::unordered_set<GoldStandardElement> FileReader::readDir(const char *dir, std::string cutType) {
     std::unordered_set<GoldStandardElement> goldStandard;
 
 	if (!boost::filesystem::exists(dir))
@@ -33,14 +33,14 @@ std::unordered_set<GoldStandardElement> FileReader::readDir(const char *dir, boo
 
     for (; rdi != end_rdi; rdi++) {
         if (extension.compare((*rdi).path().extension().string()) == 0) {
-            read((*rdi).path().string(), goldStandard, cutsOnly);
+            read((*rdi).path().string(), goldStandard, cutType);
         }
     }
 
     return goldStandard;
 }
 
-void FileReader::read(std::string fileName, std::unordered_set<GoldStandardElement>& goldStandard, bool cutsOnly) {
+void FileReader::read(std::string fileName, std::unordered_set<GoldStandardElement>& goldStandard, std::string cutType) {
     std::string name = extractName(fileName);
 
     boost::smatch typeMatch;
@@ -48,10 +48,10 @@ void FileReader::read(std::string fileName, std::unordered_set<GoldStandardEleme
     boost::smatch endFrameMatch;
 
     boost::regex typeRegex;
-    if (cutsOnly) {
-        typeRegex = boost::regex(".*?type..(CUT).*");
-    } else {
+    if (cutType == "all") {
         typeRegex = boost::regex(".*?type..([A-Z]+).*");
+    } else {
+        typeRegex = boost::regex(".*?type..(" + cutType + ").*");
     }
     boost::regex startFrameRegex(".*?preFNum..([0-9]+).*");
     boost::regex endFrameRegex  (".*?postFNum..([0-9]+).*");

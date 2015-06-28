@@ -18,7 +18,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     // read all truth files
     std::cout << "Read truth files..." << std::endl;
     FileReader fileReader;
-    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), false);
+    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), "all");
 
     // count different cut types
     std::cout << "Count different cut types..." << std::endl;
@@ -95,7 +95,7 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 	// read all truth files
 	std::cout << "Read truth files..." << std::endl;
 	FileReader fileReader;
-	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), "CUT");
 
     std::unordered_set<std::string> skipDirectories;
     GoldElementDict directories;
