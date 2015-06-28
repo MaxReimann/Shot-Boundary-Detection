@@ -49,7 +49,7 @@ namespace sbd
 
         SequenceBatch getSequenceBatch(std::vector<Sequence> sequences, int start);
 
-        SoftCutMain() : size(227, 277) {}
+        SoftCutMain() : size(227, 227) {}
 
         void findSoftCuts();
 
@@ -60,7 +60,7 @@ namespace sbd
         std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_110000.caffemodel";
         std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
 
-        bool useCPU = true;
+        bool useCPU = false;
         cv::Size size;
         int channels = 3;
         bool isDebug = true;
@@ -72,7 +72,7 @@ namespace sbd
         // programm parameters
         int sequenceSize = 10;
         int sequenceBatchSize = batchSize / sequenceSize;
-        std::string txtFile = "/opt/data_sets/video_sbd_dataset/frames/test_test.txt"; // TODO adapt to correct file
+        std::string txtFile = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-2.txt";
         std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions";
     };
 }

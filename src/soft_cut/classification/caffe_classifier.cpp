@@ -81,8 +81,6 @@ namespace sbd {
             Mat image;
             if (originImage.cols != imageSize.width || originImage.rows != imageSize.height) {
                 resize(originImage, image, imageSize);
-//                std::cout << "Image does not have correct size. Exiting." << std::endl;
-//                exit(99);
             } else
                 image = originImage;
 
