@@ -106,7 +106,8 @@ void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
         Sequence sequence = sequences[i + k / sequenceSize];
 
         int pred = (int)predictions[k];
-        int actual = sequence.clazz;
+        int actual = sequence.clazzes[k % sequenceSize];
+        assert(sequence.clazzes.size() == sequenceSize);
 
         boost::format line("Frame: %s Predicted: %-3d Actual: %-3d");
         line % sequence.frames[k % sequenceSize];

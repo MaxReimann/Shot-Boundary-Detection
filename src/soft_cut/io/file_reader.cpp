@@ -47,9 +47,6 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
             video.sequences = sequences;
             videos.push_back(video);
 
-            std::cout << "Video: " << std::endl;
-            std::cout << "    Name: " << videoName << "; Sequences: " << sequences.size() << std::endl;
-
             sequences = std::vector<Sequence>();
             frames = std::vector<std::string>();
             clazzes = std::vector<int>();
