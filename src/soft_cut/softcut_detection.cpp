@@ -43,7 +43,7 @@ void SoftCutMain::findSoftCuts() {
     CaffeClassifier classifier(useCPU, preModel, protoFile, size, channels, isDebug);
 
     // 3. Predict and evaluating all videos
-    Evaluation<float> evaluation("Sequence-Level-Evaluation", nrClasses);
+    Evaluation evaluation("Sequence-Level-Evaluation", nrClasses);
     for (auto video : videos) {
         std::cout << "Predicting video " << video.videoName << std::endl;
         std::vector<float> predictions;
@@ -51,7 +51,7 @@ void SoftCutMain::findSoftCuts() {
         assert(predictions.size() == video.sequences.size());
         for (int i = 0; i < predictions.size(); i++) {
             float actual = static_cast<float>(video.sequences[i].clazz);
-            evaluation.prediction(predictions[i], actual);
+            evaluation.prediction((int) predictions[i], (int) actual);
         }
     }
     std::cout << evaluation.summaryString() << std::endl;
@@ -62,7 +62,7 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
 
     std::string outputFileName = outputFile + "_" + video.videoName + ".txt";
     FileWriter writer(outputFileName);
-    Evaluation<float> videoFrameEvaluation(video.videoName, nrClasses);
+    Evaluation videoFrameEvaluation(video.videoName, nrClasses);
 
     for (int i = 0; i < video.sequences.size(); i += sequenceBatchSize) {
         std::cout << (i * 100) / video.sequences.size() << "% " << std::flush;
@@ -78,7 +78,7 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
 
         for (int j = 0; j < framePredictions.size(); j++) {
             float actual = static_cast<float>(sequenceBatch.labels[j]);
-            videoFrameEvaluation.prediction(framePredictions[j], actual);
+            videoFrameEvaluation.prediction((int) framePredictions[j], (int) actual);
             if (j % sequenceSize == sequenceSize - 1)
                 predictions.push_back(framePredictions[j]);
         }
