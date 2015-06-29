@@ -55,8 +55,31 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 	{
 		trainSet = features;
 		std::string classifyPath = flagArgs["classify_folder"].as<std::string>();
-		std::vector<std::string> imagePathsTest = getFileNames(classifyPath);
-		testSet = buildHistogramDifferences(imagePathsTest, gold);
+		std::string histogramCachePath = "../resources/differenceHistogramsEvaluation.yaml";
+		cv::FileStorage fs2;
+
+		if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
+		{
+
+			std::vector<std::string> imagePathsTest = getFileNames(classifyPath);
+			testSet = buildHistogramDifferences(imagePathsTest, gold);
+
+			if (USE_CACHED_HISTOGRAMS)
+			{
+				std::cout << "Caching built histograms." << std::endl;
+				fs2.open(histogramCachePath, cv::FileStorage::WRITE);
+				fs2 << "Histograms" << testSet.values;
+				fs2 << "Labels" << testSet.classes;
+			}
+		}
+		else
+		{
+			std::cout << "Using cached histogram differences." << std::endl;
+			fs2.open(histogramCachePath, cv::FileStorage::READ);
+			fs2["Histograms"] >> testSet.values;
+			fs2["Labels"] >> testSet.classes;
+		}
+		fs2.release();
 		
 	}
 	else{
