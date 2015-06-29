@@ -154,14 +154,14 @@ set(sources
     src/soft_cut/classification/caffe_classifier.hpp
     src/soft_cut/classification/merger.cpp
     src/soft_cut/classification/merger.hpp
+    src/soft_cut/classification/gap_filler.cpp
+    src/soft_cut/classification/gap_filler.hpp
     src/soft_cut/io/file_writer.cpp
     src/soft_cut/io/file_writer.hpp
     src/soft_cut/io/file_reader.cpp
     src/soft_cut/io/file_reader.cpp
     src/soft_cut/softcut_detection.cpp 
     src/soft_cut/softcut_detection.hpp 
-    src/soft_cut/gap_filler.cpp
-    src/soft_cut/gap_filler.hpp
 
 )
 

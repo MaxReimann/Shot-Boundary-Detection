@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <src/evaluation/evaluation.hpp>
 #include <src/soft_cut/classification/merger.hpp>
-#include "src/soft_cut/gap_filler.hpp"
+#include "src/soft_cut/classification/gap_filler.hpp"
 
 void wrongUsage();
 
