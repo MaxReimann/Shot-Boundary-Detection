@@ -152,6 +152,8 @@ set(sources
     src/data_generation/data_generation.hpp
     src/soft_cut/classification/caffe_classifier.cpp
     src/soft_cut/classification/caffe_classifier.hpp
+    src/soft_cut/classification/merger.cpp
+    src/soft_cut/classification/merger.hpp
     src/soft_cut/io/file_writer.cpp
     src/soft_cut/io/file_writer.hpp
     src/soft_cut/io/file_reader.cpp

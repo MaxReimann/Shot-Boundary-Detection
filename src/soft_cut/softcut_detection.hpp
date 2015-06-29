@@ -6,15 +6,10 @@
 namespace sbd
 {
 
-    struct Sequence {
-        std::vector<std::string> frames;
-        std::vector<int> clazzes;
-        int clazz;
-    };
-
     struct Video {
         std::string videoName;
-        std::vector<Sequence> sequences;
+        std::vector<short> actual;
+        std::vector<std::string> frames;
     };
 
     struct SequenceBatch {
@@ -41,19 +36,16 @@ namespace sbd
     public:
         int main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments);
 
-        void writePrediction(std::vector<sbd::Sequence> sequences,
-                             std::vector<float> predictions,
-                             int i, int sequenceSize,
-                             sbd::FileWriter &writer);
-        std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize);
+        void writePrediction(std::string videoName, std::vector<short> actual, std::vector<short> predictions, std::vector<std::string> frames);
+        //std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize);
 
-        SequenceBatch getSequenceBatch(std::vector<Sequence> sequences, int start);
+        SequenceBatch getSequenceBatch(Video video, int start);
 
         SoftCutMain() : size(227, 227) {}
 
         void findSoftCuts();
 
-        void processVideo(Video& video, CaffeClassifier&, std::vector<float>& predictions);
+        void processVideo(Video& video, CaffeClassifier&, std::vector<std::vector<short>>& predictions);
 
     protected:
         // Caffe parameters
@@ -73,6 +65,6 @@ namespace sbd
         int sequenceSize = 10;
         int sequenceBatchSize = batchSize / sequenceSize;
         std::string txtFile = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-2.txt";
-        std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions";
+        std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions_";
     };
 }

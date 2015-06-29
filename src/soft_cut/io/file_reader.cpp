@@ -5,20 +5,19 @@
 
 using namespace sbd;
 
-void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>& videos) {
+void FileReader::load(std::string txtFile, std::vector<Video>& videos) {
     std::cout << "Reading " << txtFile << " ..." << std::endl;
 
     std::ifstream input(txtFile);
     std::string line;
     std::vector<std::string> frames;
-    std::vector<int> clazzes;
+    std::vector<short> actual;
     std::string videoName = "";
 
     if (!input.is_open()) {
         throw "Could not read input file";
     }
 
-    std::vector<Sequence> sequences;
     while (std::getline(input, line)) {
         // read line and get frame path and class
         std::vector<std::string> tokens = splitLine(line);
@@ -27,7 +26,12 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
 
         // skip files, which do not exists
         if (!boost::filesystem::exists(file)) {
-            std::cout << "Can't find " << file << std::endl;
+            std::cout << "Can't find " << file << "!" << std::endl;
+            continue;
+        }
+        // skip files, which are empty
+        if (!cv::imread(file).data) {
+            std::cout << "Image " << file << " is emtpy!" << std::endl;
             continue;
         }
 
@@ -44,44 +48,26 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
             videoName = curVideoName;
             Video video;
             video.videoName = videoName;
-            video.sequences = sequences;
+            video.actual = actual;
+            video.frames = frames;
             videos.push_back(video);
 
-            sequences = std::vector<Sequence>();
             frames = std::vector<std::string>();
-            clazzes = std::vector<int>();
+            actual = std::vector<short>();
         }
 
         // add frame and clazz to vectors
         frames.push_back(file);
-        clazzes.push_back(clazz);
-
-        // if sequence is complete, create sequence and
-        // add it to the sequence vector
-        if (frames.size() >= sequenceSize) {
-            // get last 10 frames amd classes
-            std::vector<std::string> curFrames(frames.end() - sequenceSize, frames.end());
-            std::vector<int> curClazzes(clazzes.end() - sequenceSize, clazzes.end());
-            // if the last 10 frames contain a frame, which does not belong to a soft cut
-            // set the current class to 0, otherwise set it to 1
-            int curClazz = 1;
-            if (std::find(curClazzes.begin(), curClazzes.end(), 0) != curClazzes.end()) {
-                curClazz = 0;
-            }
-
-            Sequence seq;
-            seq.clazzes = curClazzes;
-            seq.frames = curFrames;
-            seq.clazz = curClazz;
-            sequences.push_back(seq);
-        }
+        actual.push_back(clazz);
     }
 
     // add the last video
     Video video;
     video.videoName = videoName;
-    video.sequences = sequences;
+    video.actual = actual;
+    video.frames = frames;
     videos.push_back(video);
+
     input.close();
 }
 

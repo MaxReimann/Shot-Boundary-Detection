@@ -71,7 +71,7 @@ namespace sbd {
      * @param predictions the predictions
      */
     void CaffeClassifier::predict(std::vector<cv::Mat> originImages, std::vector<int> labels, string resultLayer,
-                                  string dataLayer, vector<float> & predictions) {
+                                  string dataLayer, vector<short> & predictions) {
         vector<Datum> vecDatum;
 
         for (int i = 0; i < originImages.size(); i++) {
