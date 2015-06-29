@@ -53,6 +53,7 @@ void SoftCutMain::findSoftCuts() {
             // 4. Merge sequencePredictions
             std::vector<short> predictions = strategy->mergeSequencePredictions(sequencePredictions);
             assert(predictions.size() == actual.size());
+            assert(predictions.size() == video.frames.size());
 
             // 5. Evaluation
             Evaluation eval(strategy->name(), 2);
@@ -60,6 +61,7 @@ void SoftCutMain::findSoftCuts() {
                 eval.prediction(predictions[i], actual[i]);
             }
             std::cout << eval.summaryString() << std::endl;
+
             // 6. Evaluation with Gap Filler
             int maxGapsize = 10;
             for (int i = 1; i < maxGapsize; i++) {
@@ -70,6 +72,7 @@ void SoftCutMain::findSoftCuts() {
                 for (int i = 0; i < predictions.size(); i++) {
                     eval.prediction(predictions[i], actual[i]);
                 }
+                std::cout << evalWithGapFiller.summaryString() << std::endl;
             }
 
             delete strategy;
@@ -77,8 +80,6 @@ void SoftCutMain::findSoftCuts() {
         mergeStrategies.clear();
     }
 
-
-    // TODO integrate. Fill gaps in sequencePredictions
 }
 
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<std::vector<short>>& predictions) {
