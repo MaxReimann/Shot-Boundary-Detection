@@ -17,6 +17,8 @@ class Evaluation {
         int nr();
         float accuracy();
         int nrClasses();
+        float precision(int);
+        float recall(int);
         unsigned int* confusionMatrix();
 
 
@@ -25,14 +27,14 @@ class Evaluation {
 
         unsigned int* _confusionMatrix;
         std::string _name;
-        int _nr = 0;
-        int _correct = 0;
         int _nrClasses = 0;
+        int _matrixSize = 0;
     };
 
     Evaluation::Evaluation(std::string name, int nrClasses) : _nrClasses(nrClasses), _name(name) {
-        _confusionMatrix = new unsigned int[nrClasses * nrClasses];
-        for (auto i = 0u; i < _nrClasses * _nrClasses; i++)
+        _matrixSize = _nrClasses * _nrClasses;
+        _confusionMatrix = new unsigned int[_matrixSize];
+        for (auto i = 0u; i < _matrixSize; i++)
             _confusionMatrix[i] = 0;
     }
 
@@ -48,22 +50,20 @@ class Evaluation {
         assert(pred >= 0 && pred < nrClasses());
         assert(actual >= 0 && actual < nrClasses());
         cell(pred, actual) += 1;
-//        _confusionMatrix[pred * nrClasses() + actual] += 1;
-//        _confusionMatrix[pred * nrClasses() + actual] += 1;
-        if (pred == actual)
-            _correct += 1;
-        _nr += 1;
     }
 
     std::string Evaluation::summaryString() {
         std::ostringstream stream;
         stream << this->name() << ": " << this->correct() << "/" << this->nr() << " = " << this->accuracy() << std::endl;
         stream << "Confusion Matrix:";
-        for (auto i = 0u; i < _nrClasses * _nrClasses; i++) {
+        for (auto i = 0u; i < _matrixSize; i++) {
             if (i % _nrClasses == 0)
                 stream << std::endl;
 
             stream << std::setw(7) << _confusionMatrix[i] << " ";
+        }
+        for (auto i = 0u; i < _nrClasses; i++) {
+            stream << std::endl << i << ": Precision = " << precision(i) << ", Recall = " << recall(i);
         }
         return stream.str();
     }
@@ -73,15 +73,45 @@ class Evaluation {
     }
 
     float Evaluation::accuracy() {
-        return static_cast<float>(_correct) / _nr;
+        return static_cast<float>(correct()) / nr();
     }
 
     int Evaluation::nr() {
-        return _nr;
+        int sum = 0;
+        for (auto i = 0u; i < _matrixSize; i++) {
+            sum += _confusionMatrix[i];
+        }
+        return sum;
     }
 
     int Evaluation::correct() {
-        return _correct;
+        int sum = 0;
+        for (auto i = 0u; i < _nrClasses; i++) {
+            sum += cell(i, i);
+        }
+        return sum;
+    }
+
+    float Evaluation::precision(int clazz) {
+        int count = 0;
+        int correct = 0;
+        for (auto i = 0u; i < _nrClasses; i++) {
+            count += cell(i, clazz);
+            if (i == clazz)
+                correct = cell(clazz, clazz);
+        }
+        return static_cast<float>(correct) / count;
+    }
+
+    float Evaluation::recall(int clazz) {
+        int count = 0;
+        int correct = 0;
+        for (auto i = 0u; i < _nrClasses; i++) {
+            count += cell(clazz, i);
+            if (i == clazz)
+                correct = cell(clazz, clazz);
+        }
+        return static_cast<float>(correct) / count;
     }
 
     unsigned int* Evaluation::confusionMatrix() {
