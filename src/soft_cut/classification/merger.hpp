@@ -17,4 +17,14 @@ namespace  sbd {
         virtual vector<short> mergeSequencePredictions(vector<vector<short>>) override;
         virtual std::string name() override { return "Majority-Voting-Diagonally"; }
     };
+
+    class TakeFirstMerger : public Merger {
+        virtual vector<short> mergeSequencePredictions(vector<vector<short>>) override;
+        virtual std::string name() override { return "Take-First"; }
+    };
+
+    class TakeLastMerger : public Merger {
+        virtual vector<short> mergeSequencePredictions(vector<vector<short>>) override;
+        virtual std::string name() override { return "Take-Last"; }
+    };
 }

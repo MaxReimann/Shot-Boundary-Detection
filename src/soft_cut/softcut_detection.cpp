@@ -43,13 +43,16 @@ void SoftCutMain::findSoftCuts() {
         std::vector<short> actual = video.actual;
 
         std::vector<Merger*> mergeStrategies = {
-            new MajorityVotingDiagonallyMerger()
+            // new MajorityVotingDiagonallyMerger()
+            new TakeFirstMerger,
+            new TakeLastMerger
         };
 
         for (auto &strategy : mergeStrategies) {
             // 4. Merge sequencePredictions
             std::vector<short> predictions = strategy->mergeSequencePredictions(sequencePredictions);
             assert(predictions.size() == actual.size());
+
             // 5. Evaluation
             Evaluation eval(strategy->name(), 2);
             for (int i = 0; i < predictions.size(); i++) {
