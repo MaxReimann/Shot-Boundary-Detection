@@ -122,7 +122,7 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
             }
 
             frames.push_back(frame);
-            labels.push_back(video.truth[index]);
+            labels.push_back(video.actual[index]);
         }
     }
 
