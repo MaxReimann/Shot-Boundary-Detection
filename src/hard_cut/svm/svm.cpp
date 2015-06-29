@@ -13,17 +13,21 @@ SVMLearner::SVMLearner()
     m_params.svm_type = CvSVM::C_SVC;
     m_params.kernel_type = CvSVM::RBF;
     m_params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+
+	cv::Mat weights = cv::Mat(1, 2, CV_32FC1);
+	weights.at<float>(cv::Point(0, 0)) = 0.1f;
+	weights.at<float>(cv::Point(1, 0)) = 0.9f;
+	CvMat *classWeights = new CvMat(weights);
+	m_params.class_weights = classWeights;
+
+	std::cout << "class weights =" << " " << weights << std::endl << std::endl;
+
+
+	// create a 3x3 double-precision identity matrix
 }
 
 void SVMLearner::train(cv::Mat& trainingData, cv::Mat& labels)
 {
-    CvSVMParams params;
-    params.svm_type = CvSVM::C_SVC;
-//    params.kernel_type = CvSVM::LINEAR;
-//    params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
-//    params.gamma = 3;
-//    params.C = 10E20;
-    // Train the SVM
     m_svm.train_auto(trainingData, labels, cv::Mat(), cv::Mat(), m_params);
 }
 
