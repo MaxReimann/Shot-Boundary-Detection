@@ -82,7 +82,6 @@ void SoftCutMain::findSoftCuts() {
 }
 
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<std::vector<short>>& predictions) {
-#ifndef _WIN32
     std::cout << "Predicting " << video.frames.size() << " frames of video." << std::endl;
 
     for (int i = 0; i < video.frames.size(); i += sequenceSize + sequenceBatchSize) {
@@ -102,7 +101,6 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
         framePredictions.clear();
     }
     std::cout << std::endl;
-#endif
 }
 
 void SoftCutMain::writePrediction(std::string videoName,
