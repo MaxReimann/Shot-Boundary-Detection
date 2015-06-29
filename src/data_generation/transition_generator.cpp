@@ -61,13 +61,11 @@ TransitionGenerator::TransitionGenerator(std::unordered_set<sbd::GoldStandardEle
 
     m_gold = orderedGold;
     m_dataFolder = dataFolder;
-
-    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/files-0-new.txt");
 }
 
 int sbd::TransitionGenerator::writeFilesTxtForTestData() {
     m_filesTxtOut.close();
-    m_filesTxtOut.open("files-2.txt");
+    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-2.txt");
 
     int currentFrameIdx = 0;
     
@@ -118,6 +116,8 @@ int sbd::TransitionGenerator::writeFilesTxtForTestData() {
 
 int sbd::TransitionGenerator::createRandomTransition()
 {
+    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-0.txt");
+
     enum TransitionType { DISSOLVE, FADE, TYPE_COUNT };
     static const char* transitionNames[TYPE_COUNT] = { "DIS", "FAD" };
 
@@ -275,8 +275,6 @@ int sbd::TransitionGenerator::createRandomTransition()
     groundTruthOut << "<trans type = \"" << transitionNames[currentType] << "\" preFNum = \"0\" postFNum = \"" + std::to_string(transitionLength) + "\" / >" << std::endl;
     groundTruthOut << "< / refSeg>" << std::endl;
 
-
-
     return 0;
 }
 
@@ -285,9 +283,11 @@ void sbd::TransitionGenerator::createRandomTransitions(int amount)
     for (size_t i = 0; i < amount; i++)
     {
         if (this->createRandomTransition() != 0) {
+            std::cout << (i * 100) / amount << "% " << std::flush;
             i--;
         }
     }
+    std::cout << std::endl;
 }
 
 std::string sbd::TransitionGenerator::getDatasetName()
