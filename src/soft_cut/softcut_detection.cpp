@@ -17,11 +17,11 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 #ifndef _WIN32
     // Disable caffe logging (1: log warnings, 3: log nothing)
     FLAGS_minloglevel = 1;
+#endif
 
 
     SoftCutMain softcut = SoftCutMain();
     softcut.findSoftCuts();
-#endif
     return 0;
 }
 
