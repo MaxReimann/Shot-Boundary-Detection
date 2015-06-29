@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <src/evaluation/evaluation.hpp>
 #include <src/soft_cut/classification/merger.hpp>
+#include "src/soft_cut/gap_filler.hpp"
 
 void wrongUsage();
 
@@ -60,11 +61,15 @@ void SoftCutMain::findSoftCuts() {
             }
             std::cout << eval.summaryString() << std::endl;
             // 6. Evaluation with Gap Filler
-            Evaluation evalWithGapFiller(strategy->name() + " with gap filler", 2);
-            // TODO: Call gap filler and assign to predictions
-            
-            for (int i = 0; i < predictions.size(); i++) {
-                eval.prediction(predictions[i], actual[i]);
+            int maxGapsize = 10;
+            for (int i = 1; i < maxGapsize; i++) {
+                Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(i), 2);
+                // fill the gaps
+                predictions = GapFiller::fillGaps(predictions, i);
+
+                for (int i = 0; i < predictions.size(); i++) {
+                    eval.prediction(predictions[i], actual[i]);
+                }
             }
 
             delete strategy;
@@ -72,10 +77,12 @@ void SoftCutMain::findSoftCuts() {
         mergeStrategies.clear();
     }
 
+
     // TODO integrate. Fill gaps in sequencePredictions
 }
 
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<std::vector<short>>& predictions) {
+#ifndef _WIN32
     std::cout << "Predicting " << video.frames.size() << " frames of video." << std::endl;
 
     for (int i = 0; i < video.frames.size(); i += sequenceSize + sequenceBatchSize) {
@@ -95,6 +102,7 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
         framePredictions.clear();
     }
     std::cout << std::endl;
+#endif
 }
 
 void SoftCutMain::writePrediction(std::string videoName,
@@ -148,7 +156,6 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
     }
     return sequenceBatch;
 }
-
 
 //std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize) {
 //    std::vector<int> centers;
