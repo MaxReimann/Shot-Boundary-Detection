@@ -363,7 +363,4 @@ layer {
   bottom: "reshape-prediction"
   bottom: "label"
   top: "accuracy"
-  include {
-    phase: TEST
-  }
 }

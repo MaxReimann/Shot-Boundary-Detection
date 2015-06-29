@@ -239,7 +239,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         cv::resize(result, resizedResult, size);
 
         std::string fileName = outputFramesFolder + "/" + std::to_string(i) + ".jpg";
-        std::cout << "writing file" << fileName << std::endl;
+//       std::cout << "writing file" << fileName << std::endl;
         cv::imwrite(fileName, resizedResult);
 
         m_filesTxtOut << fileName << " 1" << std::endl;
@@ -259,7 +259,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         cv::resize(image1, resizedImage1, size);
 
         std::string fileName = noTransitionFolder + "/" + std::to_string(i) + ".jpg";
-        std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
+//        std::cout << "writing file" << startFrame1 << startFrame2 << std::endl;
         cv::imwrite(fileName, resizedImage1);
 
         m_filesTxtOut << fileName << " 0" << std::endl;
@@ -282,8 +282,8 @@ void sbd::TransitionGenerator::createRandomTransitions(int amount)
 {
     for (size_t i = 0; i < amount; i++)
     {
+        std::cout << (i * 100) / amount << "% " << std::flush;
         if (this->createRandomTransition() != 0) {
-            std::cout << (i * 100) / amount << "% " << std::flush;
             i--;
         }
     }

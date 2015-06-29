@@ -1,6 +1,6 @@
 net: "net.prototxt"
 # Test every nth iteration
-test_interval: 1000
+test_interval: 2000
 # How many iterations per test
 test_iter: 300
 # Base learning rate
