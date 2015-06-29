@@ -158,6 +158,8 @@ set(sources
     src/soft_cut/io/file_reader.cpp
     src/soft_cut/softcut_detection.cpp 
     src/soft_cut/softcut_detection.hpp 
+    src/soft_cut/gap_filler.cpp
+    src/soft_cut/gap_filler.hpp
 
 )
 

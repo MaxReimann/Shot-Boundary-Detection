@@ -26,7 +26,7 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 }
 
 void SoftCutMain::findSoftCuts() {
-
+#ifndef _WIN32
     // TODO
     // (1) Evaluierung einbauen: Frame-Level, Sequence-Level, Video-Level
     // (2) Mergen von 10er Sequenzen die einen Soft-Cut darstellen. -> Macht Felix
@@ -55,9 +55,11 @@ void SoftCutMain::findSoftCuts() {
         }
     }
     std::cout << evaluation.summaryString() << std::endl;
+#endif
 }
 
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<float>& predictions) {
+#ifndef _WIN32
     std::cout << "Predicting " << video.sequences.size() << " sequences" << std::endl;
 
     std::string outputFileName = outputFile + "_" + video.videoName + ".txt";
@@ -94,7 +96,7 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
     std::cout << videoFrameEvaluation.summaryString() << std::endl;
     std::cout << "Wrote prediction to " << outputFileName << std::endl;
     writer.close();
-
+#endif
 }
 
 void SoftCutMain::writePrediction(std::vector<Sequence> sequences,
@@ -160,6 +162,7 @@ std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int
     while (i < sequences.size()) {
         std::vector<std::string> mergedFrames;
         // collect sequences of detected sequemces
+        // also allow gaps 
         while (sequences[i].clazz) {
             for (int j = 0; j < sequenceSize; j++) {
                 // check if current frame already is in mergedFrames
