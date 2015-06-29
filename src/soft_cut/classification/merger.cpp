@@ -1,7 +1,7 @@
 
 #include "merger.hpp"
 
-std::vector<short> sbd::MajorityVotingDiagonallyMerger::mergeSequencePredictions(
-        std::vector<std::vector<short>> vector) {
+vector<short> sbd::MajorityVotingDiagonallyMerger::mergeSequencePredictions(
+        vector<vector<short>> sequencePredictions) {
     return std::vector<short>();
 }

@@ -2,14 +2,16 @@
 
 #include "../../forwarddeclarations.hpp"
 
+using std::vector;
+
 namespace  sbd {
     class Merger {
     public:
-        virtual std::vector<short> mergeSequencePredictions(std::vector<std::vector<short>>) = 0;
+        virtual vector<short> mergeSequencePredictions(vector<vector<short>>) = 0;
     };
 
 
     class MajorityVotingDiagonallyMerger : public Merger {
-        virtual std::vector<short> mergeSequencePredictions(std::vector<std::vector<short>>) override;
+        virtual vector<short> mergeSequencePredictions(vector<vector<short>>) override;
     };
 }
