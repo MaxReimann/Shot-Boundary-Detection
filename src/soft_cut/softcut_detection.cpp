@@ -42,7 +42,6 @@ void SoftCutMain::findSoftCuts() {
         processVideo(video, classifier, sequencePredictions);
 
         std::vector<short> actual = video.actual;
-
         std::vector<Merger*> mergeStrategies = {
             // new MajorityVotingDiagonallyMerger()
             new TakeFirstMerger,
@@ -51,6 +50,7 @@ void SoftCutMain::findSoftCuts() {
 
         for (auto &strategy : mergeStrategies) {
             // 4. Merge sequencePredictions
+            std::cout << "Merge predictions ..." << std::endl;
             std::vector<short> predictions = strategy->mergeSequencePredictions(sequencePredictions);
             assert(predictions.size() == actual.size());
             assert(predictions.size() == video.frames.size());
@@ -85,7 +85,7 @@ void SoftCutMain::findSoftCuts() {
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<std::vector<short>>& predictions) {
     std::cout << "Predicting " << video.frames.size() << " frames of video." << std::endl;
 
-    for (int i = 0; i < video.frames.size(); i += sequenceSize + sequenceBatchSize) {
+    for (int i = 0; i < video.frames.size(); i += sequenceBatchSize) {
         std::cout << (i * 100) / video.frames.size() << "% " << std::flush;
 
         // get data for the batch of videos
@@ -95,10 +95,16 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
         std::vector<short> framePredictions;
         classifier.predict(sequenceBatch.frames, sequenceBatch.labels, resultLayer, dataLayer, framePredictions);
         framePredictions = std::vector<short>(framePredictions.begin(), framePredictions.begin() + sequenceBatch.relevantSize);
-
         assert(framePredictions.size() == sequenceBatch.relevantSize);
-        predictions.push_back(framePredictions);
+        assert(framePredictions.size() % sequenceSize == 0);
 
+        // split predictions into sequenceSize batches
+        for (int j = 0; j < framePredictions.size(); j += sequenceSize) {
+            std::vector<short> sequencePrediction = std::vector<short>(framePredictions.begin() + j, framePredictions.begin() + j + sequenceSize);
+            assert(sequencePrediction.size() == sequenceSize);
+            predictions.push_back(sequencePrediction);
+        }
+        
         framePredictions.clear();
     }
     std::cout << std::endl;
@@ -128,7 +134,6 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
             // if we are at the end of the video and there are no new
             // frames left to fill the batch, take the last frame multiple times
             int index = std::min(j, static_cast<int>(video.frames.size()) - 1);
-
             std::string frameFile = video.frames[index];
             cv::Mat frame = cv::imread(frameFile);
 
@@ -147,12 +152,13 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
     sequenceBatch.frames = frames;
     sequenceBatch.labels = labels;
 
-    if (start + sequenceBatchSize + sequenceSize - 1 > video.frames.size()) {
-        int missingSequences = (int) (start + sequenceBatchSize + sequenceSize - 1 - video.frames.size());
+    if (start + sequenceBatchSize > video.frames.size()) {
+        int missingSequences = (int) (start + sequenceBatchSize - video.frames.size());
         sequenceBatch.relevantSize = batchSize - (sequenceSize *  missingSequences);
     } else {
         sequenceBatch.relevantSize = batchSize;
     }
+
     return sequenceBatch;
 }
 
