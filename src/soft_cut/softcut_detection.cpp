@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <src/evaluation/evaluation.hpp>
 #include <src/soft_cut/classification/merger.hpp>
+#include "src/soft_cut/gap_filler.hpp"
 
 void wrongUsage();
 
@@ -26,7 +27,6 @@ int SoftCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 }
 
 void SoftCutMain::findSoftCuts() {
-#ifndef _WIN32
     // 1. Get all videos with frame paths and class label
     std::vector<Video> videos;
     FileReader::load(txtFile, videos);
@@ -61,11 +61,15 @@ void SoftCutMain::findSoftCuts() {
             }
             std::cout << eval.summaryString() << std::endl;
             // 6. Evaluation with Gap Filler
-            Evaluation evalWithGapFiller(strategy->name() + " with gap filler", 2);
-            // TODO: Call gap filler and assign to predictions
-            
-            for (int i = 0; i < predictions.size(); i++) {
-                eval.prediction(predictions[i], actual[i]);
+            int maxGapsize = 10;
+            for (int i = 1; i < maxGapsize; i++) {
+                Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(i), 2);
+                // fill the gaps
+                predictions = GapFiller::fillGaps(predictions, i);
+
+                for (int i = 0; i < predictions.size(); i++) {
+                    eval.prediction(predictions[i], actual[i]);
+                }
             }
 
             delete strategy;
@@ -75,7 +79,6 @@ void SoftCutMain::findSoftCuts() {
 
 
     // TODO integrate. Fill gaps in sequencePredictions
-#endif
 }
 
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<std::vector<short>>& predictions) {
