@@ -8,6 +8,7 @@
 #include <src/soft_cut/io/file_reader.hpp>
 #include <algorithm>
 #include <src/evaluation/evaluation.hpp>
+#include <src/soft_cut/classification/merger.hpp>
 
 void wrongUsage();
 
@@ -37,15 +38,30 @@ void SoftCutMain::findSoftCuts() {
     for (auto video : videos) {
         // 3. Predict all videos
         std::cout << "Predicting video " << video.videoName << std::endl;
-        std::vector<std::vector<short>> predictions;
-        processVideo(video, classifier, predictions);
+        std::vector<std::vector<short>> sequencePredictions;
+        processVideo(video, classifier, sequencePredictions);
 
-        // 4. Merge predictions
+        // 4. Merge sequencePredictions
+        std::vector<short> predictions;
 
-        // 5. Fill gaps in predictions
+        // 5. Fill gaps in sequencePredictions
 
         // 6. Evaluation
-        std::vector<short> truth = video.truth;
+        std::vector<short> actual = video.actual;
+
+        std::vector<Merger*> mergeStrategies = {
+            new MajorityVotingDiagonallyMerger()
+        };
+
+        for (auto &strategy : mergeStrategies) {
+            Evaluation eval(strategy->name(), 2);
+            std::vector<short> predictions = strategy->mergeSequencePredictions(sequencePredictions);
+            assert(predictions.size() == actual.size());
+
+            delete strategy;
+        }
+        mergeStrategies.clear();
+
     }
 }
 

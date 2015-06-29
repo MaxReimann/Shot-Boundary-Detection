@@ -14,7 +14,7 @@ namespace sbd
     struct Video {
         std::string videoName;
         std::vector<Sequence> sequences;
-        std::vector<short> truth;
+        std::vector<short> actual;
     };
 
     struct SequenceBatch {

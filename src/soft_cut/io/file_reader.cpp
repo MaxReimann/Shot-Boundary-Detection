@@ -46,7 +46,7 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
             Video video;
             video.videoName = videoName;
             video.sequences = sequences;
-            video.truth = truth;
+            video.actual = truth;
             videos.push_back(video);
 
             sequences = std::vector<Sequence>();
@@ -78,7 +78,7 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
     Video video;
     video.videoName = videoName;
     video.sequences = sequences;
-    video.truth = truth;
+    video.actual = truth;
     videos.push_back(video);
     input.close();
 }
