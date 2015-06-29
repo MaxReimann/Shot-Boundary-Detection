@@ -19,7 +19,7 @@ class CaffeClassifier {
         virtual ~CaffeClassifier();
 
         void initializeCaffeNet(bool cpu, std::string modelFile, std::string protoFile);
-        void predict(std::vector<cv::Mat> image, std::vector<int> labels, std::string resultLayer, std::string dataLayer, std::vector<float>& predictions);
+        void predict(std::vector<cv::Mat> image, std::vector<int> labels, std::string resultLayer, std::string dataLayer, std::vector<short>& predictions);
 
     protected:
         bool isDebug;

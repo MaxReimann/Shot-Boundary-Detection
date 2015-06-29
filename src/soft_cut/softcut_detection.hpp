@@ -9,12 +9,12 @@ namespace sbd
     struct Sequence {
         std::vector<std::string> frames;
         std::vector<int> clazzes;
-        int clazz;
     };
 
     struct Video {
         std::string videoName;
         std::vector<Sequence> sequences;
+        std::vector<short> truth;
     };
 
     struct SequenceBatch {
@@ -53,7 +53,7 @@ namespace sbd
 
         void findSoftCuts();
 
-        void processVideo(Video& video, CaffeClassifier&, std::vector<float>& predictions);
+        void processVideo(Video& video, CaffeClassifier&, std::vector<std::vector<short>>& predictions);
 
     protected:
         // Caffe parameters

@@ -12,6 +12,7 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
     std::string line;
     std::vector<std::string> frames;
     std::vector<int> clazzes;
+    std::vector<short> truth;
     std::string videoName = "";
 
     if (!input.is_open()) {
@@ -45,16 +46,19 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
             Video video;
             video.videoName = videoName;
             video.sequences = sequences;
+            video.truth = truth;
             videos.push_back(video);
 
             sequences = std::vector<Sequence>();
             frames = std::vector<std::string>();
             clazzes = std::vector<int>();
+            truth = std::vector<short>();
         }
 
         // add frame and clazz to vectors
         frames.push_back(file);
         clazzes.push_back(clazz);
+        truth.push_back(clazz);
 
         // if sequence is complete, create sequence and
         // add it to the sequence vector
@@ -62,17 +66,10 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
             // get last 10 frames amd classes
             std::vector<std::string> curFrames(frames.end() - sequenceSize, frames.end());
             std::vector<int> curClazzes(clazzes.end() - sequenceSize, clazzes.end());
-            // if the last 10 frames contain a frame, which does not belong to a soft cut
-            // set the current class to 0, otherwise set it to 1
-            int curClazz = 1;
-            if (std::find(curClazzes.begin(), curClazzes.end(), 0) != curClazzes.end()) {
-                curClazz = 0;
-            }
 
             Sequence seq;
             seq.clazzes = curClazzes;
             seq.frames = curFrames;
-            seq.clazz = curClazz;
             sequences.push_back(seq);
         }
     }
@@ -81,6 +78,7 @@ void FileReader::load(std::string txtFile, int sequenceSize, std::vector<Video>&
     Video video;
     video.videoName = videoName;
     video.sequences = sequences;
+    video.truth = truth;
     videos.push_back(video);
     input.close();
 }
