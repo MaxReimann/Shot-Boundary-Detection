@@ -47,15 +47,22 @@ void SoftCutMain::findSoftCuts() {
         };
 
         for (auto &strategy : mergeStrategies) {
-            Evaluation eval(strategy->name(), 2);
             // 4. Merge sequencePredictions
             std::vector<short> predictions = strategy->mergeSequencePredictions(sequencePredictions);
             assert(predictions.size() == actual.size());
             // 5. Evaluation
+            Evaluation eval(strategy->name(), 2);
             for (int i = 0; i < predictions.size(); i++) {
                 eval.prediction(predictions[i], actual[i]);
             }
             std::cout << eval.summaryString() << std::endl;
+            // 6. Evaluation with Gap Filler
+            Evaluation evalWithGapFiller(strategy->name() + " with gap filler", 2);
+            // TODO: Call gap filler and assign to predictions
+            
+            for (int i = 0; i < predictions.size(); i++) {
+                eval.prediction(predictions[i], actual[i]);
+            }
 
             delete strategy;
         }
