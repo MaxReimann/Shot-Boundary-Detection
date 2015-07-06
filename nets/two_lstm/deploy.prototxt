@@ -12,7 +12,7 @@ layer {
     mean_value: 123
   }
   memory_data_param {
-    batch_size: 70
+    batch_size: 77
     channels: 3
     width: 227
     height: 227
@@ -24,12 +24,12 @@ layer {
   top: "sequence"
   dummy_data_param {
     shape {
-      dim: 10
+      dim: 11
       dim: 7
     }
     data_filler {
       type: "sequence"
-      value: 10
+      value: 11
     }
   }
 }
@@ -244,7 +244,7 @@ layer {
   bottom: "fc6"
   reshape_param {
     shape {
-      dim: 10
+      dim: 11
       dim: 7
       dim: 4096
     }
@@ -324,7 +324,7 @@ layer {
   bottom: "prediction"
   reshape_param {
     shape {
-      dim: 70
+      dim: 77
       dim: 2
     }
   }

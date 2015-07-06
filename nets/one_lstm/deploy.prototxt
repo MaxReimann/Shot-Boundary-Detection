@@ -1,10 +1,9 @@
 name: "soft_cut_net"
 layer {
   name: "data"
-  type: "Data"
+  type: "MemoryData"
   top: "data"
   top: "label"
-  include { phase: TRAIN }
   transform_param {
     mirror: true
     crop_size: 227
@@ -12,31 +11,11 @@ layer {
     mean_value: 117
     mean_value: 123
   }
-  data_param {
-    backend: LMDB
-    source: "/opt/data_sets/video_sbd_dataset/lmdb/soft_cut/train/"
-    batch_size: 70
-  }
-}
-layer {
-  name: "data"
-  type: "Data"
-  top: "data"
-  top: "label"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    mirror: true
-    crop_size: 227
-    mean_value: 104
-    mean_value: 117
-    mean_value: 123
-  }
-  data_param {
-    backend: LMDB
-    source: "/opt/data_sets/video_sbd_dataset/lmdb/soft_cut/test/"
-    batch_size: 70
+  memory_data_param {
+    batch_size: 77
+    channels: 3
+    width: 227
+    height: 227
   }
 }
 layer {
@@ -45,12 +24,12 @@ layer {
   top: "sequence"
   dummy_data_param {
     shape {
-      dim: 10
+      dim: 11
       dim: 7
     }
     data_filler {
       type: "sequence"
-      value: 10
+      value: 11
     }
   }
 }
@@ -234,10 +213,10 @@ layer {
   bottom: "pool5"
   top: "fc6"
   param {
-    lr_mult: 0.1
+    lr_mult: 0.0
   }
   param {
-    lr_mult: 0.1
+    lr_mult: 0.0
   }
   inner_product_param {
     num_output: 4096
@@ -265,7 +244,7 @@ layer {
   bottom: "fc6"
   reshape_param {
     shape {
-      dim: 10
+      dim: 11
       dim: 7
       dim: 4096
     }
@@ -345,16 +324,15 @@ layer {
   bottom: "prediction"
   reshape_param {
     shape {
-      dim: 70
+      dim: 77
       dim: 2
     }
   }
 }
 layer {
   name: "loss"
-  type: "SoftmaxWithLoss"
+  type: "Softmax"
   bottom: "reshape-prediction"
-  bottom: "label"
   top: "loss"
 }
 layer {
@@ -363,4 +341,16 @@ layer {
   bottom: "reshape-prediction"
   bottom: "label"
   top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name:"argmax"
+  type: "ArgMax"
+  bottom: "loss"
+  top: "argmax"
+  argmax_param {
+    top_k: 1
+  }
 }
