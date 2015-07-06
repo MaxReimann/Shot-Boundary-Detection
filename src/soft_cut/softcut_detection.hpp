@@ -37,7 +37,6 @@ namespace sbd
         int main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments);
 
         void writePrediction(std::string videoName, std::vector<short> actual, std::vector<short> predictions, std::vector<std::string> frames);
-        //std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize);
 
         SequenceBatch getSequenceBatch(Video video, int start);
 
