@@ -49,7 +49,7 @@ namespace sbd
 
     protected:
         // Caffe parameters
-        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_110000.caffemodel";
+        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_40000.caffemodel";
         std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
 
         bool useCPU = false;
@@ -58,11 +58,11 @@ namespace sbd
         bool isDebug = true;
         std::string resultLayer = "argmax";
         std::string dataLayer = "data";
-        int batchSize = 70;
+        int batchSize = 77;
         int nrClasses = 2;
 
         // programm parameters
-        int sequenceSize = 10;
+        int sequenceSize = 11;
         int sequenceBatchSize = batchSize / sequenceSize;
         std::string txtFile = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-2.txt";
         std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions_";
