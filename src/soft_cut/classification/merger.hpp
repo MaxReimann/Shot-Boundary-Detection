@@ -16,6 +16,8 @@ namespace  sbd {
     class MajorityVotingDiagonallyMerger : public Merger {
         virtual vector<short> mergeSequencePredictions(vector<vector<short>>) override;
         virtual std::string name() override { return "Majority-Voting-Diagonally"; }
+
+        vector<short> getVotesForFrame(int frameNr, int sequenceSize, int videoLength, vector<vector<short>> sequencePredictions);
     };
 
     class TakeFirstMerger : public Merger {
