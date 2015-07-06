@@ -19,7 +19,7 @@ using namespace sbd;
 
 
 int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
-    bool USE_CACHED_HISTOGRAMS = true;
+    bool USE_CACHED_HISTOGRAMS = false;
 
     std::string dataFolder = inputArguments.at("data_folder");
 
@@ -28,11 +28,19 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 
     cv::FileStorage fs;
     Features features;
+
+    // data variables used to create visualization
+    std::vector<std::string> visImagePaths;
+    cv::Mat visGolds;
+    cv::Mat visDiffs;
+    std::vector<float> visPredictions;
+
     std::string histogramCachePath = "../resources/differenceHistograms.yaml";
     if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
+
         if (USE_CACHED_HISTOGRAMS)
         {
             std::cout << "Caching built histograms." << std::endl;
@@ -61,8 +69,10 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 		if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
 		{
 
-			std::vector<std::string> imagePathsTest = getFileNames(classifyPath);
+            std::vector<std::string> imagePathsTest = getFileNames(classifyPath);
+            visImagePaths = imagePathsTest;
 			testSet = buildHistogramDifferences(imagePathsTest, gold);
+
 
 			if (USE_CACHED_HISTOGRAMS)
 			{
@@ -87,7 +97,15 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 		splitTrainTestSets(features, 0.7, trainSet, testSet);
 	}
     cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
-    evaluate(testSet, learner);
+    visPredictions = evaluate(testSet, learner);
+
+    visGolds = testSet.classes;
+    visDiffs = testSet.values;
+
+    // the needed visualization data can just be createded if a classify_folder was used und we did not use the cache
+    if (!USE_CACHED_HISTOGRAMS && flagArgs.count("classify_folder")) {
+        writeVisualizationData(visImagePaths, Histogram::getAbsChanges(visDiffs), visGolds, visPredictions);
+    }
 
     // wait for key, so we can read the console output
 #ifdef _WIN32
@@ -215,10 +233,10 @@ Features HardCutMain::buildHistogramDifferences(std::vector<std::string> &imageP
     Features features = { golds, diffs };
 
     // Draw absolute changes of diffs
-    std::vector<float> absChanges = histBuilder.getAbsChanges(diffs);
-    histBuilder.drawAbsChanges(absChanges, golds, frameNumbers);
+    // std::vector<float> absChanges = Histogram::getAbsChanges(diffs);
+    // histBuilder.drawAbsChanges(absChanges, golds, frameNumbers);
 
-    writeVisualizationData(imagePaths, absChanges, golds);
+    // writeVisualizationData(imagePaths, absChanges, golds);
 
 
     return features;
@@ -256,7 +274,7 @@ cv::Ptr<sbd::SVMLearner> HardCutMain::trainSVM(Features &trainSet) {
  * 5.
  * Evaluate on some held-out test set.
  */
-void HardCutMain::evaluate(Features &testSet, SVMLearner *learner) {
+std::vector<float> HardCutMain::evaluate(Features &testSet, SVMLearner *learner) {
     printf("Evaluating on test set ...\n");
 
     cv::Mat testMat = testSet.values;
@@ -264,6 +282,7 @@ void HardCutMain::evaluate(Features &testSet, SVMLearner *learner) {
     std::cout << "Evaluating on " << cv::sum(labelsMat)[0] << "/" << labelsMat.size().height << " positive instances." << std::endl;
 
     int tp = 0, fp = 0, tn = 0, fn = 0;
+    std::vector<float> predictions;
 
     for (int rowIndex = 0; rowIndex < testMat.rows; rowIndex++) {
         cv::Mat mTest = testMat.row(rowIndex);
@@ -274,6 +293,7 @@ void HardCutMain::evaluate(Features &testSet, SVMLearner *learner) {
         } else {
             (actual && ++fn) || fp++;
         }
+        predictions.push_back(predicted);
 //        printf("Predicted %f   Actual: %f\n", predicted, actual);
     }
 
@@ -288,6 +308,8 @@ void HardCutMain::evaluate(Features &testSet, SVMLearner *learner) {
     std::cout << std::setw(11) << "Recall: "    << recall << std::endl;
     std::cout << std::setw(11) << "F1: "        << f1 << std::endl;
     std::cout << std::setw(11) << "Accuracy: "  << accuracy << std::endl;
+
+    return predictions;
 }
 
 void wrongUsageHardCut()

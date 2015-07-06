@@ -72,7 +72,7 @@ bool sbd::findGold(std::string path1, std::string path2, std::unordered_set<sbd:
 }
 
 
-void sbd::writeVisualizationData(std::vector<std::string> &imagePaths, std::vector<float> diffs, cv::Mat& gold) {
+void sbd::writeVisualizationData(std::vector<std::string> &imagePaths, std::vector<float> diffs, cv::Mat& gold, std::vector<float> predictions) {
     std::string filepath = "../resources/d3/data/visData.tsv";
 
     std::ofstream fout(filepath);
@@ -82,11 +82,13 @@ void sbd::writeVisualizationData(std::vector<std::string> &imagePaths, std::vect
         return;
     }
 
-    fout << "idx\tframe1\tframe2\tabsDiff\tgold" << std::endl;
+    fout << "idx\tframe1\tframe2\tabsDiff\tprediction\tgold" << std::endl;
     
     for (int i = 0; i < gold.rows; ++i) {
         float diffVal = diffs[i];
         float goldVal = gold.at<float>(i, 0);
+        float predVal = predictions[i];
+
         // get the name of the folder, that contains the current images
         std::string videoFolder = boost::filesystem::path(imagePaths[i]).parent_path().filename().string();
         std::string frame1 = videoFolder + "/" + boost::filesystem::path(imagePaths[i]).filename().string();
@@ -96,6 +98,7 @@ void sbd::writeVisualizationData(std::vector<std::string> &imagePaths, std::vect
             << frame1 << "\t"
             << frame2 << "\t"
             << diffVal << "\t"
+            << predVal << "\t"
             << goldVal 
             << std::endl;
     }
