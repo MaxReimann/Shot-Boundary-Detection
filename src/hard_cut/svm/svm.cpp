@@ -15,8 +15,8 @@ SVMLearner::SVMLearner()
     m_params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
 
 	cv::Mat weights = cv::Mat(1, 2, CV_32FC1);
-	weights.at<float>(cv::Point(0, 0)) = 0.1f;
-	weights.at<float>(cv::Point(1, 0)) = 0.9f;
+	weights.at<float>(cv::Point(0, 0)) = 10.f;
+	weights.at<float>(cv::Point(1, 0)) = 1.f;
 	CvMat *classWeights = new CvMat(weights);
 	m_params.class_weights = classWeights;
 

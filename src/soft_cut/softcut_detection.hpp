@@ -45,7 +45,7 @@ namespace sbd
         void findSoftCuts();
 
         void processVideo(Video& video, CaffeClassifier&, std::vector<std::vector<short>>& predictions);
-
+		void writeVisualizationData(std::vector<Video> &videos);
     protected:
         // Caffe parameters
         std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_40000.caffemodel";
