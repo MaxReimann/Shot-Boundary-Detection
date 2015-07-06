@@ -37,7 +37,6 @@ namespace sbd
         int main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments);
 
         void writePrediction(std::string videoName, std::vector<short> actual, std::vector<short> predictions, std::vector<std::string> frames);
-        //std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize);
 
         SequenceBatch getSequenceBatch(Video video, int start);
 
@@ -46,11 +45,11 @@ namespace sbd
         void findSoftCuts();
 
         void processVideo(Video& video, CaffeClassifier&, std::vector<std::vector<short>>& predictions);
-
+		void writeVisualizationData(std::vector<Video> &videos);
     protected:
         // Caffe parameters
-        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_110000.caffemodel";
-        std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
+        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/one_lstm/_iter_40000.caffemodel";
+        std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/one_lstm/deploy.prototxt";
 
         bool useCPU = false;
         cv::Size size;
@@ -58,11 +57,11 @@ namespace sbd
         bool isDebug = true;
         std::string resultLayer = "argmax";
         std::string dataLayer = "data";
-        int batchSize = 70;
+        int batchSize = 77;
         int nrClasses = 2;
 
         // programm parameters
-        int sequenceSize = 10;
+        int sequenceSize = 11;
         int sequenceBatchSize = batchSize / sequenceSize;
         std::string txtFile = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-2.txt";
         std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions_";

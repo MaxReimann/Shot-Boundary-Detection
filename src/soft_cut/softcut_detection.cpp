@@ -10,6 +10,7 @@
 #include <src/evaluation/evaluation.hpp>
 #include <src/soft_cut/classification/merger.hpp>
 #include "src/soft_cut/classification/gap_filler.hpp"
+#include "../hard_cut/histogram/histogram.hpp"
 
 void wrongUsage();
 
@@ -42,17 +43,18 @@ void SoftCutMain::findSoftCuts() {
         processVideo(video, classifier, sequencePredictions);
 
         std::vector<short> actual = video.actual;
-
         std::vector<Merger*> mergeStrategies = {
-            // new MajorityVotingDiagonallyMerger()
+            new MajorityVotingDiagonallyMerger(),
             new TakeFirstMerger,
             new TakeLastMerger
         };
 
         for (auto &strategy : mergeStrategies) {
             // 4. Merge sequencePredictions
+            std::cout << "Merge predictions ..." << std::endl;
             std::vector<short> predictions = strategy->mergeSequencePredictions(sequencePredictions);
             assert(predictions.size() == actual.size());
+            assert(predictions.size() == video.frames.size());
 
             // 5. Evaluation
             Evaluation eval(strategy->name(), 2);
@@ -60,16 +62,19 @@ void SoftCutMain::findSoftCuts() {
                 eval.prediction(predictions[i], actual[i]);
             }
             std::cout << eval.summaryString() << std::endl;
+
             // 6. Evaluation with Gap Filler
             int maxGapsize = 10;
-            for (int i = 1; i < maxGapsize; i++) {
-                Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(i), 2);
+            for (int gapSize = 1; gapSize < maxGapsize; gapSize++) {
+                Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(
+                        gapSize), 2);
                 // fill the gaps
-                predictions = GapFiller::fillGaps(predictions, i);
+                predictions = GapFiller::fillGaps(predictions, gapSize);
 
                 for (int i = 0; i < predictions.size(); i++) {
-                    eval.prediction(predictions[i], actual[i]);
+                    evalWithGapFiller.prediction(predictions[i], actual[i]);
                 }
+                std::cout << evalWithGapFiller.summaryString() << std::endl;
             }
 
             delete strategy;
@@ -77,14 +82,14 @@ void SoftCutMain::findSoftCuts() {
         mergeStrategies.clear();
     }
 
+		writeVisualizationData(videos);
 
-    // TODO integrate. Fill gaps in sequencePredictions
 }
 
 void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::vector<std::vector<short>>& predictions) {
     std::cout << "Predicting " << video.frames.size() << " frames of video." << std::endl;
 
-    for (int i = 0; i < video.frames.size(); i += sequenceSize + sequenceBatchSize) {
+    for (int i = 0; i < video.frames.size(); i += sequenceBatchSize) {
         std::cout << (i * 100) / video.frames.size() << "% " << std::flush;
 
         // get data for the batch of videos
@@ -94,10 +99,16 @@ void SoftCutMain::processVideo(Video& video, CaffeClassifier& classifier, std::v
         std::vector<short> framePredictions;
         classifier.predict(sequenceBatch.frames, sequenceBatch.labels, resultLayer, dataLayer, framePredictions);
         framePredictions = std::vector<short>(framePredictions.begin(), framePredictions.begin() + sequenceBatch.relevantSize);
-
         assert(framePredictions.size() == sequenceBatch.relevantSize);
-        predictions.push_back(framePredictions);
+        assert(framePredictions.size() % sequenceSize == 0);
 
+        // split predictions into sequenceSize batches
+        for (int j = 0; j < framePredictions.size(); j += sequenceSize) {
+            std::vector<short> sequencePrediction = std::vector<short>(framePredictions.begin() + j, framePredictions.begin() + j + sequenceSize);
+            assert(sequencePrediction.size() == sequenceSize);
+            predictions.push_back(sequencePrediction);
+        }
+        
         framePredictions.clear();
     }
     std::cout << std::endl;
@@ -127,7 +138,6 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
             // if we are at the end of the video and there are no new
             // frames left to fill the batch, take the last frame multiple times
             int index = std::min(j, static_cast<int>(video.frames.size()) - 1);
-
             std::string frameFile = video.frames[index];
             cv::Mat frame = cv::imread(frameFile);
 
@@ -146,45 +156,61 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
     sequenceBatch.frames = frames;
     sequenceBatch.labels = labels;
 
-    if (start + sequenceBatchSize + sequenceSize - 1 > video.frames.size()) {
-        int missingSequences = (int) (start + sequenceBatchSize + sequenceSize - 1 - video.frames.size());
+    if (start + sequenceBatchSize > video.frames.size()) {
+        int missingSequences = (int) (start + sequenceBatchSize - video.frames.size());
         sequenceBatch.relevantSize = batchSize - (sequenceSize *  missingSequences);
     } else {
         sequenceBatch.relevantSize = batchSize;
     }
+
     return sequenceBatch;
 }
 
-//std::vector<Softcut> mergeDetectedSequences(std::vector<Sequence> sequences, int sequenceSize) {
-//    std::vector<int> centers;
-//    std::vector<Softcut> softcuts;
-//    int i = 0;
-//    while (i < sequences.size()) {
-//        std::vector<std::string> mergedFrames;
-//        // collect sequences of detected sequemces
-//        while (sequences[i].clazz) {
-//            for (int j = 0; j < sequenceSize; j++) {
-//                // check if current frame already is in mergedFrames
-//                if (std::find(mergedFrames.begin(), mergedFrames.end(), sequences[i].frames[j]) == mergedFrames.end()) {
-//                    // it is not, so add it
-//                    mergedFrames.push_back(sequences[i].frames[j]);
-//                }
-//            }
-//            i++;
-//        }
-//
-//        // mergedFrames now contains the full sequence of frames that belong to the softcut (or at least the major part of it)
-//        Softcut cut;
-//        cut.firstFrame = mergedFrames[0];
-//        cut.lastFrame = mergedFrames.back();
-//        cut.length = mergedFrames.size();
-//        softcuts.push_back(cut);
-//
-//        i++;
-//    }
-//
-//    return softcuts;
-//}
+
+void SoftCutMain::writeVisualizationData(std::vector<Video> &videos) {
+	std::string filepath = "../resources/d3/data/visData.tsv";
+
+	std::ofstream fout(filepath);
+
+	if (!fout) {
+		printf("Could not open visData file\n");
+		return;
+	}
+
+	fout << "idx\tframe1\tframe2\tabsDiff\tgold" << std::endl;
+	Histogram histBuilder(8, false); // using color histogram and 8 bins
+	int i = 0;
+	for (Video vid : videos) {
+		// get the name of the folder, that contains the current images
+		std::string videoFolder = vid.videoName;// boost::filesystem::path().parent_path().filename().string();
+
+		for (int i = 0; i < vid.frames.size() - 1; i++)
+		{
+			std::string frame1 = videoFolder + "/" + vid.frames[i];
+			std::string frame2 = videoFolder + "/" + vid.frames[i+1];
+
+			float diffVal;
+			try {
+				cv::Mat diffs = histBuilder.getDiff(frame1, frame2);
+				diffVal = histBuilder.getAbsChanges(diffs).front();
+			}
+			catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+				continue;
+			}
+
+			fout << (i++) << "\t"
+				<< frame1 << "\t"
+				<< frame2 << "\t"
+				<< diffVal << "\t"
+				<< std::max(vid.actual[i], vid.actual[i+1]) //write out as softcut, as soon as 1 frame is a SC
+				<< std::endl;
+		}
+	}
+
+	fout.close();
+}
+
 
 void wrongUsageSoftCut() {
     std::cout << "Usage: sbd --soft_cut" << std::endl;
