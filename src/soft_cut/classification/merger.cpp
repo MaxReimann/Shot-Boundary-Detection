@@ -13,8 +13,12 @@ vector<short> sbd::MajorityVotingDiagonallyMerger::mergeSequencePredictions(
         // the first videos have fewer votes, hence the min
         for (auto j = 0; j < std::min(videoNr + 1, sequenceSize); j++) {
             // the last videos also have fewer videos, therefore we check here:
-            if (videoNr - j < videoLength)
-                votes.push_back(sequencePredictions[videoNr - j][j]);
+            if (videoNr - j < videoLength) {
+                auto videoIndex = videoNr - j;
+                auto frameIndex = j;
+                std::cout << "Trying to access [" << videoIndex << ", " << frameIndex << "]."
+                votes.push_back(sequencePredictions[videoIndex][j]);
+            }
         }
 
         auto sum = 0;
