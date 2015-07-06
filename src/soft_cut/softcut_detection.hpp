@@ -48,8 +48,8 @@ namespace sbd
 
     protected:
         // Caffe parameters
-        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/snapshots/_iter_40000.caffemodel";
-        std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/deploy.prototxt";
+        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/one_lstm/_iter_40000.caffemodel";
+        std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/one_lstm/deploy.prototxt";
 
         bool useCPU = false;
         cv::Size size;
