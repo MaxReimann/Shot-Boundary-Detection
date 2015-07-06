@@ -50,13 +50,13 @@ class Evaluation {
     void Evaluation::prediction(int pred, int actual) {
         assert(pred >= 0 && pred < nrClasses());
         assert(actual >= 0 && actual < nrClasses());
-        cell(pred, actual) += 1;
+        cell(actual, pred) += 1;
     }
 
     std::string Evaluation::summaryString() {
         std::ostringstream stream;
         stream << this->name() << ": " << this->correct() << "/" << this->nr() << " = " << this->accuracy() << std::endl;
-        stream << "Confusion Matrix:";
+        stream << "Confusion Matrix (rows are actual):";
         for (auto i = 0u; i < _matrixSize; i++) {
             if (i % _nrClasses == 0)
                 stream << std::endl;
@@ -119,7 +119,7 @@ class Evaluation {
         return _confusionMatrix;
     }
 
-    int &Evaluation::cell(int pred, int actual) {
+    int &Evaluation::cell(int actual, int pred) {
         return (int &) _confusionMatrix[actual * nrClasses() + pred];
     }
 
