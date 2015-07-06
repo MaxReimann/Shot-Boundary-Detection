@@ -64,13 +64,14 @@ void SoftCutMain::findSoftCuts() {
 
             // 6. Evaluation with Gap Filler
             int maxGapsize = 10;
-            for (int i = 1; i < maxGapsize; i++) {
-                Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(i), 2);
+            for (int gapSize = 1; gapSize < maxGapsize; gapSize++) {
+                Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(
+                        gapSize), 2);
                 // fill the gaps
-                predictions = GapFiller::fillGaps(predictions, i);
+                predictions = GapFiller::fillGaps(predictions, gapSize);
 
                 for (int i = 0; i < predictions.size(); i++) {
-                    eval.prediction(predictions[i], actual[i]);
+                    evalWithGapFiller.prediction(predictions[i], actual[i]);
                 }
                 std::cout << evalWithGapFiller.summaryString() << std::endl;
             }
