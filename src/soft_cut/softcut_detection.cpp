@@ -43,7 +43,7 @@ void SoftCutMain::findSoftCuts() {
 
         std::vector<short> actual = video.actual;
         std::vector<Merger*> mergeStrategies = {
-            new MajorityVotingDiagonallyMerger(),
+            // new MajorityVotingDiagonallyMerger()
             new TakeFirstMerger,
             new TakeLastMerger
         };
