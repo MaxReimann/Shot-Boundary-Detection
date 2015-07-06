@@ -32,6 +32,7 @@ vector<short> sbd::MajorityVotingDiagonallyMerger::getVotesForFrame(int frameNr,
 //        std::cout << "Trying to access [" << videoIndex << ", " << frameIndex << "].";
         votes.push_back(sequencePredictions[videoIndex][j]);
     }
+    return votes;
 }
 
 vector<short> sbd::TakeFirstMerger::mergeSequencePredictions(
