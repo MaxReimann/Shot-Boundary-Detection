@@ -41,12 +41,12 @@ $(function() {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     svg.call(tip);
-    
     data = data.map(function(d) { 
       d.idx = parseInt(d.idx);
       d.gold = d.gold == "1" ? true : false;
+      d.prediction = d.prediction == "1" ? true : false;
       return d;
-    })
+    });
 
     x.domain(data.map(function(d) { return d.idx; }));
     y.domain([0, d3.max(data, function(d) { return d.absDiff; })]);
@@ -69,7 +69,12 @@ $(function() {
     svg.selectAll(".bar")
         .data(data)
       .enter().append("rect")
-        .attr("class", function(d) { return d.gold ? "bar-cut" : "bar" })
+        .attr("class", function(d) { 
+          if (d.gold && d.prediction) return "bar-tp";
+          if (!d.gold && !d.prediction) return "bar-tn";
+          if (d.gold && !d.prediction) return "bar-fn";
+          if (!d.gold && d.prediction) return "bar-fp";
+        })
         .attr("x", function(d) { return x(d.idx) * barWidth; })
         .attr("width", barWidth)
         .attr("y", function(d) { return y(d.absDiff); })

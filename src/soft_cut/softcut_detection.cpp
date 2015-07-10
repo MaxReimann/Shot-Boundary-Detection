@@ -10,6 +10,7 @@
 #include <src/evaluation/evaluation.hpp>
 #include <src/soft_cut/classification/merger.hpp>
 #include "src/soft_cut/classification/gap_filler.hpp"
+#include "../hard_cut/histogram/histogram.hpp"
 
 void wrongUsage();
 
@@ -43,7 +44,7 @@ void SoftCutMain::findSoftCuts() {
 
         std::vector<short> actual = video.actual;
         std::vector<Merger*> mergeStrategies = {
-             new MajorityVotingDiagonallyMerger(),
+            new MajorityVotingDiagonallyMerger(),
             new TakeFirstMerger,
             new TakeLastMerger
         };
@@ -80,6 +81,8 @@ void SoftCutMain::findSoftCuts() {
         }
         mergeStrategies.clear();
     }
+
+		writeVisualizationData(videos);
 
 }
 
@@ -162,6 +165,52 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
 
     return sequenceBatch;
 }
+
+
+void SoftCutMain::writeVisualizationData(std::vector<Video> &videos) {
+	std::string filepath = "../resources/d3/data/visData.tsv";
+
+	std::ofstream fout(filepath);
+
+	if (!fout) {
+		printf("Could not open visData file\n");
+		return;
+	}
+
+	fout << "idx\tframe1\tframe2\tabsDiff\tgold" << std::endl;
+	Histogram histBuilder(8, false); // using color histogram and 8 bins
+	int i = 0;
+	for (Video vid : videos) {
+		// get the name of the folder, that contains the current images
+		std::string videoFolder = vid.videoName;// boost::filesystem::path().parent_path().filename().string();
+
+		for (int i = 0; i < vid.frames.size() - 1; i++)
+		{
+			std::string frame1 = videoFolder + "/" + vid.frames[i];
+			std::string frame2 = videoFolder + "/" + vid.frames[i+1];
+
+			float diffVal;
+			try {
+				cv::Mat diffs = histBuilder.getDiff(frame1, frame2);
+				diffVal = histBuilder.getAbsChanges(diffs).front();
+			}
+			catch (std::exception &e) {
+				std::cout << e.what() << std::endl;
+				continue;
+			}
+
+			fout << (i++) << "\t"
+				<< frame1 << "\t"
+				<< frame2 << "\t"
+				<< diffVal << "\t"
+				<< std::max(vid.actual[i], vid.actual[i+1]) //write out as softcut, as soon as 1 frame is a SC
+				<< std::endl;
+		}
+	}
+
+	fout.close();
+}
+
 
 void wrongUsageSoftCut() {
     std::cout << "Usage: sbd --soft_cut" << std::endl;

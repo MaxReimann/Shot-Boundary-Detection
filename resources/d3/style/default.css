@@ -9,11 +9,19 @@ body {
   shape-rendering: crispEdges;
 }
 
-.bar {
+.bar-tp {
+  fill: green;
+}
+
+.bar-tn {
   fill: gray;
 }
 
-.bar-cut {
+.bar-fp {
+  fill: red;
+}
+
+.bar-fn {
   fill: orange;
 }
 
