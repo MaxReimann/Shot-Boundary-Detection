@@ -91,7 +91,7 @@ int sbd::TransitionGenerator::writeFilesTxtForTestData() {
 
         int offset = goldIndex + 1 < m_gold.size() ? 1 : 0;
         std::string nextVideoName = m_gold[goldIndex + offset].videoName;
-        if (gold.videoName != nextVideoName) {
+        if (gold.videoName != nextVideoName || goldIndex + 1 == m_gold.size()) {
             // we have reached the last gold element in the current video
             // now we have to output the remaining frames
             while (true) {
