@@ -1,0 +1,16 @@
+- Hard Cut Detection:
+    Verbesserungsideen:  - Filtern von Helligkeitsänderungen
+
+- Soft Cut Generierung
+    -> Mehr Trainingsdaten erzeugen
+    -> Schreiben eines Programms, welches Soft Cuts der Länge 10 testet und dann programmatisch die komplette Länge
+       des Soft Cuts erkennt
+            - Preprozessing (Ideen):
+               - Wenn ein Hard Cut in der Sequenz ist, befindet sich dort sehr wahrscheinlich kein Soft Cut
+               - Helligkeitsänderungen filtern
+    -> Verbessern des RNN:  - CNN fine-tunen
+                            - 2 LSTM statt 1 LSTM
+
+                            
+    -> Existiert bereits ein Split der Daten von TrecVid (http://www-nlpir.nist.gov/projects/trecvid/trecvid.data.html)?
+

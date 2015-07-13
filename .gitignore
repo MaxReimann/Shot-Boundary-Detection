@@ -1,16 +1,36 @@
+# C extensions
+*.so
+
 # Compiled Object files
 *.slo
 *.lo
 *.o
-
-# Compiled Dynamic libraries
-*.so
 *.dylib
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+
+# Caffe
+*.caffemodel
+*.tlog*
+*.caffemodel
+*.solverstate
+*.binaryproto
+nets/experiments
+
+# Temporary files
+*.log
+.idea/
+*.iml
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+build/
+*.autosave
+
+# IDE
+.idea
 
 # build dir
 build
@@ -18,6 +38,10 @@ build
 /bin
 /lib
 
+CMakeLists.txt.user
+CMakeCache.txt
+
+resources/frames/
 resources/senses111
 resources/truth/BG_11362
 resources/frames/BG_11362
@@ -25,11 +49,6 @@ resources/truth/BG_36506/
 resources/frames/BG_36506/
 resources/differenceHistograms.yaml
 resources/abs-changes.png
-
-CMakeLists.txt.user
-CMakeCache.txt
-
 gold_standard_statistics.txt
-
-.idea
-
+resources/d3/data/visData.tsv
+resources/*.txt

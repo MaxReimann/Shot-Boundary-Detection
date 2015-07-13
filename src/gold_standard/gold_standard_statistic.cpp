@@ -1,13 +1,13 @@
 #include <boost/algorithm/string.hpp>
 #include <fstream>
-#include "gold_standard_statistic.hpp"
-#include "file_reader.hpp"
 #include <numeric>
 #include <random>
-#include "../util.hpp"
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
+#include "gold_standard_statistic.hpp"
+#include "file_reader.hpp"
+#include <src/util.hpp>
 
 
 using namespace sbd;
@@ -18,7 +18,7 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     // read all truth files
     std::cout << "Read truth files..." << std::endl;
     FileReader fileReader;
-    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), false);
+    std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), "all");
 
     // count different cut types
     std::cout << "Count different cut types..." << std::endl;
@@ -32,27 +32,27 @@ void GoldStandardStatistic::create(std::string dataFolder) {
     std::vector<double> othLength;
 
     for (const auto& element : goldStandard) {
-        if (element.type == "CUT") {
+        if (element.cutType== "CUT") {
             cut++;
             cutLength.push_back(element.endFrame - element.startFrame);
-        } else if (element.type == "DIS") {
+        } else if (element.cutType == "DIS") {
             dis++;
             disLength.push_back(element.endFrame - element.startFrame);
-        } else if (element.type == "OTH" || element.type == "OHT") {
+        } else if (element.cutType == "OTH" || element.cutType == "OHT") {
             oth++;
             othLength.push_back(element.endFrame - element.startFrame);
-        } else if (element.type == "FOI") {
+        } else if (element.cutType== "FOI") {
             foi++;
             foiLength.push_back(element.endFrame - element.startFrame);
         } else {
-            std::cout << element.type << std::endl;
+            std::cout << element.cutType << std::endl;
         }
     }
 
     // write results
     std::cout << "Write results..." << std::endl;
     std::ofstream outfile;
-    outfile.open ("../gold_standard_statistics.txt");
+    outfile.open ("../resources/gold_standard_statistics.txt");
     writeResult(outfile, "CUT", cut, cutLength);
     writeResult(outfile, "DIS", dis, disLength);
     writeResult(outfile, "OTH", oth, othLength);
@@ -95,14 +95,14 @@ void GoldStandardStatistic::extractCuts(std::string dataFolder, std::string outp
 	// read all truth files
 	std::cout << "Read truth files..." << std::endl;
 	FileReader fileReader;
-	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), true);
+	std::unordered_set<sbd::GoldStandardElement> goldStandard = fileReader.readDir(truthFolder.c_str(), "CUT");
 
     std::unordered_set<std::string> skipDirectories;
     GoldElementDict directories;
     
     for (auto &element : goldStandard)
     {
-        auto imPath = fp(boost::replace_first_copy(element.filePath, "truth", "frames"));
+        auto imPath = fp(boost::replace_first_copy(element.truthFilePath, "truth", "frames"));
         std::string name = fileReader.extractName(imPath.string());
         auto imDir = imPath.parent_path().parent_path() / name; //parentpath skips sbref folder
 
@@ -145,16 +145,16 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
     for (auto &it : directories)
     {
         auto imDir = fp(it.first);
-        auto &elements = it.second;
-        std::sort(elements.begin(), elements.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
+        auto &positives = it.second;
+        std::sort(positives.begin(), positives.end(), [](sbd::GoldStandardElement a, sbd::GoldStandardElement b) {
             return a.startFrame <= b.startFrame;
         });
 	std::cout <<"ok"<<std::endl;
 
         //last frame known to exist without counting frames
-        int maxFrame = elements.back().startFrame;
+        int maxFrame = positives.back().startFrame;
 
-        int numNegatives = static_cast<int>(round(elements.size() * posOverNegRate));
+        int numNegatives = static_cast<int>(round(positives.size() * posOverNegRate));
         std::vector<sbd::GoldStandardElement> negatives;
 
 
@@ -174,12 +174,12 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
             auto equalIndex = [&chosenIndex](const sbd::GoldStandardElement &element) {
                 return element.startFrame == chosenIndex || element.endFrame == chosenIndex + 1; };
 
-            if (find_if(elements.begin(), elements.end(), equalIndex) == elements.end())
+            if (find_if(positives.begin(), positives.end(), equalIndex) == positives.end())
             {
                 //assuming filenames are always ints and files always jpg
                 std::string name = std::to_string(chosenIndex) + ".jpg";
                 fp imPath = imDir / name;
-                negatives.push_back(GoldStandardElement(imDir.leaf().string(), "CUT", imPath.string(), chosenIndex, chosenIndex + 1));
+                negatives.push_back(GoldStandardElement(imDir.leaf().string(), "NEG", imPath.string(), chosenIndex, chosenIndex + 1));
                 pickedNegatives++;
             }
 
@@ -187,7 +187,7 @@ void GoldStandardStatistic::fillNegatives(GoldElementDict &directories, float po
             choices.erase(choiceIt, choiceIt + 2); 
         }
 
-        elements.insert(elements.end(), negatives.begin(), negatives.end()); //insert into original vector
+        positives.insert(positives.end(), negatives.begin(), negatives.end()); //insert into original vector
     }
 
 }
@@ -204,7 +204,7 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
         auto goldElements = it.second;
         int copycount = 0;
         
-        std::string name = fileReader.extractName(goldElements.front().filePath);
+        std::string name = fileReader.extractName(goldElements.front().truthFilePath);
 
         fp outPath(outputFolder);
         outPath = outPath / name;
@@ -219,14 +219,18 @@ void GoldStandardStatistic::copyFiles(std::string outputFolder, GoldElementDict 
         {
             try
             {
-                if (hardCutsOnly)
+                // extracts only hardcuts and proportional negative examples
+                if (hardCutsOnly) 
                 {
-                    auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
-                    auto in = imDir / strFrame(element.startFrame);
-                    auto out = outPath / strFrame(element.startFrame);
-                    copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
-                    copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
-                    copycount++;
+                    if (element.cutType == "CUT" || element.cutType == "NEG")
+                    {
+                        auto strFrame = [](int frameNumber){return std::to_string(frameNumber) + ".jpg"; };
+                        auto in = imDir / strFrame(element.startFrame);
+                        auto out = outPath / strFrame(element.startFrame);
+                        copy_file(imDir / strFrame(element.startFrame), outPath / strFrame(element.startFrame));
+                        copy_file(imDir / strFrame(element.endFrame), outPath / strFrame(element.endFrame));
+                        copycount++;
+                    }
 
                 }
                 else

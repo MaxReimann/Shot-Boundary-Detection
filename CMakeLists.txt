@@ -98,14 +98,23 @@ endif()
 # OpenCV
 find_package( OpenCV REQUIRED )
 
+add_definitions(-DBOOST_ALL_DYN_LINK)
 add_definitions(-DBOOST_ALL_NO_LIB)
-find_package(Boost COMPONENTS system filesystem regex REQUIRED)
+find_package(Boost COMPONENTS system filesystem regex program_options REQUIRED)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+if (NOT WIN32)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+else()
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} /MP")
 endif()
+endif()
+
+set (Caffe_DIR "/home/mpss2015/caffe-tmbo/build-cmake/")
+find_package( Caffe )
+
 
 #################################################
 # SOURCES
@@ -114,13 +123,23 @@ endif()
 set(sources
 	src/main.cpp
 	src/main.hpp
-	src/forwarddeclarations.hpp
 	src/util.cpp
 	src/util.hpp
-	src/histogram/histogram.hpp
-	src/histogram/histogram.cpp
-	src/svm/svm.hpp
-	src/svm/svm.cpp
+	src/forwarddeclarations.hpp
+	src/hard_cut/hardcut_detection.cpp
+	src/hard_cut/hardcut_detection.hpp
+	src/hard_cut/util.cpp
+	src/hard_cut/util.hpp
+	src/hard_cut/histogram/histogram.hpp
+	src/hard_cut/histogram/histogram.cpp
+	src/hard_cut/svm/svm.hpp
+	src/hard_cut/svm/svm.cpp
+    src/evaluation/evaluation.hpp
+    src/evaluation/evaluation.cpp
+    src/option_printing/custom_option_description.cpp
+    src/option_printing/custom_option_description.hpp
+    src/option_printing/option_printer.cpp
+    src/option_printing/option_printer.hpp
     src/gold_standard/file_reader.hpp
     src/gold_standard/file_reader.cpp
     src/gold_standard/gold_standard_statistic.hpp
@@ -129,6 +148,20 @@ set(sources
     src/gold_standard/gold_standard_element.cpp
     src/data_generation/transition_generator.cpp
     src/data_generation/transition_generator.hpp
+    src/data_generation/data_generation.cpp 
+    src/data_generation/data_generation.hpp
+    src/soft_cut/classification/caffe_classifier.cpp
+    src/soft_cut/classification/caffe_classifier.hpp
+    src/soft_cut/classification/merger.cpp
+    src/soft_cut/classification/merger.hpp
+    src/soft_cut/classification/gap_filler.cpp
+    src/soft_cut/classification/gap_filler.hpp
+    src/soft_cut/io/file_writer.cpp
+    src/soft_cut/io/file_writer.hpp
+    src/soft_cut/io/file_reader.cpp
+    src/soft_cut/io/file_reader.cpp
+    src/soft_cut/softcut_detection.cpp 
+    src/soft_cut/softcut_detection.hpp 
 
 )
 
@@ -149,13 +182,25 @@ include_directories(
 	${CMAKE_SOURCE_DIR}
 	${OpenCV_INCLUDE_DIR}
 	${Boost_INCLUDE_DIR}
+	${Caffe_INCLUDE_DIRS}
 	${PROJECT_BINARY_DIR} #for the generated files
 )
 
 
+
+if (NOT WIN32)
+	add_definitions(${Caffe_DEFINITIONS})
+endif()
+
 link_directories(${Boost_LIBRARY_DIR})
+
+#prevent linking of caffe libaries on windows
+if (WIN32) 
+	SET(Caffe_LIBRARIES "")
+endif()
 
 target_link_libraries( ${target}
     ${OpenCV_LIBS}
     ${Boost_LIBRARIES}
+    ${Caffe_LIBRARIES}
 )

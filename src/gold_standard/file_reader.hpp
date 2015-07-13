@@ -9,8 +9,8 @@ namespace sbd {
         private:
         public:
             std::string extractName(std::string);
-            void read(std::string, std::unordered_set<GoldStandardElement>&, bool cutsOnly);
-            std::unordered_set<GoldStandardElement> readDir(const char*, bool cutsOnly);
+            void read(std::string, std::unordered_set<GoldStandardElement>&, std::string cutType);
+            std::unordered_set<GoldStandardElement> readDir(const char*, std::string cutType);
 
     };
 
