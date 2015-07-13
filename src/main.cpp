@@ -60,8 +60,9 @@ int main(int argc, char** argv) {
             usage(desc, positionalOptions, &verboseHelp);
         }
 
-        if (1 != (vmap.count("hard_cut") + vmap.count("generate") + vmap.count("gold_statistic") + vmap.count("soft_cut")))
-			throw po::error("must specify --hard_cut OR --soft_cut OR --gold_statistic OR --generate");
+        if (1 != (vmap.count("hard_cut") + vmap.count("generate") + vmap.count("gold_statistic") + 
+			vmap.count("soft_cut") + vmap.count("extract_cuts")))
+			throw po::error("must specify --hard_cut OR --soft_cut OR --gold_statistic OR --generate OR --extract_cuts");
 
         po::notify(vmap); // throws on error, so do after help in case there are any problems 
     }
@@ -106,7 +107,7 @@ void usage(po::options_description desc,
     std::map<std::string, std::string> *verboseExplanation)
 {
     std::cout << "Shot boundary detection application" << std::endl;
-    std::cout << "Usage: sbd [--hard_cut | --soft_cut | --generate | --gold_statistic] data_folder" << std::endl;
+    std::cout << "Usage: sbd [--hard_cut | --soft_cut | --generate | --gold_statistic | --extract_cuts] data_folder" << std::endl;
     rad::OptionPrinter::printStandardAppDesc("sbd",
         std::cout, desc, &positionalOptions, verboseExplanation);
     // wait for key, so we can read the console output
