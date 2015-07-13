@@ -15,7 +15,7 @@ layer {
   data_param {
     backend: LMDB
     source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/train"
-    batch_size: 77
+    batch_size: 22
   }
 }
 layer {
@@ -34,7 +34,7 @@ layer {
   data_param {
     backend: LMDB
     source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/test"
-    batch_size: 77
+    batch_size: 22
   }
 }
 layer {
@@ -48,10 +48,10 @@ layer {
     stride: 2
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
 }
 layer {
@@ -95,10 +95,10 @@ layer {
     stride: 2
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
 }
 layer {
@@ -141,10 +141,10 @@ layer {
     kernel_size: 3
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
 }
 layer {
@@ -164,10 +164,10 @@ layer {
     kernel_size: 3
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
 }
 layer {
@@ -187,10 +187,10 @@ layer {
     kernel_size: 3
   }
   param {
-    lr_mult: 1
-  }
+    lr_mult: 0.5
+ }
   param {
-    lr_mult: 1
+    lr_mult: 0.5
   }
 }
 layer {
