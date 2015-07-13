@@ -48,7 +48,8 @@ void SoftCutMain::findSoftCuts() {
         std::vector<Merger*> mergeStrategies = {
             new MajorityVotingDiagonallyMerger(),
             new TakeFirstMerger,
-            new TakeLastMerger
+            new TakeLastMergerSequence,
+            new TakeLastMergerFrame
         };
 
         for (auto &strategy : mergeStrategies) {

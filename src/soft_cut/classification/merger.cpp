@@ -44,11 +44,28 @@ vector<short> sbd::TakeFirstMerger::mergeSequencePredictions(
     return framePredictions;
 }
 
-vector<short> sbd::TakeLastMerger::mergeSequencePredictions(
+vector<short> sbd::TakeLastMergerSequence::mergeSequencePredictions(
         vector<vector<short>> sequencePredictions) {
     vector<short> framePredictions;
     for (auto sequence : sequencePredictions) {
         framePredictions.push_back(sequence.back());
     }
+    return framePredictions;
+}
+
+vector<short> sbd::TakeLastMergerFrame::mergeSequencePredictions(
+        vector<vector<short>> sequencePredictions) {
+    vector<short> framePredictions;
+    int sequenceSize = static_cast<int>(sequencePredictions[0].size());
+    int videoLength = static_cast<int>(sequencePredictions.size());
+
+    for (auto frameNr = 0; frameNr < videoLength; frameNr++) {
+        if (frameNr < sequenceSize - 1) {
+            framePredictions.push_back(sequencePredictions[0][frameNr]);
+        } else {
+            framePredictions.push_back(sequencePredictions[frameNr - (sequenceSize - 1)][sequenceSize - 1]);
+        }
+    }
+
     return framePredictions;
 }
