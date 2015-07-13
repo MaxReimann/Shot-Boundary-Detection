@@ -148,7 +148,7 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     std::uniform_int_distribution<int> transitionLengthDist(10, 25);
     //int transitionLength = transitionLengthDist(mt);
-    int transitionLength = 21;
+    int transitionLength = 21 - 1;
 
     std::uniform_int_distribution<int> flipperDist(-1, 2);
     int flipperParam1 = flipperDist(mt);
