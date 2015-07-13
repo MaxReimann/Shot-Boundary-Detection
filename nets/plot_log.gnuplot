@@ -18,40 +18,44 @@
 reset
 #set terminal dumb
 set style data lines
-set key right
+set key right center
 
-file(test_or_train) = sprintf("soft_cuts.tlog.%s", test_or_train)
+file(test_or_train) = sprintf("%s.%s", filename, test_or_train)
 ucf_101_title = "Learning on six classes of UCF 101"
 
 ###### Fields in the training data
 ###### Iters Seconds TrainingLoss LearningRate
 
 # Training loss vs. training iterations
+set terminal png
+set output "it_vs_train-loss.png"
 set title "Training loss vs. training iterations"
 set xlabel "Training iterations"
 set ylabel "Training loss"
-set terminal wxt 0
 plot file("train") using 1:3 title "loss"
 
 # Training loss vs. training time
-set title "Training time vs. training loss"
-set xlabel "Training time"
-set ylabel "Training loss"
-set terminal wxt 1
-plot file("train") using 2:3 title "loss"
+#set terminal png
+#set output "time_vs_train-loss.png"
+#set title "Training time vs. training loss"
+#set xlabel "Training time"
+#set ylabel "Training loss"
+#plot file("train") using 2:3 title "loss"
 
 # Learning rate vs. training iterations;
+set terminal png
+set output "it_vs_lr.png"
 set xlabel "Training iterations"
 set ylabel "Learning rate"
-set terminal wxt 2
 plot file("train") using 1:4 title "learning rate"
 
 ###### Fields in the test data
 ###### Iters Seconds TestAccuracy TestLoss
 
 # Test loss vs. training iterations
+set terminal png
+set output "it_vs_test-acc.png"
 set title "Training iterations vs. test accuracy"
 set xlabel "Training iterations"
-set ylabel "Accuracy"
-set terminal wxt 3
+set ylabel "Test accuracy"
 plot file("test") using 1:3 title "accuracy"

@@ -116,7 +116,6 @@ int sbd::TransitionGenerator::writeFilesTxtForTestData() {
 
 int sbd::TransitionGenerator::createRandomTransition()
 {
-    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-0.txt");
 
     enum TransitionType { DISSOLVE, FADE, TYPE_COUNT };
     static const char* transitionNames[TYPE_COUNT] = { "DIS", "FAD" };
@@ -136,7 +135,7 @@ int sbd::TransitionGenerator::createRandomTransition()
     int cutStart2 = goldSizeDist(mt);
 
     if (cutStart1 == cutStart2) {
-        std::cout << "same start frames. retry" << std::endl;
+        //std::cout << "same start frames. retry" << std::endl;
         return -1;
     }
 
@@ -157,7 +156,7 @@ int sbd::TransitionGenerator::createRandomTransition()
 
     if ((sequence1End - sequence1Start) < transitionLength ||
         (sequence2End - sequence2Start) < transitionLength) {
-        std::cout << "retry due to too short sequence";
+        //std::cout << "retry due to too short sequence";
         return -1;
     }
 
@@ -188,7 +187,7 @@ int sbd::TransitionGenerator::createRandomTransition()
         (flipperParam2 < 2 ? ("-" + std::to_string(flipperParam2)) : "");
 
     //std::string baseFolder = "../output/";
-    std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-0/";
+    std::string baseFolder = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/gen-2007-1/";
     std::string outputFramesFolder = baseFolder + "frames/" + newDatasetName;
     std::string outputTruthFolder = baseFolder + "truth/" + newDatasetName;
     std::string noTransitionFolder = baseFolder + "frames/noTransition-" + datasetName + "-" + std::to_string(startFrame1);
@@ -280,6 +279,7 @@ int sbd::TransitionGenerator::createRandomTransition()
 
 void sbd::TransitionGenerator::createRandomTransitions(int amount)
 {
+    m_filesTxtOut.open("/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-1.txt");
     for (size_t i = 0; i < amount; i++)
     {
         std::cout << (i * 100) / amount << "% " << std::flush;
