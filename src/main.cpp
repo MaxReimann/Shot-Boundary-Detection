@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
 		("soft_cut", "detection of soft cuts")
 		("generate", "generation of soft cuts")
 		("gold_statistic", "calculation of gold statistics")
+		("extract_cuts", "extraction of hard cuts")
 		("help", "print help messages")
 		("classify_folder", po::value<std::string>(), "[opt, for hardcuts] specify external testfolder");
 
@@ -86,6 +87,9 @@ int main(int argc, char** argv) {
     } else if (vmap.count("gold_statistic")) {
         GoldStandardStatistic::create(inputArguments["data_folder"]);
     }
+	else if (vmap.count("extract_cuts")) {
+		GoldStandardStatistic::extractCuts(inputArguments["data_folder"], "../resources/extracted", true);
+	}
 
 #ifdef _WIN32
     system("pause");
