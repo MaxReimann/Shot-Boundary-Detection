@@ -17,7 +17,7 @@ layer {
   data_param {
     backend: LMDB
     source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/train/"
-    batch_size: 77
+    batch_size: 84
   }
 }
 layer {
@@ -38,7 +38,7 @@ layer {
   data_param {
     backend: LMDB
     source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/test/"
-    batch_size: 77
+    batch_size: 84
   }
 }
 layer {
@@ -47,12 +47,12 @@ layer {
   top: "sequence"
   dummy_data_param {
     shape {
-      dim: 11
-      dim: 7
+      dim: 21
+      dim: 4
     }
     data_filler {
       type: "sequence"
-      value: 11
+      value: 21
     }
   }
 }
@@ -267,8 +267,8 @@ layer {
   bottom: "fc6"
   reshape_param {
     shape {
-      dim: 11
-      dim: 7
+      dim: 21
+      dim: 4
       dim: 4096
     }
   }
@@ -345,7 +345,7 @@ layer {
   bottom: "prediction"
   reshape_param {
     shape {
-      dim: 77
+      dim: 84
       dim: 2
     }
   }
