@@ -13,14 +13,14 @@ SVMLearner::SVMLearner()
     m_params.svm_type = CvSVM::C_SVC;
     m_params.kernel_type = CvSVM::RBF;
     m_params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
-
+/*
 	cv::Mat weights = cv::Mat(1, 2, CV_32FC1);
 	weights.at<float>(cv::Point(0, 0)) = 10.f;
 	weights.at<float>(cv::Point(1, 0)) = 1.f;
 	CvMat *classWeights = new CvMat(weights);
 	m_params.class_weights = classWeights;
 
-	std::cout << "class weights =" << " " << weights << std::endl << std::endl;
+	std::cout << "class weights =" << " " << weights << std::endl << std::endl;*/
 
 
 	// create a 3x3 double-precision identity matrix

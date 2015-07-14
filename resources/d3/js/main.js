@@ -80,8 +80,8 @@ $(function() {
         .attr("y", function(d) { return y(d.absDiff); })
         .attr("height", function(d) { return height - y(d.absDiff); })
         .on("mouseover", function(d) {
-          var path1 = '../frames/' + d.frame1;
-          var path2 = '../frames/' + d.frame2;
+          var path1 = '../test2/frames/' + d.frame1;
+          var path2 = '../test2/frames/' + d.frame2;
           d3.select("#frame1")
             .on("load", function() {
               loaded1 = true;

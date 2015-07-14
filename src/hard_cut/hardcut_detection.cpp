@@ -40,6 +40,7 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
+        
 
         if (USE_CACHED_HISTOGRAMS)
         {
@@ -96,7 +97,9 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 
 		splitTrainTestSets(features, 0.7, trainSet, testSet);
 	}
+
     cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
+    
     visPredictions = evaluate(testSet, learner);
 
     visGolds = testSet.classes;
@@ -201,6 +204,7 @@ Features HardCutMain::buildHistogramDifferences(std::vector<std::string> &imageP
     unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
     cv::Mat diff;
+    float absDiff;
 
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         std::string imagePath1 = imagePaths[i];
@@ -213,6 +217,8 @@ Features HardCutMain::buildHistogramDifferences(std::vector<std::string> &imageP
 
         try {
             diff = histBuilder.getDiff(imagePath1, imagePath2);
+            absDiff = Histogram::getAbsChanges(diff)[0];
+            diff = cv::Mat(1, 1, CV_32F, &absDiff);
         }
         catch (std::exception &e) {
             std::cout << e.what() << std::endl;
