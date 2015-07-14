@@ -27,7 +27,7 @@ function cleanup() {
     $CAFFE_ROOT/tools/extra/parse_log.sh $TRAINING_LOG_NAME
 
     echo "Copying logs"
-    cp $TRAINING_LOG_NAME $TRAINING_LOG_NAME.train $TRAINING_LOG_NAME.test experiments/$FOLDER_NAME
+    cp $TRAINING_LOG_NAME $TRAINING_LOG_NAME.train $TRAINING_LOG_NAME.test training.sh experiments/$FOLDER_NAME
 
     echo "Building plots"
     gnuplot -e "filename='$TRAINING_LOG_NAME'" -p plot_log.gnuplot
