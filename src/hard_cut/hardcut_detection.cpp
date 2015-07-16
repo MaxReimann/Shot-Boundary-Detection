@@ -212,18 +212,24 @@ Features HardCutMain::buildHistogramDifferences(std::vector<std::string> &imageP
         std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
         std::string frameNumber2 = boost::filesystem::path(imagePath2).stem().string();
 
-        if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1 )
-            continue;
-
-        try {
-            diff = histBuilder.getDiff(imagePath1, imagePath2);
-            absDiff = Histogram::getAbsChanges(diff)[0];
+        if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1) {
+            // if the frames are not belonging together, write a difference of 0
+            // hacky solution to avoid errors in visualization
+            absDiff = 0.;
             diff = cv::Mat(1, 1, CV_32F, &absDiff);
+        } else {
+            try {
+                diff = histBuilder.getDiff(imagePath1, imagePath2);
+                absDiff = Histogram::getAbsChanges(diff)[0];
+                diff = cv::Mat(1, 1, CV_32F, &absDiff);
+            }
+            catch (std::exception &e) {
+                std::cout << e.what() << std::endl;
+                continue;
+            }
         }
-        catch (std::exception &e) {
-            std::cout << e.what() << std::endl;
-            continue;
-        }
+
+        
 
         float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
 
