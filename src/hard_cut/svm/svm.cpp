@@ -11,16 +11,16 @@ SVMLearner::SVMLearner()
 {
     // Set up SVM's parameters
     m_params.svm_type = CvSVM::C_SVC;
-    m_params.kernel_type = CvSVM::RBF;
+    m_params.kernel_type = CvSVM::LINEAR;
     m_params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
 
-	cv::Mat weights = cv::Mat(1, 2, CV_32FC1);
-	weights.at<float>(cv::Point(0, 0)) = 10.f;
-	weights.at<float>(cv::Point(1, 0)) = 1.f;
-	CvMat *classWeights = new CvMat(weights);
-	m_params.class_weights = classWeights;
+	//cv::Mat weights = cv::Mat(1, 2, CV_32FC1);
+	//weights.at<float>(cv::Point(0, 0)) = 10.f;
+	//weights.at<float>(cv::Point(1, 0)) = 1.f;
+	//CvMat *classWeights = new CvMat(weights);
+	//m_params.class_weights = classWeights;
 
-	std::cout << "class weights =" << " " << weights << std::endl << std::endl;
+	//std::cout << "class weights =" << " " << weights << std::endl << std::endl;
 
 
 	// create a 3x3 double-precision identity matrix
@@ -36,27 +36,29 @@ float SVMLearner::predict(cv::Mat& sample)
     return m_svm.predict(sample);
 }
 
-void SVMLearner::plotDecisionRegions()
+void SVMLearner::plotDecisionRegions(Features &testSet)
 {
     // Data for visual representation
     int width = 512, height = 512;
     cv::Mat image = cv::Mat::zeros(height, width, CV_8UC3);
 
     cv::Vec3b green(0, 255, 0), blue(255, 0, 0);
-    // Show the decision regions given by the SVM
-    //for (int i = 0; i < image.rows; ++i)
-    //{
-    //  for (int j = 0; j < image.cols; ++j)
-    //  {
-    //      cv::Mat sampleMat = (cv::Mat_<float>(1, 2) << j, i);
-    //      float response = m_svm.predict(sampleMat);
+	//Show the decision regions given by the SVM
+	for (int i = 0; i < image.rows; ++i)
+		{
+		for (int j = 0; j < image.cols; ++j)
+		{
+			cv::Mat sampleMat = (cv::Mat_<float>(1, 2) << j, i);
+			float response = m_svm.predict(sampleMat);
 
-    //      if (response == 1)
-    //          image.at<cv::Vec3b>(i, j) = green;
-    //      else if (response == -1)
-    //          image.at<cv::Vec3b>(i, j) = blue;
-    //  }
-    //}
+			if (response == 1)
+				image.at<cv::Vec3b>(i, j) = green;
+			else if (response == -1)
+				image.at<cv::Vec3b>(i, j) = blue;
+		}
+	}
+
+
 
 
     // Show the training data

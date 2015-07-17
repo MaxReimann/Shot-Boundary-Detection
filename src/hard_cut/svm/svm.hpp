@@ -12,7 +12,7 @@ namespace sbd
 
         void train(cv::Mat& trainingData, cv::Mat& labels);
         float predict(cv::Mat& sample);
-        void plotDecisionRegions();
+		void plotDecisionRegions(Features &testSet);
 
     private:
         CvSVMParams m_params;
