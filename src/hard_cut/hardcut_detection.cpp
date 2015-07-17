@@ -19,7 +19,7 @@ using namespace sbd;
 
 
 int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
-    bool USE_CACHED_HISTOGRAMS = false;
+    bool USE_CACHED_HISTOGRAMS = true;
 
     std::string dataFolder = inputArguments.at("data_folder");
 
@@ -40,6 +40,7 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     {
         std::vector<std::string> imagePaths = getFileNames(dataFolder);
         features = buildHistogramDifferences(imagePaths, gold);
+        
 
         if (USE_CACHED_HISTOGRAMS)
         {
@@ -96,7 +97,9 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 
 		splitTrainTestSets(features, 0.7, trainSet, testSet);
 	}
+
     cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
+    
     visPredictions = evaluate(testSet, learner);
 
     visGolds = testSet.classes;
@@ -201,6 +204,7 @@ Features HardCutMain::buildHistogramDifferences(std::vector<std::string> &imageP
     unsigned long tenPercent = imagePaths.size() / 10;
     std::cout << "0% " << std::flush;
     cv::Mat diff;
+    float absDiff;
 
     for (int i = 0; i < imagePaths.size() - 1; i += 1) {
         std::string imagePath1 = imagePaths[i];
@@ -208,16 +212,24 @@ Features HardCutMain::buildHistogramDifferences(std::vector<std::string> &imageP
         std::string frameNumber = boost::filesystem::path(imagePath1).stem().string();
         std::string frameNumber2 = boost::filesystem::path(imagePath2).stem().string();
 
-        if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1 )
-            continue;
+        if (std::stoi(frameNumber) != std::stoi(frameNumber2) - 1) {
+            // if the frames are not belonging together, write a difference of 0
+            // hacky solution to avoid errors in visualization
+            absDiff = 0.;
+            diff = cv::Mat(1, 1, CV_32F, &absDiff);
+        } else {
+            try {
+                diff = histBuilder.getDiff(imagePath1, imagePath2);
+                absDiff = Histogram::getAbsChanges(diff)[0];
+                diff = cv::Mat(1, 1, CV_32F, &absDiff);
+            }
+            catch (std::exception &e) {
+                std::cout << e.what() << std::endl;
+                continue;
+            }
+        }
 
-        try {
-            diff = histBuilder.getDiff(imagePath1, imagePath2);
-        }
-        catch (std::exception &e) {
-            std::cout << e.what() << std::endl;
-            continue;
-        }
+        
 
         float gold = static_cast<float>(findGold(imagePath1, imagePath2, goldStandard));
 
@@ -283,6 +295,7 @@ std::vector<float> HardCutMain::evaluate(Features &testSet, SVMLearner *learner)
 
     int tp = 0, fp = 0, tn = 0, fn = 0;
     std::vector<float> predictions;
+	learner->plotDecisionRegions(testMat, labelsMat);
 
     for (int rowIndex = 0; rowIndex < testMat.rows; rowIndex++) {
         cv::Mat mTest = testMat.row(rowIndex);
@@ -296,6 +309,8 @@ std::vector<float> HardCutMain::evaluate(Features &testSet, SVMLearner *learner)
         predictions.push_back(predicted);
 //        printf("Predicted %f   Actual: %f\n", predicted, actual);
     }
+
+
 
     float precision = static_cast<float>(tp) / (tp + fp);
     float recall    = static_cast<float>(tp) / (tp + fn);

@@ -46,6 +46,12 @@ $(function() {
       d.gold = d.gold == "1" ? true : false;
       d.prediction = d.prediction == "1" ? true : false;
       return d;
+    }).filter(function(d) {
+      // split the path, get last element of path as filename, split by '.' to remove file ending
+      var nr1 = parseInt(d.frame1.split('/').slice(-1)[0].split('.')[0]);
+      var nr2 = parseInt(d.frame2.split('/').slice(-1)[0].split('.')[0]);
+
+      return (nr1 + 1) == nr2;
     });
 
     x.domain(data.map(function(d) { return d.idx; }));
@@ -80,8 +86,8 @@ $(function() {
         .attr("y", function(d) { return y(d.absDiff); })
         .attr("height", function(d) { return height - y(d.absDiff); })
         .on("mouseover", function(d) {
-          var path1 = '../frames/' + d.frame1;
-          var path2 = '../frames/' + d.frame2;
+          var path1 = '../test2/frames/' + d.frame1;
+          var path2 = '../test2/frames/' + d.frame2;
           d3.select("#frame1")
             .on("load", function() {
               loaded1 = true;

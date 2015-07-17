@@ -35,6 +35,8 @@ void SoftCutMain::findSoftCuts() {
     // 2. Initialize classifier
     std::cout << "Initialize classifier ..." << std::endl;
     CaffeClassifier classifier(useCPU, preModel, protoFile, size, channels, isDebug);
+    std::vector<std::vector<short>> perVidVisPredictions;
+    std::vector<std::vector<std::vector<short>>> visPredictions;
 
     for (auto video : videos) {
         // 3. Predict all videos
@@ -46,7 +48,8 @@ void SoftCutMain::findSoftCuts() {
         std::vector<Merger*> mergeStrategies = {
             new MajorityVotingDiagonallyMerger(),
             new TakeFirstMerger,
-            new TakeLastMerger
+            new TakeLastMergerSequence,
+            new TakeLastMergerFrame
         };
 
         for (auto &strategy : mergeStrategies) {
@@ -65,11 +68,13 @@ void SoftCutMain::findSoftCuts() {
 
             // 6. Evaluation with Gap Filler
             int maxGapsize = 10;
+            
             for (int gapSize = 1; gapSize < maxGapsize; gapSize++) {
                 Evaluation evalWithGapFiller(strategy->name() + " with gap filler of size " + boost::lexical_cast<std::string>(
                         gapSize), 2);
                 // fill the gaps
                 predictions = GapFiller::fillGaps(predictions, gapSize);
+                perVidVisPredictions.push_back(predictions);
 
                 for (int i = 0; i < predictions.size(); i++) {
                     evalWithGapFiller.prediction(predictions[i], actual[i]);
@@ -80,9 +85,10 @@ void SoftCutMain::findSoftCuts() {
             delete strategy;
         }
         mergeStrategies.clear();
+        visPredictions.push_back(perVidVisPredictions);
     }
 
-		writeVisualizationData(videos);
+	writeVisualizationData(videos, visPredictions);
 
 }
 
@@ -167,8 +173,9 @@ SequenceBatch SoftCutMain::getSequenceBatch(Video video, int start) {
 }
 
 
-void SoftCutMain::writeVisualizationData(std::vector<Video> &videos) {
-	std::string filepath = "../resources/d3/data/visData.tsv";
+void SoftCutMain::writeVisualizationData(std::vector<Video> &videos, std::vector<std::vector<std::vector<short>>> visPredictions) {
+    printf("Writing visualization data...\n");
+	std::string filepath = "../resources/d3/data/soft_visData.tsv";
 
 	std::ofstream fout(filepath);
 
@@ -176,18 +183,29 @@ void SoftCutMain::writeVisualizationData(std::vector<Video> &videos) {
 		printf("Could not open visData file\n");
 		return;
 	}
+    if (!visPredictions.size()) {
+        printf("Error in visData");
+        return;
+    }
 
-	fout << "idx\tframe1\tframe2\tabsDiff\tgold" << std::endl;
+    fout << "idx\tframe1\tframe2\tabsDiff\t";
+    // visPredictions[0] contains the predictions for the first video, its size is the number of different gap fillers used
+    for (int i = 0; i < visPredictions[0].size(); i++) {
+        fout << "prediction" << (i + 1) << "\t";
+    }
+    fout << "gold" << std::endl;
+
 	Histogram histBuilder(8, false); // using color histogram and 8 bins
 	int i = 0;
+    int nrVideo = 0;
 	for (Video vid : videos) {
 		// get the name of the folder, that contains the current images
-		std::string videoFolder = vid.videoName;// boost::filesystem::path().parent_path().filename().string();
+		std::string videoFolder = vid.videoName; // boost::filesystem::path().parent_path().filename().string();
 
-		for (int i = 0; i < vid.frames.size() - 1; i++)
+		for (int k = 0; k < vid.frames.size() - 1; k++)
 		{
-			std::string frame1 = videoFolder + "/" + vid.frames[i];
-			std::string frame2 = videoFolder + "/" + vid.frames[i+1];
+			std::string frame1 = videoFolder + "/" + vid.frames[k];
+			std::string frame2 = videoFolder + "/" + vid.frames[k+1];
 
 			float diffVal;
 			try {
@@ -199,16 +217,26 @@ void SoftCutMain::writeVisualizationData(std::vector<Video> &videos) {
 				continue;
 			}
 
-			fout << (i++) << "\t"
-				<< frame1 << "\t"
-				<< frame2 << "\t"
-				<< diffVal << "\t"
-				<< std::max(vid.actual[i], vid.actual[i+1]) //write out as softcut, as soon as 1 frame is a SC
+            fout << (i+1) << "\t"
+                << frame1 << "\t"
+                << frame2 << "\t"
+                << diffVal << "\t";
+
+            for (int j = 0; j < visPredictions[nrVideo].size(); j++) {
+                fout << std::max(visPredictions[nrVideo][j][k], visPredictions[nrVideo][j][k+1]) << "\t";
+            }
+
+			fout << std::max(vid.actual[k], vid.actual[k+1]) // write out as softcut, as soon as 1 frame is a SC
 				<< std::endl;
+
+            i++;
 		}
+
+        nrVideo++;
 	}
 
 	fout.close();
+    printf("...done\n");
 }
 
 
