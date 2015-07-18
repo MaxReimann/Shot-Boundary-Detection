@@ -48,8 +48,8 @@ namespace sbd
         void writeVisualizationData(std::vector<Video> &videos, std::vector<std::vector<std::vector<short>>> visPredictions);
     protected:
         // Caffe parameters
-        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/20150710-090510_two-lstm/_iter_110000.caffemodel";
-        std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/20150710-090510_two-lstm/deploy.prototxt";
+        std::string preModel = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/20150718-095654_two_lstm_21/_iter_20000.caffemodel";
+        std::string protoFile = "/home/pva_t1/Shot-Boundary-Detection/nets/experiments/20150718-095654_two_lstm_21/deploy.prototxt";
 
         bool useCPU = false;
         cv::Size size;
@@ -57,13 +57,13 @@ namespace sbd
         bool isDebug = true;
         std::string resultLayer = "argmax";
         std::string dataLayer = "data";
-        int batchSize = 77;
+        int batchSize = 84;
         int nrClasses = 2;
 
         // programm parameters
-        int sequenceSize = 11;
+        int sequenceSize = 21;
         int sequenceBatchSize = batchSize / sequenceSize;
         std::string txtFile = "/opt/data_sets/video_sbd_dataset/generated_soft_cuts/files-2.txt";
-        std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/predictions_";
+        std::string outputFile = "/home/pva_t1/Shot-Boundary-Detection/resources/21_predictions_";
     };
 }
