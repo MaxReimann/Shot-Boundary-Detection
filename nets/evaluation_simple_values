@@ -1,0 +1,28 @@
+Predicting video BG_35050
+Predicting 83112 frames of video.
+Majority-Voting-Diagonally: 76705/83112 = 0.922911
+  75574    6183 
+    224    1131 
+0: Precision = 0.997045, Recall = 0.924373
+1: Precision = 0.154635, Recall = 0.834686
+
+Take-First: 66702/83112 = 0.802556
+  65429   16328 
+     82    1273 
+0: Precision = 0.998748, Recall = 0.800286
+1: Precision = 0.0723254, Recall = 0.939483
+
+Take-Last-Sequence: 76514/83112 = 0.920613
+  75469    6288 
+    310    1045 
+0: Precision = 0.995909, Recall = 0.923089
+1: Precision = 0.142506, Recall = 0.771218
+
+Take-Last-Frame: 76684/83112 = 0.922659
+  75554    6203 
+    225    1130 
+0: Precision = 0.997031, Recall = 0.924129
+1: Precision = 0.154098, Recall = 0.833948
+
+11,0.154635,"Maj-P(1)"
+'plot.csv' every 4::4 using 1:2 with boxes ls 5 title "Majority Voting"
