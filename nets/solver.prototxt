@@ -26,7 +26,7 @@ snapshot_prefix: "snapshots/"
 random_seed: 1701
 # Display the loss averaged over the last average_loss iterations
 average_loss: 100
-#clip_gradients: 10
+clip_gradients: 10
 
 # GPU for the win!
 solver_mode: GPU
