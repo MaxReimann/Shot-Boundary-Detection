@@ -12,7 +12,7 @@ layer {
     mean_value: 123
   }
   memory_data_param {
-    batch_size: 77
+    batch_size: 84
     channels: 3
     width: 227
     height: 227
@@ -24,12 +24,12 @@ layer {
   top: "sequence"
   dummy_data_param {
     shape {
-      dim: 11
-      dim: 7
+      dim: 21
+      dim: 4
     }
     data_filler {
       type: "sequence"
-      value: 11
+      value: 21
     }
   }
 }
@@ -244,22 +244,41 @@ layer {
   bottom: "fc6"
   reshape_param {
     shape {
-      dim: 11
-      dim: 7
+      dim: 21
+      dim: 4
       dim: 4096
     }
   }
 }
 layer {
-  name: "lstm"
+  name: "lstm1"
   type: "LSTM"
   bottom: "reshape-fc6"
   bottom: "sequence"
-  top: "lstm"
+  top: "lstm1"
   recurrent_param {
-    num_output: 256
+    num_output: 1024
     weight_filler {
-      type: "uniform"
+      type: "xavier"
+      min: -0.08
+      max: 0.08
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "lstm2"
+  type: "LSTM"
+  bottom: "lstm1"
+  bottom: "sequence"
+  top: "lstm2"
+  recurrent_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
       min: -0.08
       max: 0.08
     }
@@ -272,7 +291,7 @@ layer {
 layer {
   name: "prediction"
   type: "InnerProduct"
-  bottom: "lstm"
+  bottom: "lstm2"
   top: "prediction"
   param {
     lr_mult: 1
@@ -296,27 +315,6 @@ layer {
     axis: 2
   }
 }
-#layer {
-#  name: "fc7"
-#  type: "InnerProduct"
-#  bottom: "lstm"
-#  top: "fc7"
-#  param {
-#    lr_mult: 0.2
-#    decay_mult: 0
-#  }
-#  inner_product_param {
-#    num_output: 16
-#    weight_filler {
-#      type: "gaussian"
-#      std: 0.005
-#    }
-#    bias_filler {
-#      type: "constant"
-#      value: 1
-#    }
-#  }
-#}
 layer {
   name: "reshape-prediction"
   type: "Reshape"
@@ -324,7 +322,7 @@ layer {
   bottom: "prediction"
   reshape_param {
     shape {
-      dim: 77
+      dim: 84
       dim: 2
     }
   }

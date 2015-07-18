@@ -9,7 +9,7 @@ base_lr: 0.001
 # Policy for changing the learning rate - multiply by gamma every stepsize iterations
 lr_policy: "step"
 gamma: 0.1
-stepsize: 28000
+stepsize: 40000
 momentum: 0.9
 # Regularization parameter for the weights
 weight_decay: 0.0001

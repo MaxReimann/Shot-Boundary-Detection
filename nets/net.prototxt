@@ -1,4 +1,4 @@
-name: "soft_cut_net" 
+name: "soft_cut_net"
 layer { 
   name: "data" 
   type: "Data" 
@@ -15,8 +15,8 @@ layer {
     mean_value: 123
   }
   data_param {
-    backend: LMDB
-    source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/train/"
+    backend: LEVELDB
+    source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/21/train/"
     batch_size: 84
   }
 }
@@ -36,8 +36,8 @@ layer {
     mean_value: 123
   }
   data_param {
-    backend: LMDB
-    source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/test/"
+    backend: LEVELDB
+    source: "/mnt/naruto/data_sets/video_sbd_dataset/lmdb/21/test/"
     batch_size: 84
   }
 }
