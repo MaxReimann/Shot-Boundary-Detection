@@ -1,0 +1,496 @@
+Predicting video BG_35050
+Predicting 83112 frames of video.
+Merge predictions ...
+Majority-Voting-Diagonally: 41552/83112 = 0.499952
+Confusion Matrix (rows are actual):
+  40871   40886 
+    674     681 
+0: Precision = 0.983777, Recall = 0.499908
+1: Precision = 0.0163832, Recall = 0.502583
+Majority-Voting-Diagonally with gap filler of size 1: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 2: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 3: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 4: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 5: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 6: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 7: 81733/83112 = 0.983408
+Confusion Matrix (rows are actual):
+  81733      24 
+   1355       0 
+0: Precision = 0.983692, Recall = 0.999706
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 8: 81741/83112 = 0.983504                                                                                                                            [1582/6830]
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 9: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Merge predictions ...
+Take-First: 21455/83112 = 0.258146
+Confusion Matrix (rows are actual):
+  20439   61318 
+    339    1016 
+0: Precision = 0.983685, Recall = 0.249997
+1: Precision = 0.0162993, Recall = 0.749816
+Take-First with gap filler of size 1: 21457/83112 = 0.25817
+Confusion Matrix (rows are actual):
+  20441   61316 
+    339    1016 
+0: Precision = 0.983686, Recall = 0.250021
+1: Precision = 0.0162998, Recall = 0.749816
+Take-First with gap filler of size 2: 21459/83112 = 0.258194
+Confusion Matrix (rows are actual):
+  20443   61314 
+    339    1016 
+0: Precision = 0.983688, Recall = 0.250046
+1: Precision = 0.0163003, Recall = 0.749816
+Take-First with gap filler of size 3: 81752/83112 = 0.983637
+Confusion Matrix (rows are actual):
+  81752       5 
+   1355       0 
+0: Precision = 0.983696, Recall = 0.999939
+1: Precision = 0, Recall = 0
+Take-First with gap filler of size 4: 81752/83112 = 0.983637
+Confusion Matrix (rows are actual):
+  81752       5 
+   1355       0 
+0: Precision = 0.983696, Recall = 0.999939
+1: Precision = 0, Recall = 0
+Take-First with gap filler of size 5: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 6: 81757/83112 = 0.983697                                                                                                                                            [1533/6830]
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 7: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 8: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 9: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Merge predictions ...
+Take-Last-Sequence: 61658/83112 = 0.741866
+Confusion Matrix (rows are actual):
+  61318   20439 
+   1015     340 
+0: Precision = 0.983716, Recall = 0.750003
+1: Precision = 0.0163627, Recall = 0.250923
+Take-Last-Sequence with gap filler of size 1: 81752/83112 = 0.983637
+Confusion Matrix (rows are actual):
+  81752       5 
+   1355       0 
+0: Precision = 0.983696, Recall = 0.999939
+1: Precision = 0, Recall = 0
+Take-Last-Sequence with gap filler of size 2: 81754/83112 = 0.983661
+Confusion Matrix (rows are actual):
+  81754       3 
+   1355       0 
+0: Precision = 0.983696, Recall = 0.999963
+1: Precision = 0, Recall = 0
+Take-Last-Sequence with gap filler of size 3: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 4: 81757/83112 = 0.983697                                                                                                                                    [1484/6830]
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 5: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 6: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 7: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 8: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 9: 81757/83112 = 0.983697
+Confusion Matrix (rows are actual):
+  81757       0 
+   1355       0 
+0: Precision = 0.983697, Recall = 1
+1: Precision = -nan, Recall = 0
+Merge predictions ...
+Take-Last-Frame: 61647/83112 = 0.741734
+Confusion Matrix (rows are actual):
+  61307   20450 
+   1015     340 
+0: Precision = 0.983714, Recall = 0.749869
+1: Precision = 0.016354, Recall = 0.250923
+Take-Last-Frame with gap filler of size 1: 81736/83112 = 0.983444
+Confusion Matrix (rows are actual):
+  81736      21 
+   1355       0 
+0: Precision = 0.983693, Recall = 0.999743
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 2: 81738/83112 = 0.983468                                                                                                                                       [1435/6830]
+Confusion Matrix (rows are actual):
+  81738      19 
+   1355       0 
+0: Precision = 0.983693, Recall = 0.999768
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 3: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 4: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 5: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 6: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 7: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 8: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 9: 81741/83112 = 0.983504
+Confusion Matrix (rows are actual):
+  81741      16 
+   1355       0 
+0: Precision = 0.983694, Recall = 0.999804
+1: Precision = 0, Recall = 0
+
+
+
+
+Predicting video BG_36506
+Predicting 36995 frames of video.
+Merge predictions ...                                      
+Majority-Voting-Diagonally: 18490/36995 = 0.499797
+Confusion Matrix (rows are actual):
+  18464   18478 
+     27      26 
+0: Precision = 0.99854, Recall = 0.499811
+1: Precision = 0.0014051, Recall = 0.490566
+Majority-Voting-Diagonally with gap filler of size 1: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 2: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 3: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 4: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 5: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 6: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 7: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 8: 36929/36995 = 0.998216                                                                                                                            [1165/6830]
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Majority-Voting-Diagonally with gap filler of size 9: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Merge predictions ...
+Take-First: 9274/36995 = 0.250683
+Confusion Matrix (rows are actual):
+   9235   27707 
+     14      39 
+0: Precision = 0.998486, Recall = 0.249986
+1: Precision = 0.00140561, Recall = 0.735849
+Take-First with gap filler of size 1: 9276/36995 = 0.250737
+Confusion Matrix (rows are actual):
+   9237   27705 
+     14      39 
+0: Precision = 0.998487, Recall = 0.250041
+1: Precision = 0.00140571, Recall = 0.735849
+Take-First with gap filler of size 2: 9276/36995 = 0.250737
+Confusion Matrix (rows are actual):
+   9237   27705 
+     14      39 
+0: Precision = 0.998487, Recall = 0.250041
+1: Precision = 0.00140571, Recall = 0.735849
+Take-First with gap filler of size 3: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 4: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 5: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 6: 36942/36995 = 0.998567                                                                                                                                            [1116/6830]
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 7: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 8: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-First with gap filler of size 9: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Merge predictions ...
+Take-Last-Sequence: 27719/36995 = 0.749263
+Confusion Matrix (rows are actual):
+  27706    9236 
+     40      13 
+0: Precision = 0.998558, Recall = 0.749986
+1: Precision = 0.00140556, Recall = 0.245283
+Take-Last-Sequence with gap filler of size 1: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 2: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 3: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 4: 36942/36995 = 0.998567                                                                                                                                    [1067/6830]
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 5: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 6: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 7: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 8: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Take-Last-Sequence with gap filler of size 9: 36942/36995 = 0.998567
+Confusion Matrix (rows are actual):
+  36942       0 
+     53       0 
+0: Precision = 0.998567, Recall = 1
+1: Precision = -nan, Recall = 0
+Merge predictions ...
+Take-Last-Frame: 27710/36995 = 0.74902
+Confusion Matrix (rows are actual):
+  27697    9245 
+     40      13 
+0: Precision = 0.998558, Recall = 0.749743
+1: Precision = 0.00140419, Recall = 0.245283
+Take-Last-Frame with gap filler of size 1: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 2: 36929/36995 = 0.998216                                                                                                                                       [1018/6830]
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 3: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 4: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 5: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 6: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 7: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 8: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
+Take-Last-Frame with gap filler of size 9: 36929/36995 = 0.998216
+Confusion Matrix (rows are actual):
+  36929      13 
+     53       0 
+0: Precision = 0.998567, Recall = 0.999648
+1: Precision = 0, Recall = 0
