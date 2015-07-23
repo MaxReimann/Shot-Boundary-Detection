@@ -1,6 +1,10 @@
 % Koma-Script Basisklasse
-\documentclass[a4paper,12pt,pagesize,headsepline,bibtotoc,titlepage]{scrartcl}
-\usepackage[english]{babel}		% deutsche Trennmuster
+\documentclass[a4paper,12pt,headsepline,pagesize,bibtotoc,titlepage]{scrartcl}
+
+\usepackage{scrpage2}
+\pagestyle{useheadings}
+%\pagestyle{scrheadings}
+%\usepackage[english]{babel}
 \usepackage[utf8]{inputenc}		% direkte Eingabe von Umlauten & Co. (Vorsicht: Encoding im Editor muss auch UTF-8 sein!)
 
 \usepackage[T1]{fontenc}			% T1-Schriften
@@ -17,7 +21,7 @@
 \usepackage{hyperref} % Hyperlinks anklickbar
 \usepackage{ae,aecompl} % bessere Bildschirmschriftarten usw.
 
-\pagestyle{headings}
+%\pagestyle{headings}
 
 % Abstand der Kopfzeile vom Text:
 \headsep4mm
@@ -46,7 +50,6 @@
 	Prof. Dr. Christoph Meinel
 }
 \date{\today}
-
 \begin{document}
 \maketitle
 \tableofcontents
