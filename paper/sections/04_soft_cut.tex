@@ -1,6 +1,44 @@
 \section{Soft-Cut Detection}
 \label{sec:soft_cut}
 
+To occur somewhere in this chapter:
+\begin{itemize}
+    \item Test with 11 frame length and 21 frame length
+    \item Test with only lstms, only basic CNN before (intuition: CNN is not so good anyways)
+    \item One-LSTM vs. Two-LSTMs
+    \item All the different merges. Why merge at all?
+    \item Evaluate on sequence and on frame level?
+    \item Histograms for debugging?
+    \item Why it did not work out.
+    
+\end{itemize}
+%%%
+%%% Hier mal noch die Ideen, die wir irgendwann hatten fuer soft-cut und hard-cut. Vllt kann man Teile davon noch irgendwo einbauen.
+%%%
+
+%- Hard Cut Detection: Visualisierungen
+%  Verbesserungsideen:  - Hinzunahme der vorherigen Frames
+%                       - Edges
+%                       - Subraktion der beiden Frames -> einfarbiges Bild?
+%                       - Trainingsverhältnis
+%                       - 2007
+%- Soft Cut Generierung
+%- Soft Cut Detection:
+%  Frage:   - Wie soll der Input aussehen? Einzelne Frames. Erkennen von Fade In/Out durch das Schwarzerwerden.
+%           - Erkennen von Dissolves durch das Überlappen zweier Frames.
+%           - Reine Pixel als input
+%           - Preprocessing? Komprimierung der Frames?
+%
+%           - Input Size: 10 Frames
+%           - Training: Fix Länge, klein
+%                       Auf selbst generierten Daten
+%           - Test: True -> rechts und links schauen
+%                           Sozusagen schrittweise ueber das Video gehen, und jeweils 5 Frames links und rechts mit in das Sliding Window nehmen.
+%                           Wenn mehrfach nacheinander ein dissolve vorausgesagt wird 
+%
+%                   Test auf 2007er Daten
+
+
 In contrast to the approaches presented in Section~\ref{sec:related_work}, we chose a deep learning approach to detect soft cuts in a video.
 In the following this approach is presented in more detail.
 
