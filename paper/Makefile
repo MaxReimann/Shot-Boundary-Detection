@@ -15,7 +15,7 @@ build:
 	@mv .output/$(OUTPUT_FILE).pdf .
 
 bibtex:
-	@cd .output && bibtex paper && cd ..
+	@cd .output && bibtex $(OUTPUT_FILE) && cd ..
 
 clean:
 	rm .output/*.aux .output/*.log
