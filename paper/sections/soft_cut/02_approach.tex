@@ -32,7 +32,7 @@ An overview over all strategies can be found in Figure~\ref{fig:merging_strategi
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.5]{images/merging_strategies.eps}
-	\caption{To merge the multiple predictions per frame into one, we implemented serval strategies: \textit{Take Last 'Frame'} (top left): The prediction of the frame, where the frame is the last of a frame sequence, is taken. \textit{Take Last 'Sequence'} (bottom left): The last prediction of the frame sequence belonging to a frame is taken. \textit{Take First} (top right): The first prediction of the frame sequence is taken. \textit{Majority-Voting Diagonally} (bottom right): The majority voting among all preditions of the frame is taken.}
+	\caption{To merge the multiple predictions per frame into one, we implemented serval strategies: \textit{Take Last 'Frame'} (top left): The prediction of the frame, where the frame is the last of a frame sequence, is taken. \textit{Take Last 'Sequence'} (bottom left): The last prediction of the frame sequence belonging to a frame is taken. \textit{Take First} (top right): The first prediction of the frame sequence is taken. \textit{Majority-Voting Diagonally} (bottom right): The majority voting among all predictions of the frame is taken.}
 	\label{fig:merging_strategies}
 \end{figure}
 \paragraph{Take First}
@@ -55,8 +55,8 @@ A sequence of frames, which are part of a soft cut, then represent a soft cut.
 However, there could be misclassified frame predictions.
 We implemented a \textit{Gap Filler} to find and correct some of those misclassified frame predictions.
 The \textit{Gap Filler} is looking for sequences of frames, belonging to a soft cut, which are interrupted by some frames, which do not belong to a soft cut.
-If the number of interrupting frames is not to large, they will be also classified as soft cut frames.
-The idea behind the \textit{Gap Filler} is, that two soft cuts do not occure close to each other.
+If the number of interrupting frames is not too large, they will be also classified as soft cut frames.
+The idea behind the \textit{Gap Filler} is, that two soft cuts do not occur close to each other.
 So, if two soft cuts are only a few frames apart, they probably belong to the same soft cut.
 In Figure~\ref{fig:gap_filler} an example of the \textit{Gap Filler} is shown.
 Here, a sequence of soft cut frames is interrupted by two non soft cut frames.
@@ -64,21 +64,21 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.7]{images/gap_filler.eps}
-	\caption{Two soft cuts do not occure close to each other. Therefore the \textit{Gap Filler} find misclassified frame predictions after the merging step and correct non soft cut frame predictions, if they are interrupting a soft cut.}
+	\caption{Two soft cuts do not occur close to each other. Therefore the \textit{Gap Filler} find misclassified frame predictions after the merging step and correct non soft cut frame predictions, if they are interrupting a soft cut.}
 	\label{fig:gap_filler}
 \end{figure}
 
-Another idea to correct misclassified frame predicitons is to delete soft cuts, which are only up to five frames long and only surrounded by non soft cut frames.
+Another idea to correct misclassified frame predictions is to delete soft cuts, which are only up to five frames long and only surrounded by non soft cut frames.
 In our data set a soft cut has on average 22 frames.
 The smallest have a length of seven frames.
 Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
 
 To classify the frames as soft cut or non soft cut frames, we used an RNN/LSTM.
-We tried different architectures, which will be evaluated in Section~\ref{sec:soft_cut_evaluation}.
+We tested the following architectures:
 
 \paragraph{CNN + one LSTM}
 For the CNN we used the architecture of the \textit{caffenet} [TODO: reference].
-We also used the pretrained weights of this net, so that we do not need to train our model from sratch.
+We also used the pre trained weights of this net, so that we do not need to train our model from scratch.
 We only fine-tuned the \textit{fc6} layer of the \textit{caffenet} with a learning rate of 0.1.
 The CNN is followed by one LSTM, which weights were initialized with the \textit{Xavier} method [TODO: \url{http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf}].
 Besides, the general learning rate was set to 0.01 and gradient clipping was used.
@@ -86,7 +86,7 @@ Besides, the general learning rate was set to 0.01 and gradient clipping was use
 \paragraph{CNN + two LSTMs}
 The architecture of this net is basically the same as the previous.
 There is only one difference: Instead of using just one LSTM, two LSTMs were used.
-Also the general learning rate was set to 0.001 and no grandient clipping was used.
+Also the general learning rate was set to 0.001 and no gradient clipping was used.
 The architecture of the net can be found in Figure~\ref{fig:net_architecture}
 \begin{figure}[!htb]
 	\centering
@@ -100,4 +100,5 @@ The last architecture which was tested uses only one convolutional layer before 
 The intuition behind it [TODO].
 The net was trained from scratch as no pretrained net existed.
 The weights of the LSTMs were again initialized using the \textit{Xavier} method.
-The learning rate was 0.001 and gradient clipping was used druing training.
+The learning rate was 0.001 and gradient clipping was used during training. \\
+
