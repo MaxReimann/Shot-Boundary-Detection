@@ -10,7 +10,7 @@ So the net memorizes previous decision along a sequence of frames. \\
 But using this architecture has one problem, as stated by Jeff Donahue: ``Backpropagation [through the LSTM] is truncated along the batch boundaries'' [TODO: Quelle].
 So one or more frame sequences has to fit exactly into the batch size used by the RNN/LSTM.
 This is hard to archive if we want to use variable length of frame sequences.
-Therefore we decided to use a fixed size for the sequences of frames in a tagging sequence, i.e. we only check for example 10 consecutive frames of being a soft cut or not.  \\
+Therefore we decided to use a fixed size for the sequences of frames in a tagging sequence, i.e. we only check for example ten consecutive frames of being a soft cut or not.  \\
 However, we still want to find soft cut of arbitrary length in a video.
 To achieve this, we repeatedly test fixed-size frame sequences.
 In Figure~\ref{fig:soft_cut_approach} an example is shown.
@@ -28,31 +28,63 @@ The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, an
 In the end we have up six prediction per frame, which have to be merged, so that we only have one prediction per frame.
 After the merging step consecutive frames, which got a prediction of one, i.e. the frame is part of an soft cut, represent a soft cut. \\
 In the following several strategies for combining the multiple frame prediction into one prediction are presented.
-An overview over all strategies can be found in Figure~\ref{fig:merging_strategies}
+An overview over all strategies can be found in Figure~\ref{fig:merging_strategies}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.5]{images/merging_strategies.eps}
 	\caption{To merge the multiple predictions per frame into one, we implemented serval strategies: \textit{Take Last 'Frame'} (top left): The prediction of the frame, where the frame is the last of a frame sequence, is taken. \textit{Take Last 'Sequence'} (bottom left): The last prediction of the frame sequence belonging to a frame is taken. \textit{Take First} (top right): The first prediction of the frame sequence is taken. \textit{Majority-Voting Diagonally} (bottom right): The majority voting among all preditions of the frame is taken.}
 	\label{fig:merging_strategies}
 \end{figure}
-
 \paragraph{Take First}
-A first simple strategy is to take always the first prediction of a frame sequence.
+A first simple strategy is having a frame, take the first prediction of the frame sequence, belonging to that frame.
 
 \paragraph{Take Last 'Sequence'}
-A second simple strategy is to take the last prediction of a frame sequence.
+A second simple strategy is having a frame, take the last prediction of a frame sequence, belonging to that frame.
 The intuition behind this is, that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
 
 \paragraph{Take Last 'Frame'}
-In the \textit{Take Last 'Frame'} strategy, the prediction of the frame, where the frame is the last in the sequence, is taken.
+In the \textit{Take Last 'Frame'} strategy, for every frame the frame sequence, where the frame is the last, is  found. The last prediction in this frame sequence is then taken as prediction for the frame.
 
 \paragraph{Majority-Voting Diagonally}
 Each frame is predicted up to \textit{x} times.
 In our example it is up to six times.
-In the \textit{Majority-Voting Diagonally} all of those predictions are taken and the majority voting among those is taken as prediction for the frame.
+In the \textit{Majority-Voting Diagonally} all of those predictions are taken and the majority voting among those is taken as prediction for the frame. \\
 
+After merging we have one prediction per frame indicating whether the frame is part of a soft cut or not.
+A sequence of frames, which are part of a soft cut, then represent a soft cut.
+However, there could be misclassified frame predictions.
+We implemented a \textit{Gap Filler} to find and correct some of those misclassified frame predictions.
+The \textit{Gap Filler} is looking for sequences of frames, belonging to a soft cut, which are interrupted by some frames, which do not belong to a soft cut.
+If the number of interrupting frames is not to large, they will be also classified as soft cut frames.
+The idea behind the \textit{Gap Filler} is, that two soft cuts do not occure close to each other.
+So, if two soft cuts are only a few frames apart, they probably belong to the same soft cut.
+In Figure~\ref{fig:gap_filler} an example of the \textit{Gap Filler} is shown.
+Here, a sequence of soft cut frames is interrupted by two non soft cut frames.
+Those non soft cut frames are detected by the \textit{Gap Filler} and classified as soft cut frames.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.7]{images/gap_filler.eps}
+	\caption{Two soft cuts do not occure close to each other. Therefore the \textit{Gap Filler} find misclassified frame predictions after the merging step and correct non soft cut frame predictions, if they are interrupting a soft cut.}
+	\label{fig:gap_filler}
+\end{figure}
 
-So far we explained how to detect soft cuts in general using a RNN/LSTM.
-Now, the different architectures of the RNN/LSTM nets we used, are shown.
+Another idea to correct misclassified frame predicitons is to delete soft cuts, which are only up to five frames long and only surrounded by non soft cut frames.
+In our data set a soft cut has on average 22 frames.
+The smallest have a length of seven frames.
+Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
 
-
+To classify the frames as soft cut or non soft cut frames, we used an RNN/LSTM.
+We tried out different architectures, which will be evaluated in Section~\ref{sec:soft_cut_evaluation}:
+\begin{itemize}
+	\item CNN + one LSTM
+	\item CNN + two LSTMs
+	\item one convolutional layer + two LSTMs
+\end{itemize}
+For the CNN we used the \textit{caffenet}.
+The architecture of the RNN/LSTM consisting of a CNN and two LSTM is shown in Figure~\ref{fig:net_architecture}.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.5]{images/net_architecture.eps}
+	\caption{Architecture of the RNN/LSTM consisting of a CNN and two LSTMs.}
+	\label{fig:net_architecture}
+\end{figure}
