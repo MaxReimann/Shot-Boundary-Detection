@@ -74,17 +74,30 @@ The smallest have a length of seven frames.
 Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
 
 To classify the frames as soft cut or non soft cut frames, we used an RNN/LSTM.
-We tried out different architectures, which will be evaluated in Section~\ref{sec:soft_cut_evaluation}:
-\begin{itemize}
-	\item CNN + one LSTM
-	\item CNN + two LSTMs
-	\item one convolutional layer + two LSTMs
-\end{itemize}
-For the CNN we used the \textit{caffenet}.
-The architecture of the RNN/LSTM consisting of a CNN and two LSTM is shown in Figure~\ref{fig:net_architecture}.
+We tried different architectures, which will be evaluated in Section~\ref{sec:soft_cut_evaluation}.
+
+\paragraph{CNN + one LSTM}
+For the CNN we used the architecture of the \textit{caffenet} [TODO: reference].
+We also used the pretrained weights of this net, so that we do not need to train our model from sratch.
+We only fine-tuned the \textit{fc6} layer of the \textit{caffenet} with a learning rate of 0.1.
+The CNN is followed by one LSTM, which weights were initialized with the \textit{Xavier} method [TODO: \url{http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf}].
+Besides, the general learning rate was set to 0.01 and gradient clipping was used.
+
+\paragraph{CNN + two LSTMs}
+The architecture of this net is basically the same as the previous.
+There is only one difference: Instead of using just one LSTM, two LSTMs were used.
+Also the general learning rate was set to 0.001 and no grandient clipping was used.
+The architecture of the net can be found in Figure~\ref{fig:net_architecture}
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.5]{images/net_architecture.eps}
 	\caption{Architecture of the RNN/LSTM consisting of a CNN and two LSTMs.}
 	\label{fig:net_architecture}
 \end{figure}
+
+\paragraph{One convolutional layer + two LSTMs}
+The last architecture which was tested uses only one convolutional layer before the two LSTMs.
+The intuition behind it [TODO].
+The net was trained from scratch as no pretrained net existed.
+The weights of the LSTMs were again initialized using the \textit{Xavier} method.
+The learning rate was 0.001 and gradient clipping was used druing training.
