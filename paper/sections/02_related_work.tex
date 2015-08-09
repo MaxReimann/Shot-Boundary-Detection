@@ -1,13 +1,48 @@
 \section{Related Work}
 \label{sec:related_work}
 
-\subsection{Hard Cut Detection}
+\subsection{Shot Boundary Detection}
+
+Many different techniques have been developed for shot boundary detection.
+For hard cut detection, a baseline approach compares the change between two frames for each pixel, and sums then up.
+Then a threshold is selected: Every value over the threshold is then considered a cut.
+However, this approach is prone to error, when there are quick camera movements in the scene, or sudden color changes inside a scene.
+Therefore, better approaches have been developed, which are shortly summarized in the next paragraphs.
+
+\paragraph{Color Histograms}
+This approach, first used by Zhang~et.al.~\cite{zhang1993automatic} sorts the color values into a histogram with a certain bin size, before comparing the histograms.
+Thus, this approach is less prone errors as the baseline approach.
+It can compensate for minor changes in the frames.
+However, using histograms also means compressing the data, thereby throwing data away.
+
+\paragraph{Luminance Values}
+Instead of working on the RGB color space, other color spaces are possible.
+Especially luminance values~\cite{petersohn2004fraunhofer}, have shown good performance, as they emphasize the white and black difference.
+
+\paragraph{Edge Detection}
+Another approach is to detect the edges in a frame and the subsequent frame.
+If the edges differ fundamentally, this is a sign for a hard cut.
+In ~\cite{ewerth2005university}, the authors use ``edge histograms of Sobel-filtered (vertically and horizontally) DC-frames''.
+
+\paragraph{Other Techniques}
+Other techniques are motion compensation~\cite{}, to prevent false positives from camera movements.
+TODO
+
+\paragraph{Machine Learning}
+For finding exact thresholds or decision boundaries, many approaches employ machine learning, especially via support vector machines (SVM).
+This works by extracing features like histogram bins, edges and then pass these to a machine learning algorithm.
+SVMs are popular, because they are ``easy to use and provide a quick classification time after the initial training''~\cite{smeaton2010video}.
+
+It is also possible to combine many of the approaches from above.
+
+
+
 
 \subsection{Deep Neural Networks}
 Deep neural networks were very successful in image classification and video classifaction tasks in the last years.
 
 Learning has seen a recent rise in popularity in the computer vision community.
-Deep 
+Deep
 
 Image classification, video classification
 
@@ -25,5 +60,5 @@ However, as told before, the last challenge for shot boundary detection was in 2
 We think this decline in research is largely because the current approaches are highly developed, and there is not much potential for further improvements.
 
 This is why we propose to use deep learning approaches for shot boundary detection.
-The next sections will detail our approach. 
+The next sections will detail our approach.
 
