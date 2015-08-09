@@ -13,6 +13,7 @@ This is hard to archive if we want to use variable length of frame sequences.
 Therefore we decided to use a fixed size for the sequences of frames in a tagging sequence, i.e. we only check for example 10 consecutive frames of being a soft cut or not.  \\
 However, we still want to find soft cut of arbitrary length in a video.
 To achieve this, we repeatedly test fixed-size frame sequences.
+In Figure~\ref{fig:soft_cut_approach} an example is shown.
 
 \begin{figure}[!htb]
 	\centering
@@ -21,9 +22,16 @@ To achieve this, we repeatedly test fixed-size frame sequences.
 	\label{fig:soft_cut_approach}
 \end{figure}
 
- has to fit into the batch size.
+We have a video with \textit{n} frames.
+The frames from three to eight represent a soft cut.
+We now generated for each frame a frame sequence of size six.
+Those sequences are then classified by the RNN/LSTM.
+The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
+In the end we have up six prediction per frame, which have to be merged, so that we only have one prediction per frame.
+After the merging step consecutive frames, which got a prediction of one, i.e. the frame is part of an soft cut, represent a soft cut. \\
+In the following several strategies for combining the multiple frame prediction into one prediction are presented.
 
-
-
-When classifying a soft cut sequence, the result is one prediction per frame.
-We therefore applied several strategies for combining the per-frame result to get one per-sequence result.
+\subsubsection{Take First}
+\subsubsection{Take Last 'Sequence'}
+\subsubsection{Take Last 'Frame'}
+\subsubsection{Majority-Voting Diagonally}
