@@ -1,3 +1,6 @@
 \subsection{Evaluation}
 \label{sec:hard_cut_evaluation}
 
+
+\subsubsection{Training Data}
+The SVM is trained on an mixture of videos from the 2007 TrecVid contest. The videos in its full length dont make a good training set, as the ratio between hard cuts and other frames is about 1:1000, leading to a failure to predict any hard-cuts. A custom training set must be constructed, which contains an suffcient amount of hard cuts. The choice of non-hard-cuts is also crucial for achieving good classification performance: very homogenous frames will lower the decision boundary, and lead to bad performance on noisy examples. Therefore the negative set should also include soft-cuts and particularly noisy frames. The training set consists of about 250 hard cuts and 2200 negatives.
