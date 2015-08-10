@@ -20,4 +20,7 @@ We then are presented with a binary classification task (cut or not) in an \emph
 In a next step, the dimensionality can be reduced by simply adding up the vector elements. 
 This step is justifiable, since it does not matter which color changed and how much, but the sum of changes in all color channels. 
 We will evaluate both approaches later.
-To do the actual classification we train an SVM with an \emph{RBF kernel} on a labeled training set.
+To do the actual classification we train an SVM classifier on a labeled training set.
+We transform the input space into a higher dimensional feature space by using a kernelized decision function. The commonly used radial basis function (RBF) kernel is employed. 
+$$K(x_i,x_j) = exp(-\lambda || x_i - x_j ||^2)$$ 
+where $\lambda$ denotes the width of the kernel and $x_i, x_j $ are vectors from the training set. The complexity parameter C for the soft-margin SVM, as well as other parameters are found by using a function, which performs k-fold cross-validation to automatically choose the best parameters.
