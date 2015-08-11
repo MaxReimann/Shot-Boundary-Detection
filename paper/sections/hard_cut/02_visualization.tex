@@ -6,7 +6,7 @@ Therefore we wanted to get a feel for the flaws in our approach by visualising t
 To make the visualization explorable and interactive, it is a web app written in \emph{HTML} and \emph{Javascript} using \emph{d3}.
 During hard cut detection, we write a \emph{tsv} file containing all required information like the histogram differences, the predicted class and the actual class for every two sequent frames.
 Then a local webserver is started that has access to the \emph{tsv} file as well as the video frames.
-The visualization can then be viewed using a web browser (Figure~\ref{fig:hard_cut_visualization}).
+The visualization can be explored using a web browser (Figure~\ref{fig:hard_cut_visualization}).
 
 \begin{figure}
 	\centering
@@ -15,14 +15,14 @@ The visualization can then be viewed using a web browser (Figure~\ref{fig:hard_c
 	\label{fig:hard_cut_visualization}
 \end{figure}
 
-
-THE FOLLOWING MIGHT BE PART OF THE EVALUATION? \\
-
 When inspecting the visualization of a processed video, we can see that the histogram differences are a useful feature for detecting the hard cuts in a video.
 In most cases there is one single bar with a very high difference surrounded by very low differences (see green bar in Figure~\ref{fig:hard_cut_visualization}).
 However, we can also see some other peaks that are not hard cuts, which are typically surrounded by noisy clusters (Figure~\ref{fig:hard_cut_noise_visualization}).
 Those can be soft cut suquences or just rapid changes during one scene.
 Since the SVM just takes the difference between two frames into account, it does not "see" the surrounding clusters and therefore makes several mistakes.
+Nevertheless, we can improve the classification performance by showing the SVM more soft cuts and frame sequences, where the colors change dramatically.
+When learning these negative examples, the decisions made by the SVM are more robust against noisy sequences.
+We make few mistakes on the noise in Figure~\ref{fig:hard_cut_visualization}, but very high peaks like in Figure~\ref{fig:hard_cut_noise_visualization} are still problematic.
 
 \begin{figure}
 	\centering
