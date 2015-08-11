@@ -16,7 +16,7 @@ In our case, we represent frames using their color histograms.
 Each frame has 3 color channels (red, green, blue) and therefore 3 histograms.
 The difference between two frames is then the difference between the histograms.
 The histogram difference can be represented as an \emph{3*n}-dimensional vector, where \emph{n} is the number of bins in a color histogram. 
-We then are presented with a binary classification task (cut or not) in an \emph{3*n}-dimensional space. \\
+We then are presented with a binary classification task (cut or not) in a \emph{3*n}-dimensional space. \\
 In a next step, the dimensionality can be reduced by simply adding up the vector elements. 
 This step is justifiable, since it does not matter which color changed and how much, but the sum of changes in all color channels. 
 We will evaluate both approaches later.
