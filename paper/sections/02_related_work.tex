@@ -1,0 +1,73 @@
+\section{Related Work}
+\label{sec:related_work}
+
+\subsection{Shot Boundary Detection}
+
+Many different techniques have been developed for shot boundary detection.
+For hard cut detection, a baseline approach compares the change between two frames for each pixel, and builds the sum of these differences.
+Then a threshold is selected: Every value over the threshold is considered a cut.
+However, this approach is prone to error, when there are quick camera movements, or sudden color changes inside a scene.
+Therefore, better approaches have been developed, which are shortly summarized in the next paragraphs.
+
+\paragraph{Color Histograms}
+This approach, first used by Zhang~et.al.~\cite{zhang1993automatic}, sorts the color values into a histogram with a certain bin size, before comparing the histograms.
+Thus, this approach is less prone errors as the baseline approach.
+It can better compensate for minor changes in the frames.
+However, using histograms also means compressing the data, thereby throwing some information away.
+
+\paragraph{Luminance Values}
+Instead of working on the RGB data, one can also work in other color spaces.
+Especially luminance values~\cite{petersohn2004fraunhofer} have shown good performance, as they emphasize the white and black difference.
+Thus, they are less susceptible to false positives.
+
+\paragraph{Edge Detection}
+Another approach is to detect the edges in a frame and the subsequent frame.
+If the edges differ fundamentally, this is a sign for a hard cut.
+In ~\cite{ewerth2005university}, the authors use ``edge histograms of Sobel-filtered (vertically and horizontally) DC-frames''.
+
+\paragraph{Other Techniques}
+There are many more finegrained ideas, which can be used to refine the result.
+One is motion compensation, used by Qu{\'s}enot~et.al.~\cite{qusenot2003clips}, to prevent false positives from camera movements.
+Another one is the idea of adaptive thresholding~\cite{volkmer2004rmit}, which does not use one fixed threshold but rather adapts the threshold dynamically, based on the current sequence.
+
+\paragraph{Machine Learning}
+For finding exact thresholds or decision boundaries, many approaches employ machine learning, especially via support vector machines (SVM).
+This works by extracing features like histogram bins, edges and then pass these to a machine learning algorithm.
+SVMs are popular, because they are ``easy to use and provide a quick classification time after the initial training''~\cite{smeaton2010video}.
+
+
+It is also possible to combine many of the approaches from above.
+For finding soft cuts, the state of the art technique is to use a sliding window of frames.
+The decision from many frame-to-frame comparisons can then be incorporated into a final soft cut prediction.
+
+\subsection{Deep Neural Networks}
+Deep neural networks were very successful in image classification~\cite{krizhevsky2012imagenet} and video classifaction~\cite{karpathy2014large} tasks in the last years.
+In the ImageNet Large Scale Visual Recognition Challenge 2014 (ILSVRC2014)~\cite{imagenet}, almost all contestants were using neural networks.
+This recent rise in popularity in the computer vision community has been fueled by two recent developments.
+First, the rise in computing power, especially of GPUs, has enabled reasonable training times.
+Second, with more and more data being collected, more training data is available, which was crucial for the success of these techniques.
+
+Neural networks work by processing the raw input pixel values layer by layer, succesively building more abstract features.
+When building networks with many layers, this idea is called deep learning.
+Two special network architectures are important for the success of deep learning.
+Convolutional networks~\cite{lecun1998gradient} process the image by looking repeatedly at small patches of the input.
+This is good at finding locally restricted features, and is especially good for spatial data, such as images or videos.
+
+Another important technique are recurrent neural networks.
+TODO
+Image classification, video classification
+tagging sequence
+RNN/LSTM
+enters a sequence
+
+While deep learning was popular in the last years, research in shot boundary detection, on the contrary, has ceased in the last years.
+From 2001 until 2007, the TRECVid~\cite{trecvid} conference series was hosting tracks on shot boundary detection.
+The TRECVID committee provided a video test collection with manually annotated gold data, which could be used by different research groups to develop and test their algorithms.
+The tasks range from instance detection (e.g. detecting a person in a video), semantic indexing, event detection and many more.
+However, as told before, the last challenge for shot boundary detection was in 2007.
+
+We think this decline in research is largely because the current approaches are highly developed, and there is not much potential for further improvements.
+
+This is why we propose to use deep learning approaches for shot boundary detection.
+The next sections will detail our approach.
+

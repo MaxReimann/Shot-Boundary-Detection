@@ -52,3 +52,5 @@ resources/abs-changes.png
 gold_standard_statistics.txt
 resources/d3/data/visData.tsv
 resources/*.txt
+
+paper/paper.blg
