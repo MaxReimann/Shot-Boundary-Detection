@@ -1,6 +1,9 @@
 \section{Related Work}
 \label{sec:related_work}
 
+This section first gives an overview about state of the art approaches for cut detection.
+Afterwards, we give a short introduction to deep neural networks.
+
 \subsection{Shot Boundary Detection}
 
 Many different techniques have been developed for shot boundary detection.
@@ -27,12 +30,12 @@ In ~\cite{ewerth2005university}, the authors use ``edge histograms of Sobel-filt
 
 \paragraph{Other Techniques}
 There are many more finegrained ideas, which can be used to refine the result.
-One is motion compensation, used by Qu{\'s}enot~et.al.~\cite{qusenot2003clips}, to prevent false positives from camera movements.
+One is motion compensation, used by Qu{\'s}enot~et.al.~\cite{qousenot2003clips}, to prevent false positives from camera movements.
 Another one is the idea of adaptive thresholding~\cite{volkmer2004rmit}, which does not use one fixed threshold but rather adapts the threshold dynamically, based on the current sequence.
 
 \paragraph{Machine Learning}
 For finding exact thresholds or decision boundaries, many approaches employ machine learning, especially via support vector machines (SVM).
-This works by extracing features like histogram bins, edges and then pass these to a machine learning algorithm.
+This works by extracting features like histogram bins, edges and then pass these to a machine learning algorithm.
 SVMs are popular, because they are ``easy to use and provide a quick classification time after the initial training''~\cite{smeaton2010video}.
 
 
@@ -67,7 +70,6 @@ The tasks range from instance detection (e.g. detecting a person in a video), se
 However, as told before, the last challenge for shot boundary detection was in 2007.
 
 We think this decline in research is largely because the current approaches are highly developed, and there is not much potential for further improvements.
-
 This is why we propose to use deep learning approaches for shot boundary detection.
 The next sections will detail our approach.
 
