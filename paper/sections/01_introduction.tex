@@ -1,35 +1,34 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Videos and movies are usually built of many independently shot sequences.
-In the final videos, these sequences are then cut after each other, which makes the final video.
-The goal of \emph{shot boundary detection} is to detect these cuts again, without relying on metadata, solely looking at the frames of the video.
-Shot boundary detection is an important preprocessing step for many other video processing, including text recognition, video classification and TODO.
+Videos and movies usually consist of many independent sequences of frames (shots).
+In the final videos, these shots are then cut one after another.
+The goal of \emph{shot boundary detection} is to detect these cuts, without relying on metadata, solely by looking at the frames of the video.
+Shot boundary detection is an important preprocessing step for many other video processing tasks, such as video annotation and classification.
 
-An important distinction is between hard cuts and soft cuts.
-Hard cuts are abrupt changes from one frame to another.
-Only two frames are involved in a hard-cut, one belong to the ending scene and the other to the starting scene.
-Soft cuts are slowly changing from one sequence to another, either by mixing the two sequences frame by frame, or by using other blend effects such as swipes or more creative effects.
-Soft cuts can be of arbitrary length, and all frames from the last unchanged frame of the old scene to the first unchanged frame of the new scene are considered part of the soft cut.
+An important distinction has to be made between hard cuts and soft cuts.
+On the one hand, hard cuts are abrupt changes from one frame to another.
+Only two frames are involved in a hard cut, namely the last frame of the ending scene and the first frame of the new scene.
+On the other hand, soft cuts are longer transitions from one shot to another, either by mixing the two scenes frame by frame (\emph{dissolve}), or by using other blend effects such as swipes.
+Soft cuts can be of arbitrary length and all frames from the last unchanged frame of the old scene to the first unchanged frame of the new scene are considered part of a soft cut.
 Sometimes, even the rate of change (interpolation between two images, or speed of the swipe effect) can change inside a soft cut.
-Thus, soft cut detection is the harder task compared to hard cut detection.
-TODO: Add illustration.
+% Thus, automated soft cut detection is more difficult than hard cut detection.
 
-For humans, shot boundary detection is an easy task.
-Computers must rely on changes in color, edges or other approaches based on the raw pixel values.
+Shot boundary detection is an easy task for humans.
+However, computers must rely on changes in color, edges or other approaches based on the raw pixel values.
 Especially if the changes are small, e.g. from one dark scene to another, the problem becomes harder for computers.
 Humans can still detect cuts in these cases, because they can take the context into account.
 
-This work can be separated in two parts:
-First, we present our results for hard cut detection.
-TODO: Write some stuff about hard cuts.
-Second, we present a new approach to soft cut detection using deep artifical neural networks.
-Deep neural networks have seen a rise in popularity in the computer vision community in the last years.
-This rise is mostly due to impressive improvements in image classification and video classification tasks.
-In this work, we want to automatically learn via artificial neural networks how soft cuts look.
-To the best of our knowledge, no one has tried to approach the problem with this approach so far.
+% This work can be separated in two parts:
+% First, we present our results for hard cut detection.
+% TODO: Write some stuff about hard cuts.
+% Second, we present a new approach to soft cut detection using deep artifical neural networks.
+% Deep neural networks have seen a rise in popularity in the computer vision community in the last years.
+% This rise is mostly due to impressive improvements in image classification and video classification tasks.
+% In this work, we want to automatically learn via artificial neural networks how soft cuts look.
+% To the best of our knowledge, no one has tried to approach the problem with this approach so far.
 
-The rest of the paper is organized as follows:
+This paper is organized as follows:
 Section~\ref{sec:related_work} shows related work for both hard cuts and soft cuts, and gives a short introduction into deep artifical neural networks.
 In Section~\ref{sec:hard_cut} we focus on our results for hard cut detection, while Section~\ref{sec:soft_cut} focuses on soft cut detection.
 For both we will illustrate, how we preprocessed the given data and evaluated our results.
