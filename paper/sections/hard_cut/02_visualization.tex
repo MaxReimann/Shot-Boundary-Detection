@@ -3,8 +3,7 @@
 
 After having implemented the ideas presented in \ref{sec:hard_cut_approach}, the results were not breathtaking.
 Therefore we wanted to get a feel for the flaws in our approach by visualising the features and the decisions that the SVM made.
-To make the visualization explorable and interactive, we build a web app written in \emph{HTML} and \emph{Javascript} using \emph{d3}.
-% TODO: Footnote auf d3 website.
+To make the visualization explorable and interactive, we build a web app written in \emph{HTML} and \emph{Javascript} using the visualization framework \emph{d3}\footnote{\url{http://d3js.org/}}.
 During hard cut detection, we write a \emph{tsv} file containing all required information like the histogram differences, the predicted class and the actual class for every two subsequent frames.
 Then a local webserver is started that has access to the \emph{tsv} file as well as the video frames.
 The visualization can be explored using a web browser (see Figure~\ref{fig:hard_cut_visualization}).
