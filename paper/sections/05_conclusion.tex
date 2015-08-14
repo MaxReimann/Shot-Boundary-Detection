@@ -1,5 +1,19 @@
 \section{Conclusion}
 \label{sec:conclusion}
+In the end, we summarize our findings concerning both hard cut and soft cut detection.
+
+\subsection{Hard cut detection}
+\label{sec:conclusion_hard_cut}
+
+As we see in Table~\ref{tab:hard_cut_results}, the precision of our approach is the main problem. 
+We have discussed the main reason for that in Section~\ref{sec:hard_cut_visualization}.
+Our approach just takes two frames into account and therefore cannot notice, whether the transition under consideration is part of a noisy cluster or a single peak (see Figure~\ref{fig:hard_cut_noise_visualization}).
+One idea to overcome this "blindness" is to use some surrounding histogram differences as additional features.
+A different approach is to do post-processing.
+To be continued.... ;)
+
+\subsection{Soft cut detection}
+\label{sec:conclusion_hard_cut}
 
 What went wrong:
 More data?
