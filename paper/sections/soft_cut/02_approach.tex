@@ -12,7 +12,7 @@ So the net remembers previous decisions through a sequence of frames.
 But using this architecture has one problem, as stated by Jeff Donahue: ``Backpropagation [through the LSTM] is truncated along the batch boundaries''. % TODO: Quelle.
 So one or more frame sequences has to fit exactly into the batch size used by the RNN/LSTM.
 This is hard to achieve, if we want to classify variable-length frame sequences.
-Therefore we decided to use a fixed size for the sequences of frames in our training data, i.e. we would only generate transitions of length ten in our training data.
+Therefore we decided to use a fixed size for the sequences of frames in our training data, i.e. we would generate only transitions of length ten in our training data.
 
 However, we still want to find soft cut of arbitrary length in a video.
 To achieve this, we repeatedly test fixed-size frame sequences.
@@ -29,7 +29,7 @@ Now, for each frame, we generate a frame sequence of size six starting from that
 This is equivalent to running a sliding window over the frames.
 Those sequences are then classified by the RNN/LSTM.
 The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
-In the end, we have six predictions per frame, which have to be merged, so that we only have one prediction per frame.
+In the end, we have six predictions per frame, which have to be merged, so that we have only one prediction per frame.
 After merging, consecutive frames with a predicted one represent one soft cut.
 
 In the following several strategies for combining multiple frame predictions into one prediction are presented.
@@ -49,8 +49,8 @@ A first simple strategy is to take the first prediction of each sequence as the 
 This is equivalent to having no prior knowledge about the frame, as the RNN/LSTM has not seen any previous frames and therefore could not remember anything.
 
 \paragraph{Take Last 'Sequence'}
-A second simple strategy is to take the last prediction of each sequence as the prediction for the frame, which started that sequence.
-Concretely, the last prediction is not a prediction for the frame under question, but the the intuition behind this is, that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
+A second simple strategy is to take the last prediction of each sequence as the prediction for the frame that started the sequence.
+Concretely, the last prediction is not a prediction for the frame under question, but the the intuition behind this is that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
 
 \paragraph{Take Last 'Frame'}
 In the \textit{Take Last 'Frame'} strategy, for every frame we take the frame sequence, in which that frame is the last.
@@ -63,12 +63,12 @@ In the \textit{Majority-Voting Diagonally} all of those predictions are taken an
 Ties are resolved by placing more weight on the half of the predictions, where the frame was later in the sequence.
 
 After merging we have one prediction per frame indicating whether the frame is part of a soft cut or not.
-A sequence of frames, which are part of a soft cut, then represent a soft cut.
+Then, a sequence of frames that are part of a soft cut represents a soft cut.
 However, there could be misclassified frame predictions.
 We implemented a \textit{Gap Filler} to find and correct some of those misclassified frame predictions.
-The \textit{Gap Filler} is looking for sequences of frames, belonging to a soft cut, which are interrupted by some frames, which do not belong to a soft cut.
-If the number of interrupting frames is not too large, they will be also classified as soft cut frames.
-The idea behind the \textit{Gap Filler} is, that two soft cuts do not occur close to each other.
+The \textit{Gap Filler} is looking for sequences of frames that belong to a soft cut and are interrupted by some non cut frames.
+If the number of interrupting frames is not too large, they are also classified as soft cut frames.
+The idea behind the \textit{Gap Filler} is that two soft cuts do not occur close to each other.
 So, if two soft cuts are only a few frames apart, they probably belong to the same soft cut.
 In Figure~\ref{fig:gap_filler} an example of the \textit{Gap Filler} is shown.
 There, a sequence of soft cut frames is interrupted by two non soft cut frames.
@@ -80,7 +80,7 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 	\label{fig:gap_filler}
 \end{figure}
 
-Another idea to correct misclassified frame predictions is to delete soft cuts, which are only up to five frames long and only surrounded by non soft cut frames.
+Another idea to correct misclassified frame predictions is to delete soft cuts that are only up to five frames long and only surrounded by non soft cut frames.
 In our data set a soft cut has on average 22 frames.
 The smallest have a length of seven frames.
 Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
@@ -112,11 +112,11 @@ The architecture of the net can be found in Figure~\ref{fig:net_architecture}.
 \end{figure}
 
 \paragraph{One convolutional layer + two LSTMs}
-The last architecture, which was tested, uses only one convolutional layer before the two LSTMs.
+The last architecture that was tested uses only one convolutional layer before the two LSTMs.
 The intuition behind it was as follows: for the CNN, it is hard to detect a soft cut frame, because it works only on one frame.
 By looking at only one frame, it would be difficult to predict a soft cut, even for a human.
 However, by looking at a sequence of frames, this becomes easier.
-This is exactly, what the RNN/LSTM does, so it seemed like a good idea to put more emphasis on this part and less emphasis on the CNN part.
+This is exactly, what the RNN/LSTM does, which is why we put more emphasis on this part and less emphasis on the CNN part.
 The net was trained from scratch as no pretrained net existed.
 The weights of the LSTMs were again initialized using the \textit{Xavier} method.
 The learning rate was 0.001 and gradient clipping was used during training.
