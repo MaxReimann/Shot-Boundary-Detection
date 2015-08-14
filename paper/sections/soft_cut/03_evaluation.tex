@@ -6,7 +6,7 @@ Therefore, we compared the accuracy calculated by \textit{caffe} during training
 This corresponds to the per-frame predictions.
 To train the neural networks we used our generated data, which is explained in Section~\ref{sec:soft_cut_data_generation}.
 The amount of soft cuts and non soft cuts in the training and test data was the same.
-We had [TODO] training data and [TODO] test data.
+We had [\textcolor{red}{TODO}] training data and [\textcolor{red}{TODO}] test data.
 The accuracy given by \textit{caffe} was the following:
 \begin{table}[ht]
 	\centering
@@ -29,22 +29,22 @@ The results can be found in Figure~\ref{fig:evaluation_net}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.7]{images/evalutation_net.eps}
-	\caption{TODO: correct image?}
+	\caption{\textcolor{red}{TODO}: correct image?}
 	\label{fig:evaluation_net}
 \end{figure}
-% TODO: die labels dieser Grafik sind nicht gut. die ganzen SCs stehen irgendwie immer so, dass sie zu mehreren Balken gehoeren koennten. Das mit dem not-Strich davor finde ich auch nicht schoen.
-As the graphic shows the results ... TODO
+% \textcolor{red}{TODO}: die labels dieser Grafik sind nicht gut. die ganzen SCs stehen irgendwie immer so, dass sie zu mehreren Balken gehoeren koennten. Das mit dem not-Strich davor finde ich auch nicht schoen.
+As the graphic shows the results ... \textcolor{red}{TODO}
 
 Because we have such a low precision for soft cuts, we also tried to increase the value by trying out the \textit{Gap Filler}.
 Unfortunately, this had no impact at all.
 The precision of soft cuts did not increase.
-TODO
+\textcolor{red}{TODO}
 
 Up to now we used a sequence length of eleven.
 We decided to keep such low, so that we do not miss a soft cut.
-TODO: explain better
+\textcolor{red}{TODO}: explain better
 The average soft cut length in the actual video data is however 21.
 So we decided to test our architecture with a sequence length of 21.
-TODO
+\textcolor{red}{TODO}
 
 

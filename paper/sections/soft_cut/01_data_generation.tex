@@ -2,10 +2,10 @@
 \label{sec:soft_cut_data_generation}
 
 The raw data set contains 1,592 soft cut frames and 637,755 non soft cut frames.
-% TODO: Wieviele Softcuts sind es genau? Das ist vllt die spannendere Zahl.
+% \textcolor{red}{TODO}: Wieviele Softcuts sind es genau? Das ist vllt die spannendere Zahl.
 This is a highly imbalanced ratio, which impedes the training.
 To achieve a good generalization of a recurrent neural net, we determined that more data was necessary.
-% TODO: Hier muss ein Zitat/Referenz stehen, das man bei DL viel Data braucht.
+% \textcolor{red}{TODO}: Hier muss ein Zitat/Referenz stehen, das man bei DL viel Data braucht.
 For that, we generated more data by blending random sequences into each other.
 The procedure for generating a new random sequence works as follows:
 First, we randomly pick two subsequent cuts from the gold standard, each with a start and end frame respectively.
@@ -20,7 +20,7 @@ As the transition type we used a classic \textit{dissolve}.
 
 In order to achieve further variance in the generated data, we flip the two sequences randomly at the x- or y-axis or at both axes.
 With this approach we generated about 50 GB of data.
-% TODO: Das ist ja jetzt gerade unvergleichbar mit den Zahlen von oben, weil wir oben absolute Zahlen hatten und hier auf einmal GB.
+% \textcolor{red}{TODO}: Das ist ja jetzt gerade unvergleichbar mit den Zahlen von oben, weil wir oben absolute Zahlen hatten und hier auf einmal GB.
 % Das muessen wir noch vereinheitlichen.
 % ICh bin dafuer, hier noch die Anzahl der Soft cuts/non soft cuts hinzuschreiben.
 
@@ -30,4 +30,4 @@ With this approach we generated about 50 GB of data.
     \caption{}
     \label{fig:data_generation}
 \end{figure}
-% TODO: Figure Text missing.
+% \textcolor{red}{TODO}: Figure Text missing.
