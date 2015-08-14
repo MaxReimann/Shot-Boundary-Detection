@@ -9,10 +9,10 @@ To achieve a good generalization of a recurrent neural net, we determined that m
 For that, we generated more data by blending random sequences into each other.
 The procedure for generating a new random sequence works as follows:
 First, we randomly pick two subsequent cuts from the gold standard, each with a start and end frame respectively.
-Between the end frame of the first cut and the start frame of the first cut, we can randomly select a subsequence with the desired transition length.
+Between the end frame of the first cut and the start frame of the next cut, we can randomly select a subsequence with the desired transition length.
 This way, it is guaranteed, that there is no hard cut or soft cut in the random sequence we picked.
 Then we do this process again, this time with two other random cuts.
-As the result, we not have two randomly selected sequences of the same length, which we can now blend into each other.
+As the result, we now have two randomly selected sequences of the same length, which we can now blend into each other.
 In order to blend two random sequences, we have multiple options for tweening behaviour.
 The standard tweening function is linear, but we also used ease-in, ease-out and others, see Figure~\ref{fig:data_generation}.
 The tweening function is randomly selected, as well.
