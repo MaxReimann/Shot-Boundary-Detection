@@ -9,12 +9,12 @@ Shot boundary detection is an important preprocessing step for many other video 
 An important distinction has to be made between hard cuts and soft cuts.
 On the one hand, hard cuts are abrupt changes from one frame to another.
 Only two frames are involved in a hard cut, namely the last frame of the ending scene and the first frame of the new scene.
-On the other hand, soft cuts are longer transitions from one shot to another, either by mixing the two scenes frame by frame (\emph{dissolve}), or by using other blend effects such as swipes.
+On the other hand, soft cuts are longer transitions from one shot to another, either by mixing the two scenes frame by frame (\emph{dissolve}), or by using other blend effects, such as swipes.
 Soft cuts can be of arbitrary length and all frames from the last unchanged frame of the old scene to the first unchanged frame of the new scene are considered part of a soft cut.
 Sometimes, even the rate of change (interpolation between two images, or speed of the swipe effect) can change inside a soft cut.
 
 Shot boundary detection is an easy task for humans.
-However, computers must rely on changes in color, edges or other approaches based on the raw pixel values.
+However, computers must rely on changes in color, edges, or other approaches based on the raw pixel values.
 Especially if the changes are small, e.g. from one dark scene to another, the problem becomes harder for computers.
 Humans can still detect cuts in these cases, because they can take the context into account.
 
@@ -29,5 +29,5 @@ To the best of our knowledge, no one has tried this approach for the soft cut de
 This work is organized as follows:
 Section~\ref{sec:related_work} shows related work for both hard cuts and soft cuts, and gives a short introduction into deep artifical neural networks.
 In Section~\ref{sec:hard_cut} we focus on our results for hard cut detection, while Section~\ref{sec:soft_cut} focuses on soft cut detection.
-For both we will illustrate, how we preprocessed the given data and evaluated our results.
+For both we illustrate, how we preprocessed the given data and evaluated our results.
 Finally, in Section~\ref{sec:conclusion} we show, what would be the best steps to improve on our results in future work.
