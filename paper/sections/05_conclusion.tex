@@ -9,8 +9,7 @@ As we see in Table~\ref{tab:hard_cut_results}, the precision of our approach is 
 We have discussed the main reason for that in Section~\ref{sec:hard_cut_visualization}.
 Our approach just takes two frames into account and therefore cannot notice, whether the transition under consideration is part of a noisy cluster or a single peak (see Figure~\ref{fig:hard_cut_noise_visualization}).
 One idea to overcome this "blindness" is to use some surrounding histogram differences as additional features. The classifier is trained with a sliding window of histogram differences, resulting in specific patterns. The classification task would then be a pattern matching task, where hard-cuts are characterized by a single peak, soft-cuts by a gradual curve and noise by random peaks. Future work could also try to employ a neural net for this kind of pattern matching.
-A different approach is to do post-processing.
-To be continued.... ;)
+A different approach is to do post-processing, where certain events which are highly unlikely, are filtered out. For example, the event that several hard-cuts immediately follow each other, should be considered as noise or a soft cut. 
 
 \subsection{Soft cut detection}
 \label{sec:conclusion_hard_cut}
