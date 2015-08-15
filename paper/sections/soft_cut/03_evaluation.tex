@@ -7,7 +7,7 @@ This corresponds to the per-frame predictions.
 To train the neural networks we used our generated data, which is explained in Section~\ref{sec:soft_cut_data_generation}.
 The amount of soft cuts and non soft cuts in the training and test data was the same.
 We had 2,579,566 training data and 2,412,487 test data.
-The accuracy given by \textit{caffe} was the following:
+The accuracy given by \textit{caffe} is shown in Table~\ref{tab:caffe_accuracy}.
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{l|l}
@@ -16,7 +16,7 @@ The accuracy given by \textit{caffe} was the following:
 	one convolutional layer + two LSTMs & 70,07 \% \\
 	\end{tabular}
 	\caption{Accuracy of the different neural network architectures given by \textit{caffe}.}
-	\label{tab:caffe_accurary}
+	\label{tab:caffe_accuracy}
 \end{table}
 The \textit{CNN + two LSTMs} has by far the highest accuracy.
 Therefore, we decided to take this neural network architecture as our basis for the following evaluations.

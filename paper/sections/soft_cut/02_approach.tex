@@ -12,7 +12,7 @@ So the net remembers previous decisions through a sequence of frames.
 But using this architecture has one problem, as stated by Jeff Donahue: ``Backpropagation [through the LSTM] is truncated along the batch boundaries''. \textcolor{red}{TODO}: Quelle.
 So one or more frame sequences have to fit exactly into the batch size used by the RNN/LSTM.
 This is hard to achieve, if we want to classify variable-length frame sequences.
-Therefore we decided to use a fixed size for the sequences of frames in our training data, i.e. we would generate only transitions of length ten in our training data.
+Therefore we decided to use a fixed size for the sequences of frames in our training data, i.e., we would generate only transitions of length ten in our training data.
 
 However, we still want to find soft cuts of arbitrary length in a video.
 To achieve this, we repeatedly test fixed-size frame sequences.
@@ -80,10 +80,10 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 	\label{fig:gap_filler}
 \end{figure}
 
-Another idea for correcting misclassified frame predictions is to delete soft cuts that are only up to five frames long and only surrounded by non soft cut frames.
+Another idea for correcting misclassified frame predictions is to delete soft cuts that are only up to five frames long and surrounded only by non soft cut frames.
 In our data set a soft cut has an average length of 21 frames.
 The smallest have a length of seven frames.
-Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
+Therefore, a soft cut of up to five frames is not realistic and misclassified with a high probability.
 
 % \textcolor{red}{TODO}: Ich finde, das sollte doch ein eigener Abschnitt werden, oder?
 % Das ist ja jetzt ein komplett anderes Thema auf einmal.
