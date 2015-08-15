@@ -8,9 +8,9 @@ During hard cut detection, we write a \emph{tsv} file containing all required in
 Then a local webserver is started, which has access to the \emph{tsv} file as well as the video frames.
 The visualization can be explored using a web browser (see Figure~\ref{fig:hard_cut_visualization}).
 
-\begin{figure}
+\begin{figure}[ht]
 	\centering
-	\includegraphics[scale=.7]{images/hard_cut_visualization.png}
+	\includegraphics[scale=.5]{images/hard_cut_visualization.png}
 	\caption{The height of the bars shows the absolute histogram difference.
     It is calculated by summing up all elements in the histogram difference vector.
     The color of the bars indicates the decision: green -- true positive, gray -- true negative, red -- false positive, orange -- false negative (not in this picture).
@@ -27,9 +27,9 @@ Nevertheless, we can improve the classification performance by showing the SVM m
 When learning these negative examples, the decisions made by the SVM are more robust against noisy sequences.
 We make fewer mistakes on the noise in Figure~\ref{fig:hard_cut_visualization}, but high peaks, such as in Figure~\ref{fig:hard_cut_noise_visualization}, are still problematic.
 
-\begin{figure}
+\begin{figure}[ht]
 	\centering
-	\includegraphics[scale=.7]{images/hard_cut_noise_visualization.png}
+	\includegraphics[scale=.5]{images/hard_cut_noise_visualization.png}
 	\caption{The histogram differences are problematic when there is lots of noise between two frames. In this case, a burning fire disturbs the classification and introduces lots of false positives.}
 	\label{fig:hard_cut_noise_visualization}
 \end{figure}

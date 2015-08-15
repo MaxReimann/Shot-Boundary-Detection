@@ -9,7 +9,7 @@ The LSTM implementation allows us to use a short term memory in the neural netwo
 The network remembers information from the beginning of a frame sequence until the last frame of the sequence.
 So the net remembers previous decisions through a sequence of frames.
 
-But using this architecture has one problem, as stated by Jeff Donahue: ``Backpropagation [through the LSTM] is truncated along the batch boundaries''. % \textcolor{red}{TODO}: Quelle.
+But using this architecture has one problem, as stated by Jeff Donahue: ``Backpropagation [through the LSTM] is truncated along the batch boundaries''. \textcolor{red}{TODO}: Quelle.
 So one or more frame sequences have to fit exactly into the batch size used by the RNN/LSTM.
 This is hard to achieve, if we want to classify variable-length frame sequences.
 Therefore we decided to use a fixed size for the sequences of frames in our training data, i.e. we would generate only transitions of length ten in our training data.
@@ -29,7 +29,7 @@ Now, for each frame, we generate a frame sequence of size six starting from that
 This is equivalent to moving a sliding window over the frames.
 Those sequences are then classified by the RNN/LSTM.
 The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
-In the end, we have six predictions per frame, which have to be merged, so that we have only one prediction per frame.
+In the end, we have uo to six predictions per frame, which have to be merged, so that we have only one prediction per frame.
 After merging, consecutive frames with a predicted value of 1 represent one soft cut.
 
 In the following several strategies for combining multiple frame predictions into one prediction are presented.
