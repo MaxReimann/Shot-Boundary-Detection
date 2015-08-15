@@ -81,7 +81,7 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 \end{figure}
 
 Another idea for correcting misclassified frame predictions is to delete soft cuts that are only up to five frames long and only surrounded by non soft cut frames.
-In our data set a soft cut has an average length of 22 frames.
+In our data set a soft cut has an average length of 21 frames.
 The smallest have a length of seven frames.
 Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
 
@@ -93,10 +93,10 @@ To classify the frames as soft cut or non soft cut frames, we used an RNN/LSTM.
 We tested the following architectures:
 
 \paragraph{CNN + one LSTM}
-For the CNN we used the architecture of the \textit{caffenet} [\textcolor{red}{TODO}: reference].
+For the CNN we used the architecture of the \textit{caffenet}\footnote{\url{https://github.com/BVLC/caffe/tree/master/models/bvlc_reference_caffenet}}.
 We also used the pre trained weights of this net, so that we do not need to train our model from scratch.
 We only fine-tuned the \textit{fc6} layer of the \textit{caffenet} with a learning rate of 0.1.
-The CNN is followed by one LSTM, whose weights were initialized with the \textit{Xavier} method [\textcolor{red}{TODO} Zitat: \url{http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf}].
+The CNN is followed by one LSTM, whose weights were initialized with the \textit{Xavier} method, because this method performs better than other as mentioned in~\cite{glorot2010understanding}.
 Besides, the general learning rate was set to 0.01 and gradient clipping was used.
 
 \paragraph{CNN + two LSTMs}
