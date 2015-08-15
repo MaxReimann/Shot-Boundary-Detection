@@ -26,7 +26,7 @@ In Figure~\ref{fig:soft_cut_approach}, we show an example.
 We have a video with \textit{n} frames.
 The frames from three to eight represent a soft cut.
 Now, for each frame, we generate a frame sequence of size six starting from that frame.
-This is equivalent to running a sliding window over the frames.
+This is equivalent to moving a sliding window over the frames.
 Those sequences are then classified by the RNN/LSTM.
 The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
 In the end, we have six predictions per frame, which have to be merged, so that we have only one prediction per frame.
@@ -53,14 +53,14 @@ A second simple strategy is to take the last prediction of each sequence as the 
 Concretely, the last prediction is not a prediction for the frame under question, but the intuition behind this is that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
 
 \paragraph{Take Last 'Frame'}
-In the \textit{Take Last 'Frame'} strategy, for every frame we take the frame sequence, in which that frame is the last.
+In the \textit{Take Last 'Frame'} strategy, for every frame we take the frame sequence, in which that frame is the last one.
 The intuition is similar to the previous case, but now we also use the prediction for the actual frame.
 
 \paragraph{Majority-Voting Diagonally}
 Each frame is predicted up to \textit{n} times.
 In our example it is up to six times.
 In the \textit{Majority-Voting Diagonally} all of those predictions are taken and the majority voting among those is taken as prediction for the frame.
-Ties are resolved by placing more weight on the half of the predictions, where the frame was later in the sequence.
+Ties are resolved by placing more weight on the half of the predictions, where the frame appeared later in the sequence.
 
 After merging we have one prediction per frame indicating whether the frame is part of a soft cut or not.
 Then, a sequence of frames that are part of a soft cut represents a soft cut.
@@ -80,7 +80,7 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 	\label{fig:gap_filler}
 \end{figure}
 
-Another idea to correct misclassified frame predictions is to delete soft cuts that are only up to five frames long and only surrounded by non soft cut frames.
+Another idea for correcting misclassified frame predictions is to delete soft cuts that are only up to five frames long and only surrounded by non soft cut frames.
 In our data set a soft cut has an average length of 22 frames.
 The smallest have a length of seven frames.
 Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
@@ -113,7 +113,7 @@ The architecture of the net can be found in Figure~\ref{fig:net_architecture}.
 
 \paragraph{One convolutional layer + two LSTMs}
 The last architecture that was tested uses only one convolutional layer before the two LSTMs.
-The intuition behind it was as follows: for the CNN, it is hard to detect a soft cut frame, because it works only on one frame.
+The intuition behind it is as follows: for the CNN, it is hard to detect a soft cut frame, because it works only on one frame.
 By looking at only one frame, it would be difficult to predict a soft cut, even for a human.
 However, by looking at a sequence of frames, this becomes easier.
 This is exactly, what the RNN/LSTM does, which is why we put more emphasis on this part and less emphasis on the CNN part.

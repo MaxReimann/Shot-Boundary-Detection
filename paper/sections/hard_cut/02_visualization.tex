@@ -21,7 +21,7 @@ The visualization can be explored using a web browser (see Figure~\ref{fig:hard_
 When inspecting the visualization of a processed video, we can see that the histogram differences are a useful feature for detecting the hard cuts in a video.
 In most cases there is one single bar with a high difference surrounded by low differences (see green bar in Figure~\ref{fig:hard_cut_visualization}).
 However, we can also see some other peaks that are not hard cuts and are typically surrounded by noisy clusters (see Figure~\ref{fig:hard_cut_noise_visualization}).
-Those can be soft cut suquences or just rapid changes during one scene.
+Those can be soft cut sequences or just rapid changes during one scene.
 Since the SVM just takes the difference between two frames into account, it does not ``see'' the surrounding clusters and therefore makes several mistakes.
 Nevertheless, we can improve the classification performance by showing the SVM more soft cuts and frame sequences, where the colors change dramatically.
 When learning these negative examples, the decisions made by the SVM are more robust against noisy sequences.

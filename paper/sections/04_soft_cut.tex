@@ -1,5 +1,5 @@
 \FloatBarrier
-\section{Soft-Cut Detection}
+\section{Soft Cut Detection}
 \label{sec:soft_cut}
 
 To occur somewhere in this chapter:
@@ -11,7 +11,7 @@ To occur somewhere in this chapter:
     \item Evaluate on sequence and on frame level?
     \item Histograms for debugging?
     \item Why it did not work out.
-    
+
 \end{itemize}
 %%%
 %%% Hier mal noch die Ideen, die wir irgendwann hatten fuer soft-cut und hard-cut. Vllt kann man Teile davon noch irgendwo einbauen.
@@ -35,13 +35,13 @@ To occur somewhere in this chapter:
 %                       Auf selbst generierten Daten
 %           - Test: True -> rechts und links schauen
 %                           Sozusagen schrittweise ueber das Video gehen, und jeweils 5 Frames links und rechts mit in das Sliding Window nehmen.
-%                           Wenn mehrfach nacheinander ein dissolve vorausgesagt wird 
+%                           Wenn mehrfach nacheinander ein dissolve vorausgesagt wird
 %
 %                   Test auf 2007er Daten
 
 
 In contrast to the approaches presented in Section~\ref{sec:related_work}, we chose a deep learning approach to detect soft cuts in a video.
-In the following this approach is presented in more detail.
+In the following subsections, this approach is presented in more detail.
 
 \input{sections/soft_cut/01_data_generation}
 \input{sections/soft_cut/02_approach}
