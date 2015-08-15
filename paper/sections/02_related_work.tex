@@ -9,12 +9,12 @@ Afterwards, we give a short introduction to deep neural networks.
 Many different techniques have been developed for shot boundary detection.
 For hard cut detection, a baseline approach compares the change between two frames for each pixel, and builds the sum of these differences.
 Then a threshold is selected: Every value over the threshold is considered a cut.
-However, this approach is prone to error, when there are quick camera movements, or sudden color changes inside a scene.
+However, this approach is prone to error, when there are quick camera movements or sudden color changes inside a scene.
 Therefore, better approaches have been developed, which are shortly summarized in the next paragraphs.
 
 \paragraph{Color Histograms}
 This approach, first used by Zhang~et.al.~\cite{zhang1993automatic}, sorts the color values into a histogram with a certain bin size, before comparing the histograms.
-Thus, this approach is less prone errors as the baseline approach.
+Thus, this approach is less prone to errors than the baseline approach.
 It can better compensate for minor changes in the frames.
 However, using histograms also means compressing the data, thereby throwing some information away.
 

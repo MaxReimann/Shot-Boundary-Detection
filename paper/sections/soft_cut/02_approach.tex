@@ -50,7 +50,7 @@ This is equivalent to having no prior knowledge about the frame, as the RNN/LSTM
 
 \paragraph{Take Last 'Sequence'}
 A second simple strategy is to take the last prediction of each sequence as the prediction for the frame that started the sequence.
-Concretely, the last prediction is not a prediction for the frame under question, but the the intuition behind this is that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
+Concretely, the last prediction is not a prediction for the frame under question, but the intuition behind this is that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
 
 \paragraph{Take Last 'Frame'}
 In the \textit{Take Last 'Frame'} strategy, for every frame we take the frame sequence, in which that frame is the last.
@@ -81,7 +81,7 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 \end{figure}
 
 Another idea to correct misclassified frame predictions is to delete soft cuts that are only up to five frames long and only surrounded by non soft cut frames.
-In our data set a soft cut has on average 22 frames.
+In our data set a soft cut has an average length of 22 frames.
 The smallest have a length of seven frames.
 Therefore, a soft cut of only up to five frames is not realistic and misclassified with a high probability.
 
