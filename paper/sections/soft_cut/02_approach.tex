@@ -2,7 +2,7 @@
 \label{sec:soft_cut_approach}
 
 For the soft cut detection we decided to use a deep learning approach.
-More concretly, we used the RNN/LSTM implementation by Jeff Donahue\footnote{\url{https://github.com/BVLC/caffe/pull/2033}} for the Caffe\footnote{\url{http://caffe.berkeleyvision.org/}} framework.
+More concretely, we used the RNN/LSTM implementation by Jeff Donahue\footnote{\url{https://github.com/BVLC/caffe/pull/2033}} for the Caffe\footnote{\url{http://caffe.berkeleyvision.org/}} framework.
 This RNN/LSTM implementation takes two different inputs: On the one hand the raw pixel values and on the other hand a tagging sequence.
 The tagging sequence tells the LSTM, where a new training example starts, as we process more than one training sequence per batch.
 The LSTM implementation allows us to use a short term memory in the neural network.

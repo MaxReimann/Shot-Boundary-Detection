@@ -10,7 +10,7 @@ We have discussed the main reason for that in Section~\ref{sec:hard_cut_visualiz
 Our approach just takes two frames into account and therefore cannot notice, whether the transition under consideration is part of a noisy cluster or a single peak (see Figure~\ref{fig:hard_cut_noise_visualization}).
 One idea to overcome this "blindness" is to use some surrounding histogram differences as additional features.
 The classifier is trained with a sliding window of histogram differences, resulting in specific patterns.
-The classification task would then be a pattern matching task, where hard cuts are characterized by a single peak, soft cuts by a gradual curve and noise by random peaks.
+The classification task would then be a pattern matching task, where hard cuts are characterized by a single peak, soft cuts by a gradual curve, and noise by random peaks.
 Future work could also try to employ a neural net for this kind of pattern matching.
 A different approach is to do post-processing, where certain highly unlikely events are filtered out.
 Looking at the false positives in Figure~\ref{fig:hard_cut_noise_visualization} (red bars), one can see, that many of them occur directly after each other.
@@ -19,9 +19,9 @@ They might either be noise or a soft cut.
 
 Furthermore, our approach is not applicable for low quality black and white videos (like the \emph{BG\_11362} video of the \emph{TrecVid 2007} data set).
 The problem is, that there are strong brightness changes from one frame to another within one scene.
-Therefore, we can hardly distiguish between cuts and non-cuts.
+Therefore, we can hardly distinguish between cuts and non-cuts.
 An idea to solve this problem is to calculate the brightness difference between the raw pixel values.
-If the resulting difference image has homogenious color, the brightness difference between the two frames is the result of bad image quality.
+If the resulting difference image has homogeneous color, the brightness difference between the two frames is the result of bad image quality.
 
 
 \subsection{Soft cut detection}

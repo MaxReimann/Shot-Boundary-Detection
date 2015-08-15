@@ -15,7 +15,7 @@ To detect hard cuts, we therefore want to apply a similarity measure to two subs
 In our case, we represent frames using their color histograms.
 Each frame has three color channels (red, green, blue) and therefore three histograms.
 The difference between two frames is then the difference between the histograms.
-The histogram difference can be represented as an \emph{3*n}-dimensional vector, where \emph{n} is the number of bins in a color histogram.
+The histogram difference can be represented as a \emph{3*n}-dimensional vector, where \emph{n} is the number of bins in a color histogram.
 So, we are presented with a binary classification task (cut or not) in a \emph{3*n}-dimensional space.
 
 In a next step, the dimensionality can be further reduced by simply adding up the vector elements.

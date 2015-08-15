@@ -5,15 +5,15 @@
 
 
 
-The SVM is trained on an mixture of videos from the 2007 TrecVid contest.
+The SVM is trained on a mixture of videos from the 2007 TrecVid contest.
 The videos in their full length do not make a good training set, as the ratio between hard cuts and other frames is about \texttt{1:1000}, leading to a failure to predict any hard cuts.
-A custom training set must be constructed, which contains a suffcient amount of hard cuts.
+A custom training set must be constructed, which contains a sufficient amount of hard cuts.
 The choice of non-hard-cuts is also crucial for achieving good classification performance: too homogenous frames lower the decision boundary, and lead to poor performance on noisy examples.
 Therefore the negative set should also include soft cuts and particularly noisy frames.
 The training set we finally build consists of about 250 hard cuts and 2200 negatives.
 
 
-We evaluate our approach on complete, heldout videos of the 2007 TrecVid contest. The results per video are shown in Figure~\ref{fig:scatterplothceval}, showing that a high recall is consistently achieved, while the precision is dependent on the video. The overall statistic, shown in Table~\ref{tab:hard_cut_results}, reveals that the objective of further improvements must be to reduce the number of false positives.
+We evaluate our approach on complete, held out videos of the 2007 TrecVid contest. The results per video are shown in Figure~\ref{fig:scatterplothceval}, showing that a high recall is consistently achieved, while the precision is dependent on the video. The overall statistic, shown in Table~\ref{tab:hard_cut_results}, reveals that the objective of further improvements must be to reduce the number of false positives.
 
 \begin{figure}
 \centering

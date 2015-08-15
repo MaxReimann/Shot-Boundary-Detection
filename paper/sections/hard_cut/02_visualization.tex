@@ -2,8 +2,8 @@
 \label{sec:hard_cut_visualization}
 
 After having implemented the ideas presented in \ref{sec:hard_cut_approach}, the results were not breathtaking.
-Therefore we wanted to receive a feeling for the flaws in our approach by visualising the features and the decisions that the SVM made.
-To make the visualization explorable and interactive, we build a web app written in \emph{HTML} and \emph{Javascript} using the visualization framework \emph{d3}\footnote{\url{http://d3js.org/}}.
+Therefore we wanted to receive a feeling for the flaws in our approach by visualizing the features and the decisions that the SVM made.
+To make the visualization explorable and interactive, we build a web app written in \emph{HTML} and \emph{JavaScript} using the visualization framework \emph{d3}\footnote{\url{http://d3js.org/}}.
 During hard cut detection, we write a \emph{tsv} file containing all required information, such as the histogram differences, the predicted class, and the actual class for every two subsequent frames.
 Then a local webserver is started, which has access to the \emph{tsv} file as well as the video frames.
 The visualization can be explored using a web browser (see Figure~\ref{fig:hard_cut_visualization}).
@@ -30,6 +30,6 @@ We make fewer mistakes on the noise in Figure~\ref{fig:hard_cut_visualization}, 
 \begin{figure}
 	\centering
 	\includegraphics[scale=.7]{images/hard_cut_noise_visualization.png}
-	\caption{The histogram differences are problematic when there is lots of noise between two frames. In this case, a burning fire disturbes the classification and introduces lots of false positives.}
+	\caption{The histogram differences are problematic when there is lots of noise between two frames. In this case, a burning fire disturbs the classification and introduces lots of false positives.}
 	\label{fig:hard_cut_noise_visualization}
 \end{figure}
