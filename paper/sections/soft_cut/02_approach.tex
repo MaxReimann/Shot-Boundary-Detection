@@ -8,14 +8,14 @@ Finally, we present different network architectures we evaluated.
 \subsubsection{Merging Strategies}
 For the soft cut detection we decided to use a deep learning approach.
 More concretely, we used the RNN/LSTM implementation by Jeff Donahue\footnote{\url{https://github.com/BVLC/caffe/pull/2033}} for the Caffe\footnote{\url{http://caffe.berkeleyvision.org/}} framework.
-This RNN/LSTM implementation takes two different inputs: On the one hand the raw pixel values and on the other hand a tagging sequence.
+This LSTM implementation takes two different inputs: On the one hand the raw pixel values and on the other hand a tagging sequence.
 The tagging sequence tells the LSTM, where a new training example starts, as we process more than one training sequence per batch.
 The LSTM implementation allows us to use a short term memory in the neural network.
 The network remembers information from the beginning of a frame sequence until the last frame of the sequence.
 So the net remembers previous decisions through a sequence of frames.
 
 But using this architecture has one problem, as stated by Jeff Donahue: ``Backpropagation [through the LSTM] is truncated along the batch boundaries''~\cite{SequencesInCaffe}.
-So one or more frame sequences have to fit exactly into the batch size used by the RNN/LSTM.
+So one or more frame sequences have to fit exactly into the batch size used by the LSTM.
 This is hard to achieve, if we want to classify variable-length frame sequences.
 Therefore we decided to use a fixed size for the sequences of frames in our training data, i.e., we would generate only transitions of length ten in our training data.
 
@@ -25,15 +25,15 @@ In Figure~\ref{fig:soft_cut_approach}, we show an example.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.7]{images/soft_cut_approach.eps}
-	\caption{To classify soft cuts of arbitrary length, we repeatedly test fixed-size frame sequences. In this example we test sequences of size six. Afterwards the predictions given by the RNN/LSTM are merged, so that we have one prediction per frame.}
+	\caption{To classify soft cuts of arbitrary length, we repeatedly test fixed-size frame sequences. In this example we test sequences of size six. Afterwards the predictions given by the LSTM are merged, so that we have one prediction per frame.}
 	\label{fig:soft_cut_approach}
 \end{figure}
 We have a video with \textit{n} frames.
 The frames from three to eight represent a soft cut.
 Now, for each frame, we generate a frame sequence of size six starting from that frame.
 This is equivalent to moving a sliding window over the frames.
-Those sequences are then classified by the RNN/LSTM.
-The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
+Those sequences are then classified by the LSTM.
+The output of the LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
 In the end, we have up to six predictions per frame, which have to be merged, so that we have only one prediction per frame.
 After merging, consecutive frames with a predicted value of 1 represent one soft cut.
 
@@ -51,11 +51,11 @@ An overview over all strategies can be found in Figure~\ref{fig:merging_strategi
 \end{figure}
 \paragraph{Take First}
 A first simple strategy is to take the first prediction of each sequence as the prediction of that frame.
-This is equivalent to having no prior knowledge about the frame, as the RNN/LSTM has not seen any previous frames and therefore could not remember anything.
+This is equivalent to having no prior knowledge about the frame, as the LSTM has not seen any previous frames and therefore could not remember anything.
 
 \paragraph{Take Last 'Sequence'}
 A second simple strategy is to take the last prediction of each sequence as the prediction for the frame that started the sequence.
-Concretely, the last prediction is not a prediction for the frame under question, but the intuition behind this is that an RNN/LSTM becomes more and more certain after having seen multiple frames of the sequence.
+Concretely, the last prediction is not a prediction for the frame under question, but the intuition behind this is that an LSTM becomes more and more certain after having seen multiple frames of the sequence.
 
 \paragraph{Take Last 'Frame'}
 In the \textit{Take Last 'Frame'} strategy, for every frame we take the frame sequence, in which that frame is the last one.
@@ -91,7 +91,7 @@ By switching the roles of 0s and 1s, we can make the \textit{Gap Filler} also pr
 In this case, sequences of 1s, which are not long enough, are filled with 0s.
 
 \subsubsection{Network Architectures}
-To classify the frames as soft cut or non soft cut frames, we used an RNN/LSTM.
+To classify the frames as soft cut or non soft cut frames, we used an LSTM.
 We tested many different architectures, and parameters settings.
 In the following we present a selection of that with significant differences:
 
@@ -110,7 +110,7 @@ The architecture of the net can be found in Figure~\ref{fig:net_architecture}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.5]{images/net_architecture.eps}
-	\caption{Architecture of the RNN/LSTM consisting of a CNN and two LSTMs.}
+	\caption{Architecture of the LSTM consisting of a CNN and two LSTMs.}
 	\label{fig:net_architecture}
 \end{figure}
 
@@ -119,7 +119,7 @@ The last architecture that was tested uses only one convolutional layer before t
 The intuition behind it is as follows: for the CNN, it is hard to detect a soft cut frame, because it works only on one frame.
 By looking at only one frame, it would be difficult to predict a soft cut, even for a human.
 However, by looking at a sequence of frames, this becomes easier.
-This is exactly, what the RNN/LSTM does, which is why we put more emphasis on this part and less emphasis on the CNN part.
+This is exactly, what the LSTM does, which is why we put more emphasis on this part and less emphasis on the CNN part.
 The net was trained from scratch as no pre-trained net existed.
 The weights of the LSTMs were again initialized using the \textit{Xavier} method.
 The learning rate was 0.001 and gradient clipping was used during training.
