@@ -18,6 +18,9 @@ The standard tweening function is linear, but we also used ease-in, ease-out, an
 The tweening function is randomly selected, as well.
 As the transition type we use a classic \textit{dissolve}.
 To achieve further variance in the generated data, we flip the two sequences randomly at the x- or y-axis or at both axes.
-With this approach we generated about 400,000 sequences of length 11 and length 21 each.
+With this approach we generated about 450,000 sequences of length 11 and length 21 each.
+Length 11 was chosen as a first approach, because it allows many training samples in one batch.
+Also the intuition was, that small sequences lead to better performance.
+Length 21 was chosen, because it is the average soft cut size in the original data.
 In each case 50\% of the the sequences are non cuts and 50\% are soft cuts.
 This makes a total of 6,400,000 soft cut frames and 6,400,000 non cut frames.
