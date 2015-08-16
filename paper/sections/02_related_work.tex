@@ -1,7 +1,7 @@
 \section{Related Work}
 \label{sec:related_work}
 
-This section first gives an overview about state of the art approaches for cut detection.
+This section gives an overview about state of the art approaches for cut detection.
 Afterwards, we give a short introduction to deep neural networks.
 
 \subsection{Shot Boundary Detection}
@@ -10,7 +10,7 @@ Many different techniques have been developed for shot boundary detection.
 For hard cut detection, a baseline approach compares the change between two frames for each pixel, and builds the sum of these differences.
 Then a threshold is selected: Every value over the threshold is considered a cut.
 However, this approach is prone to error, when there are quick camera movements or sudden color changes inside a scene.
-Therefore, better approaches have been developed, which are shortly summarized in the next paragraphs.
+Therefore, better approaches have been developed, which are summarized in the next paragraphs.
 
 \paragraph{Color Histograms}
 This approach, first used by Zhang~et.al.~\cite{zhang1993automatic}, sorts the color values into a histogram with a certain bin size, before comparing the histograms.
@@ -20,7 +20,7 @@ However, using histograms also means compressing the data, thereby throwing some
 
 \paragraph{Luminance Values}
 Instead of working on the RGB data, one can also work in other color spaces.
-Especially luminance values~\cite{petersohn2004fraunhofer} have shown good performance, as they emphasize the white and black difference.
+Especially luminance values~\cite{petersohn2004fraunhofer} have shown good performance, as they emphasize differences in brightness.
 Thus, they are less susceptible to false positives.
 
 \paragraph{Edge Detection}

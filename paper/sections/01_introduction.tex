@@ -7,7 +7,7 @@ The goal of \emph{shot boundary detection} is to detect these cuts, without rely
 Shot boundary detection is an important preprocessing step for many other video processing tasks, such as video annotation and classification.
 
 An important distinction has to be made between hard cuts and soft cuts.
-On the one hand, hard cuts are abrupt changes from one frame to another.
+On the one hand, hard cuts are abrupt changes from one scene to another.
 Only two frames are involved in a hard cut, namely the last frame of the ending scene and the first frame of the new scene.
 On the other hand, soft cuts are longer transitions from one shot to another, either by mixing the two scenes frame by frame (\emph{dissolve}), or by using other blend effects, such as swipes.
 Soft cuts can be of arbitrary length and all frames from the last unchanged frame of the old scene to the first unchanged frame of the new scene are considered part of a soft cut.
@@ -22,8 +22,8 @@ In this work we approached both hard cut detection and soft cut detection.
 Our hard cut detection works with traditional approaches from literature, concretely color histograms and machine learning.
 The soft cut detection uses a new approach: deep artificial neural networks.
 Deep neural networks have seen a rise in popularity in the computer vision community in the last years.
-This rise is mostly due to impressive improvements in image classification and video classification tasks.
-In this work, we want to automatically learn via artificial neural networks how soft cuts look.
+This rise is mostly due to impressive improvements in image and video classification tasks.
+In this work, we want to automatically learn the characteristics of soft cuts via artificial neural networks.
 To the best of our knowledge, no one has tried this approach for the soft cut detection problem so far.
 
 This work is organized as follows:
