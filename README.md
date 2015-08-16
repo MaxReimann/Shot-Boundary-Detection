@@ -36,7 +36,7 @@ The corresponding folder structure would be:
 This tells the program to do hard cut detection, take the training data from `../resources/frames/`, take the gold standard from `../resources/truth/` and run hard cut detection on all videos in `../resources/classify/frames`.
 Due to the prototypical state of this project, it is crucial that the resources folder is in the parent directory of the execution root.
 
-It will also cache the calculated data in two files and save those files in `resources/`. `differenceHistograms.yaml` is the training data cache, `differenceHistogramsEvaluation.yaml` is the cache of the classification data. If you change any of the data folders, you have to manually delete the corresponding cache. 
+It will also cache the calculated training data in `resources/differenceHistograms.yaml`. If you change any of the data folders, you have to manually delete the corresponding cache or use the `--no_cache` flag. 
 If you have just a cache file as training data, you can place it in `resources/` and leave `resources/frames/` empty. `resources/truth` still has to contain the truth data for the classify videos in order to calculate performance measures. The command to start hard cut detection stays the same.
 
 If everything works well, after reading in all the data, you will see an output like this:
@@ -53,9 +53,9 @@ If everything works well, after reading in all the data, you will see an output 
     Press any key to continue . . .
     
 ## Visualization
-The results of the hard cut detection can be visualized in an interactive bar chart, but this only works, if the flags `--classify_folder` and `--no_cache` are set, e.g.:
+The results of the hard cut detection can be visualized in an interactive bar chart, but this only works, if the flag `--classify_folder` is used, e.g.:
 
-`sbd.exe --hard_cut ../resources/[type]/ --classify_folder ../resources/classify/[type] --no_cache`
+`sbd.exe --hard_cut ../resources/[type]/ --classify_folder ../resources/classify/[type]`
 
 During hard cut detection, a file `resources/d3/data/visData.tsv` will be created. Start an http-server in the `resources/` folder, e.g., using
 
