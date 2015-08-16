@@ -29,7 +29,7 @@ Now, for each frame, we generate a frame sequence of size six starting from that
 This is equivalent to moving a sliding window over the frames.
 Those sequences are then classified by the RNN/LSTM.
 The output of the RNN/LSTM is zero, if a frame does not belong to a soft cut, and one, otherwise.
-In the end, we have uo to six predictions per frame, which have to be merged, so that we have only one prediction per frame.
+In the end, we have up to six predictions per frame, which have to be merged, so that we have only one prediction per frame.
 After merging, consecutive frames with a predicted value of 1 represent one soft cut.
 
 In the following several strategies for combining multiple frame predictions into one prediction are presented.
@@ -94,7 +94,7 @@ We tested the following architectures:
 
 \paragraph{CNN + one LSTM}
 For the CNN we used the architecture of the \textit{caffenet}\footnote{\url{https://github.com/BVLC/caffe/tree/master/models/bvlc_reference_caffenet}}.
-We also used the pre trained weights of this net, so that we do not need to train our model from scratch.
+We also used the pre-trained weights of this net, so that we do not need to train our model from scratch.
 We only fine-tuned the \textit{fc6} layer of the \textit{caffenet} with a learning rate of 0.1.
 The CNN is followed by one LSTM, whose weights were initialized with the \textit{Xavier} method, because this method performs better than other as mentioned in~\cite{glorot2010understanding}.
 Besides, the general learning rate was set to 0.01 and gradient clipping was used.
@@ -117,7 +117,7 @@ The intuition behind it is as follows: for the CNN, it is hard to detect a soft 
 By looking at only one frame, it would be difficult to predict a soft cut, even for a human.
 However, by looking at a sequence of frames, this becomes easier.
 This is exactly, what the RNN/LSTM does, which is why we put more emphasis on this part and less emphasis on the CNN part.
-The net was trained from scratch as no pretrained net existed.
+The net was trained from scratch as no pre-trained net existed.
 The weights of the LSTMs were again initialized using the \textit{Xavier} method.
 The learning rate was 0.001 and gradient clipping was used during training.
 
