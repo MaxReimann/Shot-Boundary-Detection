@@ -2,13 +2,13 @@
 \label{sec:conclusion}
 In the end, we summarize our findings concerning both hard cut and soft cut detection.
 
-\subsection{Hard cut detection}
+\subsection{Hard Cut Detection}
 \label{sec:conclusion_hard_cut}
 
 As we see in Table~\ref{tab:hard_cut_results}, the low precision of our approach is a problem.
 We have discussed the main reason for that in Section~\ref{sec:hard_cut_visualization}.
 Our approach just takes two frames into account and therefore cannot notice, whether the transition under consideration is part of a noisy cluster or a single peak (see Figure~\ref{fig:hard_cut_noise_visualization}).
-One idea to overcome this "blindness" is to use some surrounding histogram differences as additional features.
+One idea to overcome this ``blindness'' is to use some surrounding histogram differences as additional features.
 The classifier is trained with a sliding window of histogram differences, resulting in specific patterns.
 The classification task would then be a pattern matching task, where hard cuts are characterized by a single peak, soft cuts by a gradual curve, and noise by random peaks.
 Future work could also try to employ a neural net for this kind of pattern matching.
@@ -17,22 +17,33 @@ Looking at the false positives in Figure~\ref{fig:hard_cut_noise_visualization} 
 Those cut patterns are not realistic.
 They might either be noise or a soft cut.
 
-Furthermore, our approach is not applicable for low quality black and white videos (like the \emph{BG\_11362} video of the \emph{TrecVid 2007} data set).
+Furthermore, our approach is not applicable for low quality black and white videos (such as the \emph{BG\_11362} video of the TrecVid 2007 data set).
 The problem is, that there are strong brightness changes from one frame to another within one scene.
-Therefore, we can hardly distinguish between cuts and non-cuts.
+Therefore, we can hardly distinguish between cuts and non cuts.
 An idea to solve this problem is to calculate the brightness difference between the raw pixel values.
-If the resulting difference image has homogeneous color, the brightness difference between the two frames is the result of bad image quality.
+If the resulting difference image has homogeneous color, the brightness difference between the two frames is the result of poor image quality.
 
-
-\subsection{Soft cut detection}
+\subsection{Soft Cut Detection}
 \label{sec:conclusion_hard_cut}
 
-What went wrong:
-More data?
+Unlike traditional approaches, we tried to detect soft cuts in a video using a deep neural network.
+As shown in Section~\ref{sec:soft_cut_evaluation}, we could only achieve a precision of around 15\% for soft cuts.
+We think that there are various reasons for that:
+First of all it could still be a lack of insufficient data.
+Also the fixed frame sequence length could be a problem.
+Training a neural network only with soft cuts of a specific length means that it expects these lengths also on the test set.
+However, in our sliding window approach only a part of a long soft cut is processed at a time.
+Maybe the network will not recognize such parts, because the changes are much less and only one of the frame sequences is in the foreground.
+The higher accuracy when evaluating on generated test data seems to support this hypothesis.
+This could be evaluated by training multiple models each with a different fixed sequence length.
+For predicting a soft cut of a specific length the corresponding model could be used.
 
-In summary.
-We still think that the soft cut detection could be solved with deep learning.
-However, the basic approach with using a recurrent neural network does not work.
+But we think that the main problem is that the convolutional network cannot really learn good features, because there is nothing characteristic about a single soft cut frame.
+In the case of image classification, the CNN can learn concrete features, e.g., to detect a cat.
+This may include specific colors or edges, and then more abstract features like feet and ears in later layers.
+For soft cut detection, no such concrete features can be learned.
+Rather, the network would need to recognize two images, which are blended into each other, which would probably also be hard for a human by looking only at one frame.
+
+In general, we still believe that the soft cut detection could be solved with deep learning, because these techniques have proven their performance in the areas of image and video processing.
+However, the basic approach with using a recurrent neural network and merging strategies does not work.
 More work and innovation is required in this area.
-
-We think that the main problem is that the convolutional network cannot really learn good features, because there is nothing characteristic about a soft cut frame.
