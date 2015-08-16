@@ -19,7 +19,7 @@ They might either be noise or a soft cut.
 
 Furthermore, our approach is not applicable for low quality black and white videos (such as the \emph{BG\_11362} video of the TrecVid 2007 data set).
 The problem is, that there are strong brightness changes from one frame to another within one scene.
-Therefore, we can hardly distinguish between cuts and non-cuts.
+Therefore, we can hardly distinguish between cuts and non cuts.
 An idea to solve this problem is to calculate the brightness difference between the raw pixel values.
 If the resulting difference image has homogeneous color, the brightness difference between the two frames is the result of poor image quality.
 
@@ -36,11 +36,10 @@ However, in our sliding window approach only a part of a long soft cut is proces
 Maybe the network will not recognize such parts, because the changes are much less and only one of the frame sequences is in the foreground.
 The higher accuracy when evaluating on generated test data seems to support this hypothesis.
 This could be evaluated by training multiple models each with a different fixed sequence length.
-
 For predicting a soft cut of a specific length the corresponding model could be used.
 
 But we think that the main problem is that the convolutional network cannot really learn good features, because there is nothing characteristic about a single soft cut frame.
-In the case of image classification, the CNN can learn concrete features e.g. to detect a cat.
+In the case of image classification, the CNN can learn concrete features, e.g., to detect a cat.
 This may include specific colors or edges, and then more abstract features like feet and ears in later layers.
 For soft cut detection, no such concrete features can be learned.
 Rather, the network would need to recognize two images, which are blended into each other, which would probably also be hard for a human by looking only at one frame.
