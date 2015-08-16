@@ -30,7 +30,9 @@ The correspnding folder structure would be:
                         |-...
             |-(differenceHistograms.yaml)
             |-(differenceHistogramsEvaluation.yaml)
-This tells the program to do hard cut detection, take the training data from `./resources/frames/`, take the gold standard from `./resources/truth/` and run hard cut detection on all videos in `./resources/classify/frames`.
+            
+This tells the program to do hard cut detection, take the training data from `../resources/frames/`, take the gold standard from `../resources/truth/` and run hard cut detection on all videos in `../resources/classify/frames`.
+Due to the prototypical state of this project, it is crucial that the resources folder is in the parent directory of the execution root.
 
 It will also cache the calculated data in two files and save those files in `resources/`. `differenceHistograms.yaml` is the training data cache, `differenceHistogramsEvaluation.yaml` is the cache of the classification data. If you change any of the data folders, you have to manually delete the corresponding cache. 
 If you have just a cache file as training data, you can place it in `resources/` and leave `resources/frames/` empty. `resources/truth` still has to contain the truth data for the classify videos in order to calculate performance measures. The command to start hard cut detection stays the same.
