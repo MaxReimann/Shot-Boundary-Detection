@@ -1,6 +1,11 @@
 \subsection{Approach}
 \label{sec:soft_cut_approach}
 
+In the following sections we first present different merging strategies.
+Then, we present a technique for increasing the precision or recall of the merging results.
+Finally, we present different network architectures we evaluated.
+
+\subsubsection{Merging Strategies}
 For the soft cut detection we decided to use a deep learning approach.
 More concretely, we used the RNN/LSTM implementation by Jeff Donahue\footnote{\url{https://github.com/BVLC/caffe/pull/2033}} for the Caffe\footnote{\url{http://caffe.berkeleyvision.org/}} framework.
 This RNN/LSTM implementation takes two different inputs: On the one hand the raw pixel values and on the other hand a tagging sequence.
@@ -62,7 +67,8 @@ In our example it is up to six times.
 In the \textit{Majority-Voting Diagonally} all of those predictions are taken and the majority voting among those is taken as prediction for the frame.
 Ties are resolved by placing more weight on the half of the predictions, where the frame appeared later in the sequence.
 
-After merging we have one prediction per frame indicating whether the frame is part of a soft cut or not.
+\subsubsection{Gap Filler}
+After merging, we have one prediction per frame indicating whether the frame is part of a soft cut or not.
 Then, a sequence of frames that are part of a soft cut represents a soft cut.
 However, there could be misclassified frame predictions.
 We implemented a \textit{Gap Filler} to find and correct some of those misclassified frame predictions.
@@ -80,17 +86,14 @@ Those non soft cut frames are detected by the \textit{Gap Filler} and classified
 	\label{fig:gap_filler}
 \end{figure}
 
-Another idea for correcting misclassified frame predictions is to delete soft cuts that are only up to five frames long and surrounded only by non soft cut frames.
-In our data set a soft cut has an average length of 21 frames.
-The smallest have a length of seven frames.
-Therefore, a soft cut of up to five frames is not realistic and misclassified with a high probability.
+The gap filler presented so far is recall-oriented: It increases the recall of soft cuts, while trading precision at the same time.
+By switching the roles of 0s and 1s, we can make the \textit{Gap Filler} also precision-oriented:
+In this case, sequences of 1s, which are not long enough, are filled with 0s.
 
-% \textcolor{red}{TODO}: Ich finde, das sollte doch ein eigener Abschnitt werden, oder?
-% Das ist ja jetzt ein komplett anderes Thema auf einmal.
-% Und sollte der folgende Teil dann nicht auch zuerst kommen?
-% \textcolor{red}{TODO}: Hier muss auch noch hin, we tested many different architectures, and parameters, in the following we present a small selection of that with significant differences.
+\subsubsection{Network Architectures}
 To classify the frames as soft cut or non soft cut frames, we used an RNN/LSTM.
-We tested the following architectures:
+We tested many different architectures, and parameters settings.
+In the following we present a selection of that with significant differences:
 
 \paragraph{CNN + one LSTM}
 For the CNN we used the architecture of the \textit{caffenet}\footnote{\url{https://github.com/BVLC/caffe/tree/master/models/bvlc_reference_caffenet}}.
