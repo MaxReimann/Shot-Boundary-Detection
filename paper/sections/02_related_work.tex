@@ -59,11 +59,10 @@ One important property of deep learning (as opposed to shallow learning) is that
 Instead, the algorithm learns the features by itself.
 
 Another important technique are \emph{recurrent neural networks}.
-\textcolor{red}{TODO}
-Image classification, video classification
-tagging sequence
-RNN/LSTM
-enters a sequence
+In contrast to normal neural networks, recurrent networks also have backwards connections in their architecture.
+Concretely, this means that the activation values from one input image are also feed to the next input image, thereby allowing the network to build up a ``short term memory''.
+This technique has proven useful in video classification~\cite{donahue2014long}.
+To know, when a new sequence starts, a recurrent networks needs a binary tagging sequence, which indicates, when a new sequence starts.
 
 While deep learning was popular in the last years, research in shot boundary detection, on the contrary, has ceased.
 From 2001 until 2007, the TrecVid~\cite{trecvid} conference series was hosting tracks on shot boundary detection.
