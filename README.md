@@ -50,3 +50,11 @@ If everything works well, after reading in all the data, you will see an output 
      Accuracy: 1
     Press any key to continue . . .
 
+## Data Generation
+
+To generate new soft cut transitions, use the following command:
+
+`sbd --generate ../resources/[type]`
+
+The provided path should point to the data folder for the images and the truth data.
+Thus, it must contain the placeholder [type], which will be replaced by 'frames' or 'truth'".
