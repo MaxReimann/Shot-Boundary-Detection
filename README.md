@@ -6,7 +6,9 @@ To do hard cut detection, use the following command (change executable file endi
 
 `sbd.exe --hard_cut ../resources/[type]/ --classify_folder ../resources/classify/[type]`
 
-The correspnding folder structure would be:
+The `[type]` placeholder will be substituted by the program, so leave it as it is.
+
+The corresponding folder structure would be:
     
     |-Shot-Boundary-Detection/
         |-build/
@@ -49,6 +51,20 @@ If everything works well, after reading in all the data, you will see an output 
            F1: 0.86
      Accuracy: 1
     Press any key to continue . . .
+    
+## Visualization
+The results of the hard cut detection can be visualized in an interactive bar chart, but this only works, if the flags `--classify_folder` and `--no_cache` are set, e.g.:
+
+`sbd.exe --hard_cut ../resources/[type]/ --classify_folder ../resources/classify/[type] --no_cache`
+
+During hard cut detection, a file `resources/d3/data/visData.tsv` will be created. Start an http-server in the `resources/` folder, e.g., using
+
+    python -m SimpleHTTPServer
+    
+and open in your web browser: `localhost:8000/d3/index.html`
+It will look for the video folders in `resources/classify/`.
+
+![Hard Cut Visualization](paper/images/hard_cut_visualization.png?raw=true "Hard Cut Visualization")
 
 ## Data Generation
 
