@@ -37,7 +37,7 @@ This tells the program to do hard cut detection, take the training data from `..
 Due to the prototypical state of this project, it is crucial that the resources folder is in the parent directory of the execution root.
 
 It will also cache the calculated training data in `resources/differenceHistograms.yaml`. If you change any of the data folders, you have to manually delete the corresponding cache or use the `--no_cache` flag. 
-If you have just a cache file as training data, you can place it in `resources/` and leave `resources/frames/` empty. `resources/truth` still has to contain the truth data for the classify videos in order to calculate performance measures. The command to start hard cut detection stays the same.
+If you have just a cache file as training data (there is one in `resources/` that can be used), you can place it in `resources/` and leave `resources/frames/` empty. `resources/truth` still has to contain the truth data for the classify videos in order to calculate performance measures. The command to start hard cut detection stays the same.
 
 If everything works well, after reading in all the data, you will see an output like this:
     
