@@ -10,7 +10,7 @@ Therefore, we generated more soft cuts by blending random sequences into each ot
 The procedure for generating a new random sequence based on the data set provided by the 2007 TrecVid contest works as follows:
 First, we randomly pick two subsequent cuts from the gold standard provided by the TrecVid contest, each with a start and end frame respectively.
 Between the end frame of the first cut and the start frame of the next cut, we randomly select a subsequence with the desired transition length.
-Because, there is no hard or soft cut between two subsequent cuts in the gold standard, it is guaranteed that there is also no hard or soft cut in the random sequence we picked.
+Because there is no hard or soft cut between two subsequent cuts in the gold standard, it is guaranteed that there is also no hard or soft cut in the random sequence we picked.
 Afterwards, we repeat this process with two other random cuts.
 As the result, we now have two randomly selected sequences of the same length, which we now blend into each other.
 To blend two random sequences, we have multiple options for tweening behaviour.

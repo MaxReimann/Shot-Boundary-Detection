@@ -9,7 +9,10 @@ The choice of non-hard-cuts is also crucial for achieving good classification pe
 Therefore the negative set should also include soft cuts and particularly noisy frames.
 The training set we finally build consists of about 250 hard cuts and 2,200 negatives.
 
-We evaluate our approach on complete, held out videos of the 2007 TrecVid contest. The results per video are shown in Figure~\ref{fig:scatterplothceval}, showing that a high recall is consistently achieved, while the precision is dependent on the video. The overall statistic, shown in Table~\ref{tab:hard_cut_results}, reveals that the objective of further improvements must be to reduce the number of false positives.
+We evaluate our approach on complete, held out videos of the 2007 TrecVid contest (with the videos from training data being removed). 
+The results per video are shown in Figure~\ref{fig:scatterplothceval}, showing that a high recall is consistently achieved, while the precision is dependent on the video. 
+The overall statistic, shown in Table~\ref{tab:hard_cut_results}, reveals that the objective of further improvements must be to reduce the number of false positives.
+In Section~\ref{sec:conclusion_hard_cut}, we present some ideas for future work on this.
 
 \begin{figure}[ht]
 \centering
