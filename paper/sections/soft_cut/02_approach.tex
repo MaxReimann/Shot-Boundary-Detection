@@ -96,9 +96,9 @@ We tested many different architectures, and parameters settings.
 In the following we present a selection of that with significant differences:
 
 \paragraph{CNN + one LSTM}
-For the CNN we used the architecture of the \textit{caffenet}\footnote{\url{https://github.com/BVLC/caffe/tree/master/models/bvlc_reference_caffenet}}.
+For the CNN we used the architecture of the \textit{Caffenet}\footnote{\url{https://github.com/BVLC/caffe/tree/master/models/bvlc_reference_caffenet}}.
 We also used the pre-trained weights of this net, so that we do not need to train our model from scratch.
-We only fine-tuned the \textit{fc6} layer of the \textit{caffenet} with a learning rate of 0.1.
+We only fine-tuned the \textit{fc6} layer of the \textit{Caffenet} with a learning rate of 0.1.
 The CNN is followed by one LSTM, whose weights were initialized with the \textit{Xavier} method, because this method performs better than other as mentioned in~\cite{glorot2010understanding}.
 Besides, the general learning rate was set to 0.01 and gradient clipping was used.
 
