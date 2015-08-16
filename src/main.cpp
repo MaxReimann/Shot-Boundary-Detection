@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
 		("gold_statistic", "calculation of gold statistics")
 		("extract_cuts", "extraction of hard cuts")
 		("help", "print help messages")
+        ("no_cache", "disable use of training data cache")
 		("classify_folder", po::value<std::string>(), "[opt, for hardcuts] specify external testfolder");
 
     //specify string arguments here
