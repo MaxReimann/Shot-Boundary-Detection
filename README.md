@@ -66,7 +66,9 @@ It will look for the video folders in `resources/classify/`.
 
 ![Hard Cut Visualization](paper/images/hard_cut_visualization.png?raw=true "Hard Cut Visualization")
 
-## Data Generation
+## Soft Cut Detection
+
+### Data Generation
 
 To generate new soft cut transitions, use the following command:
 
@@ -79,7 +81,7 @@ Our generated data can be found on the server fb10dl01 in `/opt/data_sets/video_
 In `gen-2007-0` and `gen-2007-1` are the generated data of a transition length of 11.
 The folders `gen-21-2007-0` and `gen-21-2007-1` contain the generated data of a transistion length of 21.
 
-## Soft Cut Detection
+### Soft Cut Detection Evaluation
 
 The different net architectures can be found on the server fb10dl01 in `/home/pva_t1/Shot-Boundary-Detection/nets/experiments/`:
 - CNN + one LSTM: `one-lstm`
