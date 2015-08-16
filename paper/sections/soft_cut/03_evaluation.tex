@@ -1,48 +1,52 @@
 \subsection{Evaluation}
 \label{sec:soft_cut_evaluation}
 
-First of all we took a closer look at the performance of our three different neural network architectures, we just presented.
-Therefore, we compared the accuracy calculated by \textit{caffe} druing training.
-To train the neural networks we used our generated data, which were explained in Section~\ref{sec:soft_cut_data_generation}.
+First, we took a closer look at the performance of our three different neural network architectures, we just presented.
+To train the neural networks we used our generated data, which is explained in Section~\ref{sec:soft_cut_data_generation}.
+We also used generated data for testing, to get a first impression while training the model in \textit{Caffe}.
+We had about 225,000 sequences in train and test set each.
 The amount of soft cuts and non soft cuts in the training and test data was the same.
-We had [TODO] training data and [TODO] test data.
-The accuracy given by \textit{caffe} was the following:
+The accuracy reported by \textit{Caffe} during training represents the accuracy on per-frame predictions.
+This accuracy is shown in Table~\ref{tab:caffe_accuracy}.
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{l|l}
-	CNN + one LSTM                      & 69,80 \% \\ \hline
-	CNN + two LSTMs                     & 80,42 \% \\ \hline
-	one convolutional layer + two LSTMs & 70,07 \% \\
+	CNN + one LSTM                      & 69,80\% \\ \hline
+	CNN + two LSTMs                     & 80,42\% \\ \hline
+	one convolutional layer + two LSTMs & 70,07\% \\
 	\end{tabular}
-	\caption{Accuracy of the different neural network architectures given by \textit{caffe}.}
-	\label{tab:caffe_accurary}
+	\caption{Accuracy of the different neural network architectures given by \textit{Caffe}.}
+	\label{tab:caffe_accuracy}
 \end{table}
 The \textit{CNN + two LSTMs} has by far the highest accuracy.
-Therefore, we decided to take this neural network architecture as our basic for the following evaluations.
+Therefore, we decided to take this neural network architecture as our basis for the following evaluations.
 
 Next we evaluated the different merging strategies.
-This evaluation was done on the actual video data.
-We got the frame sequence prediction from the \textit{CNN + two LSTMs} and merged those predictions in the four different ways, presented in the last section.
-Afterwards, we compared the resulting frame predictions with the actual predictions and calculated accuracy, precision, and recall on frame basis (TODO: is that correct?).
+This evaluation was done on the actual video data provided by TrecVid.
+We used the frame sequence predictions from the \textit{CNN + two LSTMs} and merged those predictions in the four different ways, presented in the last section (see Figure~\ref{fig:merging_strategies}).
+Afterwards, we compared the resulting frame predictions with the actual values (belongs to a soft cut or not) and calculated accuracy, precision, and recall for both classes.
 The results can be found in Figure~\ref{fig:evaluation_net}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.7]{images/evalutation_net.eps}
-	\caption{TODO: correct image?}
+	\caption{Results of the different merging strategies: \textit{Majority-Voting Diagonally} (Majority Voting), \textit{Take First} (First), \textit{Take Last 'Sequence'} (Last-Sequence), \textit{Take Last 'Frame'} (Last-Frame). The \textit{Majority-Voting Diagonally} strategy performs best.}
 	\label{fig:evaluation_net}
 \end{figure}
-As the graphic shows the results ... TODO
+As the figure shows the \textit{Take First} strategy is by far the worst.
+The other three strategies perform equally well, but the \textit{Majority-Voting diagonally} is slightly better with an accuracy of 92.29\%.
+The recall for both classes (soft cut and non soft cut) is also pretty high: 92.43\% for non soft cuts and 83.46\% for soft cuts.
+However, the precision of non soft cuts is almost 100\% for all four strategies, whereas the precision for soft cuts is only around 15\%.
+This means, that our deep neural network did not learn to recognize soft cuts well.
+Only 15\% of the predicted frames were soft cuts.
+Basically, the deep neural network recognizes almost every frame as non soft cut.
 
-Because we have such a low precision for soft cuts, we also tried to increase the value by trying out the \textit{Gap Filler}.
+Because we have such a low precision for soft cuts, we also tried to increase the performance by trying out the \textit{Gap Filler}, concretely the precision-oriented version.
 Unfortunately, this had no impact at all.
 The precision of soft cuts did not increase.
-TODO
+Thus, it seems that the deep neural network does not predict long-enough sequences of soft cuts for the \textit{Gap Filler} to help.
 
-Up to know we used a sequence length of eleven.
-We decided to keep such low, so that we do not miss a soft cut.
-TODO: explain better
-The average soft cut length in the actual video data is however 21.
-So we decided to test our architecture with a sequence length of 21.
-TODO
-
-
+We first tested with a sequence length of 11:
+Using a sliding window approach to detect soft cuts, we repeatedly tested soft cuts of length 11.
+Having such a low value, allows us to detect parts of a soft cuts, which can afterwards be merged.
+Still, we also tested with sequences of length 21, as this is the average length of the soft cuts in the original data.
+Unfortunately, the results were even worse than before.

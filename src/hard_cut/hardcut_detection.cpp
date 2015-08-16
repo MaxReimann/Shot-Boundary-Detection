@@ -19,7 +19,10 @@ using namespace sbd;
 
 
 int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
-    bool USE_CACHED_HISTOGRAMS = true;
+
+
+    bool USE_CACHED_HISTOGRAMS = flagArgs.count("no_cache") == 0;
+
 
     std::string dataFolder = inputArguments.at("data_folder");
 
@@ -65,32 +68,11 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
 		trainSet = features;
 		std::string classifyPath = flagArgs["classify_folder"].as<std::string>();
 		std::string histogramCachePath = "../resources/differenceHistogramsEvaluation.yaml";
-		cv::FileStorage fs2;
 
-		if (true || !USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
-		{
+        std::vector<std::string> imagePathsTest = getFileNames(classifyPath, false);
+        visImagePaths = imagePathsTest;
+		testSet = buildHistogramDifferences(imagePathsTest, gold);
 
-            std::vector<std::string> imagePathsTest = getFileNames(classifyPath,false);
-            visImagePaths = imagePathsTest;
-			testSet = buildHistogramDifferences(imagePathsTest, gold);
-
-
-			if (false && USE_CACHED_HISTOGRAMS)
-			{
-				std::cout << "Caching built histograms." << std::endl;
-				fs2.open(histogramCachePath, cv::FileStorage::WRITE);
-				fs2 << "Histograms" << testSet.values;
-				fs2 << "Labels" << testSet.classes;
-			}
-		}
-		else
-		{
-			std::cout << "Using cached histogram differences." << std::endl;
-			fs2.open(histogramCachePath, cv::FileStorage::READ);
-			fs2["Histograms"] >> testSet.values;
-			fs2["Labels"] >> testSet.classes;
-		}
-		fs2.release();
 		
 	}
 	else{
