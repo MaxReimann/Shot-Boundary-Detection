@@ -1,8 +1,13 @@
 # Shot-Boundary-Detection
+An experimental tool for hard- and softcut detection using machine learning.
+Hardcuts are detected using a SVM, softcuts with neural networks. In-depth information on the approach can be found in the technical paper in the paper/ directory. 
+
+### Building
+Build dependencies are OpenCV, Boost and Caffe. 
 
 ## Hard Cut Detection
 
-To do hard cut detection, use the following command (change executable file ending accorging to your OS):
+To do hard cut detection, use the following command (change executable file ending according to your OS):
 
 `sbd.exe --hard_cut ../resources/[type]/ --classify_folder ../resources/classify/[type]`
 
