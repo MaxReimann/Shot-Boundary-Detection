@@ -2,7 +2,7 @@
 
 # Check if called with name
 if [ $# -ne 1 ]; then
-    echo "Usage: $0 [experiment_name] [architecture]"
+    echo "Usage: $0 [experiment_name]"
 	echo "       experiment_name: Name of the subfolder in ./experiments/ for the current experiment."
 	echo "Exiting."
 	exit 1
@@ -47,11 +47,11 @@ cp net.prototxt solver.prototxt deploy.prototxt experiments/$FOLDER_NAME
 trap 'cleanup "Training interrupted"; exit 1' INT
 
 # Calling caffe
-# WEIGHTS=$CAFFE_ROOT/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
-WEIGHTS=$CAFFE_ROOT/models/CNN_M_2048/VGG_CNN_M_2048.caffemodel
+WEIGHTS=$CAFFE_ROOT/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
+# WEIGHTS=$CAFFE_ROOT/models/CNN_M_2048/VGG_CNN_M_2048.caffemodel
 $CAFFE_ROOT/build/tools/caffe train \
-    -solver /home/pva_t1/Shot-Boundary-Detection/nets/experiments/$FOLDER_NAME/solver.prototxt \
-    -weights $WEIGHTS 2> $TRAINING_LOG_NAME
+    -solver /home/pva_t1/Shot-Boundary-Detection/nets/experiments/$FOLDER_NAME/solver.prototxt 2> $TRAINING_LOG_NAME
+#    -weights $WEIGHTS
 
 # Resetting interrupt handling
 trap - INT

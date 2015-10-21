@@ -1,0 +1,72 @@
+% Koma-Script Basisklasse
+\documentclass[a4paper,12pt,headsepline,pagesize,bibtotoc,titlepage]{scrartcl}
+
+\usepackage{scrpage2}
+\pagestyle{useheadings}
+%\pagestyle{scrheadings}
+%\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}		% direkte Eingabe von Umlauten & Co. (Vorsicht: Encoding im Editor muss auch UTF-8 sein!)
+
+\usepackage[T1]{fontenc}			% T1-Schriften
+
+\usepackage{mathptmx}			% Times/Mathe \rmdefault
+\usepackage[scaled=.90]{helvet}	% Skalierte Helvetica \sfdefault
+\usepackage{courier}			% Courier \ttdefault
+\usepackage{color}
+
+% Zusatzpakete für mehr mathematische Symbole, Einfügen von Grafiken
+% und bessere Bildunterschriften
+\usepackage{amsmath,amsthm,amsfonts,graphicx,caption,placeins}
+\usepackage{tikz,pgfplots}
+
+% Wenn man direkt mit dem pdflatex eine PDF-Datei erzeugt, sollten diese beiden Pakete eingebunden werden
+\usepackage{hyperref} % Hyperlinks anklickbar
+\usepackage{ae,aecompl} % bessere Bildschirmschriftarten usw.
+\usepackage{epstopdf}
+
+
+%\pagestyle{headings}
+
+% Abstand der Kopfzeile vom Text:
+\headsep4mm
+
+\typearea[current]{current}     % Satzspiegel neu berechnen
+
+% andere Bildunterschrift mit Hilfe von caption
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\captionlabelfont}{\bf}
+
+\title{
+	\includegraphics*[width=0.4\textwidth]{images/hpi_logo.png}\\
+	\vspace{24pt}
+	Shot Boundary Detection
+}
+\subtitle{
+	Seminar\\
+	Practical Video Analyses\\
+	Summer Semester 2015
+}
+\author{
+	Tanja Bergmann, Stefan Bunk, Philipp Otto, \\
+	Max Reimann, Felix Wolff\\ \\[12pt]
+	Supervisor:\\
+	Dr. Haojin Yang\\
+	Prof. Dr. Christoph Meinel
+}
+\date{\today}
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_hard_cut}
+\input{sections/04_soft_cut}
+\input{sections/05_conclusion}
+
+
+\bibliography{paper}{}
+\bibliographystyle{ieeetr}
+\end{document}
+

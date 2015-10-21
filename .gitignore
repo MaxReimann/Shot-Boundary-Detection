@@ -47,8 +47,9 @@ resources/truth/BG_11362
 resources/frames/BG_11362
 resources/truth/BG_36506/
 resources/frames/BG_36506/
-resources/differenceHistograms.yaml
 resources/abs-changes.png
 gold_standard_statistics.txt
 resources/d3/data/visData.tsv
 resources/*.txt
+
+paper/paper.blg

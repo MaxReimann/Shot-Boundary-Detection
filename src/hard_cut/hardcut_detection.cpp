@@ -19,7 +19,10 @@ using namespace sbd;
 
 
 int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::string> inputArguments) {
-    bool USE_CACHED_HISTOGRAMS = true;
+
+
+    bool USE_CACHED_HISTOGRAMS = flagArgs.count("no_cache") == 0;
+
 
     std::string dataFolder = inputArguments.at("data_folder");
 
@@ -60,43 +63,22 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     fs.release();
 
     Features trainSet, testSet;
-	if (flagArgs.count("classify_folder"))
-	{
-		trainSet = features;
-		std::string classifyPath = flagArgs["classify_folder"].as<std::string>();
-		std::string histogramCachePath = "../resources/differenceHistogramsEvaluation.yaml";
-		cv::FileStorage fs2;
+    if (flagArgs.count("classify_folder"))
+    {
+        trainSet = features;
+        std::string classifyPath = flagArgs["classify_folder"].as<std::string>();
+        std::string histogramCachePath = "../resources/differenceHistogramsEvaluation.yaml";
 
-		if (!USE_CACHED_HISTOGRAMS || !boost::filesystem::exists(histogramCachePath))
-		{
+        std::vector<std::string> imagePathsTest = getFileNames(classifyPath, false);
+        visImagePaths = imagePathsTest;
+        testSet = buildHistogramDifferences(imagePathsTest, gold);
 
-            std::vector<std::string> imagePathsTest = getFileNames(classifyPath);
-            visImagePaths = imagePathsTest;
-			testSet = buildHistogramDifferences(imagePathsTest, gold);
+        
+    }
+    else{
 
-
-			if (USE_CACHED_HISTOGRAMS)
-			{
-				std::cout << "Caching built histograms." << std::endl;
-				fs2.open(histogramCachePath, cv::FileStorage::WRITE);
-				fs2 << "Histograms" << testSet.values;
-				fs2 << "Labels" << testSet.classes;
-			}
-		}
-		else
-		{
-			std::cout << "Using cached histogram differences." << std::endl;
-			fs2.open(histogramCachePath, cv::FileStorage::READ);
-			fs2["Histograms"] >> testSet.values;
-			fs2["Labels"] >> testSet.classes;
-		}
-		fs2.release();
-		
-	}
-	else{
-
-		splitTrainTestSets(features, 0.7, trainSet, testSet);
-	}
+        splitTrainTestSets(features, 0.7, trainSet, testSet);
+    }
 
     cv::Ptr<SVMLearner> learner = trainSVM(trainSet);
     
@@ -106,7 +88,7 @@ int HardCutMain::main(po::variables_map flagArgs, std::map<std::string, std::str
     visDiffs = testSet.values;
 
     // the needed visualization data can just be createded if a classify_folder was used und we did not use the cache
-    if (!USE_CACHED_HISTOGRAMS && flagArgs.count("classify_folder")) {
+    if (flagArgs.count("classify_folder")) {
         writeVisualizationData(visImagePaths, Histogram::getAbsChanges(visDiffs), visGolds, visPredictions);
     }
 
@@ -140,12 +122,12 @@ std::unordered_set<sbd::GoldStandardElement> HardCutMain::readGoldStandard(std::
  * 2.
  * Read the frame file names recursively.
  */
-std::vector<std::string> HardCutMain::getFileNames(std::string dataFolder) {
+std::vector<std::string> HardCutMain::getFileNames(std::string dataFolder, bool folderReplacement) {
     printf("Getting frame file names.\n");
 
     std::vector<boost::filesystem::path> imagePaths;
     std::string extension = ".jpg";
-    if (dataFolder.find("[type]") == std::string::npos)
+    if (dataFolder.find("[type]") == std::string::npos && folderReplacement)
         wrongUsageHardCut();
     std::string framesFolder = boost::replace_first_copy(dataFolder, "[type]", "frames");
     std::cout << "Reading frames from " << framesFolder << std::endl;
@@ -295,7 +277,6 @@ std::vector<float> HardCutMain::evaluate(Features &testSet, SVMLearner *learner)
 
     int tp = 0, fp = 0, tn = 0, fn = 0;
     std::vector<float> predictions;
-	learner->plotDecisionRegions(testMat, labelsMat);
 
     for (int rowIndex = 0; rowIndex < testMat.rows; rowIndex++) {
         cv::Mat mTest = testMat.row(rowIndex);
@@ -309,8 +290,6 @@ std::vector<float> HardCutMain::evaluate(Features &testSet, SVMLearner *learner)
         predictions.push_back(predicted);
 //        printf("Predicted %f   Actual: %f\n", predicted, actual);
     }
-
-
 
     float precision = static_cast<float>(tp) / (tp + fp);
     float recall    = static_cast<float>(tp) / (tp + fn);
